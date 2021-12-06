@@ -1,9 +1,8 @@
-#ifndef RGL_H
-#define RGL_H
+#pragma once
 
-#include <GLFW/glfw3.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef int8_t          s8;
 typedef int16_t         s16;
@@ -32,11 +31,11 @@ typedef struct rgl_app_desc_t {
 
 b8 rgl_init(rgl_app_desc_t *desc);
 
+typedef struct GLFWwindow GLFWwindow;
+
 typedef struct rgl_app_cxt_t {
         GLFWwindow *window;
         rgl_app_desc_t *app_desc;
 } rgl_app_cxt_t;
 
 extern rgl_app_cxt_t rgl_cxt_instance;
-
-#endif /* RGL_H */
