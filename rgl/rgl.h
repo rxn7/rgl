@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include <glad.h>
+#include <GLFW/glfw3.h>
+
 typedef int8_t          s8;
 typedef int16_t         s16;
 typedef int32_t         s32;
@@ -30,8 +33,6 @@ typedef struct rgl_app_desc_t {
 } rgl_app_desc_t;
 
 b8 rgl_init(rgl_app_desc_t *desc);
-
-typedef struct GLFWwindow GLFWwindow;
 
 typedef struct rgl_app_cxt_t {
         GLFWwindow *window;
