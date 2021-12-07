@@ -1,4 +1,4 @@
-#include <rgl.h>
+#include <rgl/rgl.h>
 #include <stdio.h>
 
 static void _rgl_glfw_error_callback(int code, const char *msg);

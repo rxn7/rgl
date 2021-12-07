@@ -1,5 +1,4 @@
-#ifndef RGL_COLOR_H
-#define RGL_COLOR_H
+#pragma once
 
 typedef struct rgl_color_t {
         union {
@@ -18,5 +17,3 @@ typedef struct rgl_color_t {
 #define RGL_COLOR_RED           RGL_RGB(255, 0, 0)
 #define RGL_COLOR_GREEN         RGL_RGB(0, 255, 0)
 #define RGL_COLOR_BLUE          RGL_RGB(0, 0, 255)
-
-#endif /* RGL_COLOR_H */

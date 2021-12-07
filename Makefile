@@ -1,5 +1,5 @@
 SRC = -c src/*.c
-INCS = -Irgl
+INCS = -I.
 CFLAGS = -std=gnu99 -Wall -fPIC
 OUT = -o out/librgl.so
 OBJ = glad.o rgl.o 
@@ -11,7 +11,7 @@ compile:
 	gcc $(SRC) $(INCS) $(CFLAGS)
 
 link:
-	gcc -shared $(OUT) $(OBJ) $(LIBS)
+	gcc -shared $(OBJ) $(LIBS) $(OUT)
 
 clean:
 	rm -rf *.o

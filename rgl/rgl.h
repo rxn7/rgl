@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include <glad.h>
+#include <rgl/glad.h>
 #include <GLFW/glfw3.h>
 
 typedef int8_t          s8;
