@@ -1,54 +1,108 @@
-#include <rgl/rgl.h>
-#include <stdio.h>
+#include "rgl/rgl.h"
+#include "rgl/rgl_log.h"
 
+static b8 _rgl_glfw_init();
 static void _rgl_glfw_error_callback(int code, const char *msg);
+static void _rgl_start_main_loop();
+static void _rgl_quit();
+static void _rgl_def_update(f32 dt);
 
-rgl_app_cxt_t rgl_cxt_instance;
+static rgl_app_cxt_t _app_cxt;
+static s32 _win_w, _win_h;
 
 b8 rgl_init(rgl_app_desc_t *desc) {
-        rgl_cxt_instance.app_desc = desc;
+        /* Sanity checks */
+        if(desc->width <= 0)            desc->width = 960; 
+        if(desc->height <= 0)           desc->height = 640;
+        if(!desc->title)                desc->title = "RGL";
+        if(!desc->update_f)             desc->update_f = _rgl_def_update;
+        if(desc->res_height <= 0)       desc->res_height = 480;
+        if(desc->res_width <= 0)        desc->res_width = 640;
 
-	glfwSetErrorCallback(_rgl_glfw_error_callback);
-        if(!glfwInit()) {
-		printf("[RGL] Failed to initialize glfw.\n");
+        _app_cxt.desc = desc;
+
+        if(!_rgl_glfw_init()) {
                 return false;
         }
 
-        rgl_cxt_instance.window = glfwCreateWindow(desc->width, desc->height, desc->title, NULL, NULL);
-        if(!rgl_cxt_instance.window) {
-		printf("[RGL] Failed to create glfw window.\n");
-                return false;
+        /* Call user defined init func (if it exists) */
+        if(desc->init_f) {
+                desc->init_f();
         }
 
-	glfwMakeContextCurrent(rgl_cxt_instance.window);
+        _rgl_start_main_loop();
+        _rgl_quit();
 
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        return true;
+}
 
+void rgl_render_texture(rgl_texture_t *txt, b8 stretch) {
+       if(stretch) {
+               glPixelZoom((f32)_win_w / txt->width,(f32)_win_h / txt->height);
+       } else {
+               glPixelZoom(1, 1);
+       }
+
+       glDrawPixels(txt->width, txt->height, GL_RGB, GL_UNSIGNED_BYTE, txt->pixels->rgb);
+}
+
+void rgl_get_window_size(u32 *w, u32 *h) {
+        *w = _win_w;
+        *h = _win_h;
+}
+
+static void _rgl_start_main_loop() {
         f32 dt = 0, now = 0, last = 0;
-        while(!glfwWindowShouldClose(rgl_cxt_instance.window)) {
+        while(!glfwWindowShouldClose(_app_cxt.window)) {
+                /* Calculate delta time between frames */
                 now = glfwGetTime();
                 dt = (f32)(now - last);
                 last = now;
 
                 glfwPollEvents();
+                glfwGetWindowSize(_app_cxt.window, &_win_w, &_win_h);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-                if(rgl_cxt_instance.app_desc->update_f) {
-                        rgl_cxt_instance.app_desc->update_f(dt);
-                }
+                _app_cxt.desc->update_f(dt);
 
-                glfwSwapBuffers(rgl_cxt_instance.window);
+                glfwSwapBuffers(_app_cxt.window);
+        }
+}
+
+static b8 _rgl_glfw_init() {
+	glfwSetErrorCallback(_rgl_glfw_error_callback);
+        if(!glfwInit()) {
+		RGL_LOG_ERROR("FAILED TO INITIALIZE GLFW");
+                return false;
         }
 
-        if(rgl_cxt_instance.app_desc->exit_f) {
-                rgl_cxt_instance.app_desc->exit_f();
+        glfwWindowHint(GLFW_RESIZABLE, true);
+
+        _app_cxt.window = glfwCreateWindow(_app_cxt.desc->width, _app_cxt.desc->height, _app_cxt.desc->title, NULL, NULL);
+        if(!_app_cxt.window) {
+		RGL_LOG_ERROR("FAILED TO CREATE GLFW WINDOW.");
+                return false;
         }
 
-        glfwDestroyWindow(rgl_cxt_instance.window);
+	glfwMakeContextCurrent(_app_cxt.window);
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
         return true;
 }
 
 static void _rgl_glfw_error_callback(int code, const char *msg) {
-	printf("[RGL] glfw error [%i]: %s\n", code, msg);
+	RGL_LOG_ERROR("GLFW ERROR [%i]: %s", code, msg);
+}
+
+static void _rgl_quit() {
+        /* Call user defined quit function (if it exists) */
+        if(_app_cxt.desc->quit_f) {
+                _app_cxt.desc->quit_f();
+        }
+
+        glfwDestroyWindow(_app_cxt.window);
+}
+
+static void _rgl_def_update(f32 dt) { 
+        return;
 }
