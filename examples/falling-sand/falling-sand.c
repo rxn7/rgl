@@ -4,8 +4,8 @@
 #include <rgl/rgl.h>
 #include <rgl/rgl_input.h>
 
-#define WORLD_WIDTH 720
-#define WORLD_HEIGHT 480 
+#define WORLD_WIDTH 512
+#define WORLD_HEIGHT 512 
 #define WORLD_SIZE WORLD_WIDTH * WORLD_HEIGHT
 #define MAX_CHANGES_PER_TICK WORLD_SIZE
 
@@ -36,6 +36,8 @@ static void move_particle(u32 x, u32 y, u32 xo, u32 yo);
 static void draw_particles();
 static void tick();
 static void randomize();
+static void clear();
+
 static void app_init();
 static void app_quit();
 static void app_update(f32 dt);
@@ -102,9 +104,8 @@ static void app_update(f32 dt) {
                 if(!dirty) dirty = _dirty;
         }
 
-        if(rgl_is_key_pressed(GLFW_KEY_R)) {
-                randomize();
-        }
+        if(rgl_is_key_pressed(GLFW_KEY_R)) randomize();
+        if(rgl_is_key_pressed(GLFW_KEY_C)) clear();
 
         if(dirty) {
                 rgl_texture_clear(buffer);
@@ -119,7 +120,7 @@ static void app_init() {
 
         materials[MAT_IDX_EMPTY] = (material_t){false, RGL_RGB(0, 0, 0)};
         materials[MAT_IDX_SAND] = (material_t){false, RGL_RGB(255, 255, 0)};
-        materials[MAT_IDX_STONE] = (material_t){true, RGL_RGB(50, 50, 50)};
+        materials[MAT_IDX_STONE] = (material_t){true, RGL_RGB(200, 200, 200)};
 
         randomize();
 }
@@ -155,8 +156,7 @@ static void tick() {
         for(u32 x=0; x<WORLD_WIDTH; ++x) {
                 for(u32 y=0; y<WORLD_HEIGHT; ++y) {
                         part = &get_particle(x, y);
-
-                        if(y <= 0) continue;
+if(y <= 0) continue;
                         
                         switch(part->mat_idx) {
                                 case MAT_IDX_SAND: {
@@ -189,5 +189,13 @@ static void randomize() {
 
         for(u32 i=0; i<WORLD_SIZE; ++i) {
                 particles[i].mat_idx = rand() % 10 < 2 ? (rand() % MAT_COUNT + 1) : MAT_IDX_EMPTY;
+        }
+}
+
+static void clear() {
+        dirty = true;
+
+        for(u32 i=0; i<WORLD_SIZE; ++i) {
+                particles[i].mat_idx = MAT_IDX_EMPTY;
         }
 }

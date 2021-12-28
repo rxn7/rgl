@@ -37,11 +37,8 @@ b8 rgl_init(rgl_app_desc_t *desc) {
 }
 
 void rgl_render_texture(rgl_texture_t *txt, b8 stretch) {
-       if(stretch) {
-               glPixelZoom((f32)_win_w / txt->width,(f32)_win_h / txt->height);
-       } else {
-               glPixelZoom(1, 1);
-       }
+       if(stretch)      glPixelZoom((f32)_win_w / txt->width,(f32)_win_h / txt->height);
+       else             glPixelZoom(1, 1);
 
        glDrawPixels(txt->width, txt->height, GL_RGB, GL_UNSIGNED_BYTE, txt->pixels->rgb);
 }
@@ -80,11 +77,14 @@ static b8 _rgl_glfw_init() {
                 return false;
         }
 
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
         glfwWindowHint(GLFW_RESIZABLE, true);
 
         _app_data.window = glfwCreateWindow(_app_data.desc->width, _app_data.desc->height, _app_data.desc->title, NULL, NULL);
         if(!_app_data.window) {
-		RGL_LOG_ERROR("FAILED TO CREATE GLFW WINDOW.");
+		RGL_LOG_ERROR("FAILED TO CREATE GLFW WINDOW");
                 return false;
         }
 
