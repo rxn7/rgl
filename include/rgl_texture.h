@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rgl/rgl_common.h"
-#include "rgl/rgl_color.h"
+#include "rgl_common.h"
+#include "rgl_color.h"
 
 typedef struct rgl_texture_t {
         u32 width;

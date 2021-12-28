@@ -1,10 +1,15 @@
 SRC = -c src/*.c
-INCS = -I.
-CFLAGS = -std=gnu99 -Wall -fPIC
+INCS = -Iinclude -Isrc
+CFLAGS = -std=gnu99 -Wall -fPIC -g
 OUT = -o out/librgl.so
-OBJ = glad.o rgl.o rgl_texture.o
 LIBS = $(shell pkg-config --static --libs glfw3)
-all: compile link
+OBJ = glad.o \
+      rgl.o \
+      rgl_texture.o \
+      rgl_file.o \
+      rgl_input.o 
+
+all: compile link clean
 	
 compile:
 	gcc $(SRC) $(INCS) $(CFLAGS)
@@ -17,5 +22,6 @@ clean:
 
 install:
 	make
-	sudo cp -r rgl /usr/include/
+	sudo mkdir -p /usr/include/rgl
+	sudo cp -r include/* /usr/include/rgl/
 	sudo cp out/* /usr/lib/

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rgl/rgl_common.h"
+#include "rgl_common.h"
 
 typedef struct rgl_color_t {
         union {

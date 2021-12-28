@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
-#include "rgl/rgl_texture.h"
+
+#include "rgl_texture.h"
 
 rgl_texture_t *rgl_texture_new(u32 w, u32 h) {
         rgl_texture_t *txt = malloc(sizeof(rgl_texture_t));
