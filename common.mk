@@ -1,6 +1,6 @@
 SRC = -c src/*.c
 INCS = -Iinclude -Isrc
-CFLAGS = -std=gnu99 -Wall -fPIC
+CFLAGS = -std=c18 -Wall -fPIC -O2
 
 OBJ = glad.o \
       rgl.o \

@@ -11,7 +11,7 @@ typedef struct rgl_color_t {
         };
 } rgl_color_t;
 
-#define RGL_RGB(r, g, b) (rgl_color_t) { {r, g, b}  }
+#define RGL_RGB(r, g, b) (rgl_color_t) { .rgb = {r, g, b}  }
 
 #define RGL_BLACK         RGL_RGB(0, 0, 0)
 #define RGL_WHITE         RGL_RGB(255, 255, 255)
