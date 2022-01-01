@@ -45,7 +45,6 @@ static void app_update(f32 dt);
 #define get_particle_idx(x,y) (y) * WORLD_WIDTH + (x)
 #define get_particle(x,y) particles[get_particle_idx(x,y)]
 #define is_solid(x,y) materials[get_particle(x,y).mat_idx].solid
-#define in_bounds(x,y) ((x) >= 0 && (x) < WORLD_WIDTH-1 && (y) >= 0 && (y) < WORLD_HEIGHT-1)
 
 static bool dirty = false;
 static f32 tick_timer = 0;
@@ -155,9 +154,9 @@ static void tick() {
         particle_t *part;
         for(u32 x=0; x<WORLD_WIDTH; ++x) {
                 for(u32 y=0; y<WORLD_HEIGHT; ++y) {
+			if(y <= 0) continue;
                         part = &get_particle(x, y);
-if(y <= 0) continue;
-                        
+
                         switch(part->mat_idx) {
                                 case MAT_IDX_SAND: {
                                         if(get_particle(x, y-1).mat_idx == MAT_IDX_EMPTY) move_particle(x, y, 0, -1);
