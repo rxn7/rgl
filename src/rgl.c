@@ -1,114 +1,78 @@
 #include "rgl.h"
 #include "rgl_log.h"
 
-static b8 _rgl_glfw_init();
-static void _rgl_glfw_error_callback(int code, const char *msg);
-static void _rgl_start_main_loop();
-static void _rgl_quit();
-static void _rgl_def_update(f32 dt);
+rgl_app_data_t g_app_data = {0};
 
-rgl_app_data_t _app_data = {0};
-s32 _win_w, _win_h;
+static void _start_main_loop();
+static void _def_update(f32 dt);
 
 b8 rgl_init(rgl_app_desc_t *desc) {
-        /* Sanity checks */
         if(desc->width <= 0)            desc->width = 960; 
         if(desc->height <= 0)           desc->height = 640;
         if(!desc->title)                desc->title = "RGL";
-        if(!desc->update_f)             desc->update_f = _rgl_def_update;
+        if(!desc->update_f)             desc->update_f = _def_update;
         if(desc->res_height <= 0)       desc->res_height = 480;
         if(desc->res_width <= 0)        desc->res_width = 640;
 
-        _app_data.desc = desc;
+        g_app_data.desc = desc;
+	g_app_data.plat_cxt = RGL_PLATFORM_FUN(context_new, desc->title, desc->width, desc->height);
 
-        if(!_rgl_glfw_init()) {
-                return false;
-        }
-
-        /* Call user defined init func (if it exists) */
         if(desc->init_f) {
                 desc->init_f();
         }
 
-        _rgl_start_main_loop();
-        _rgl_quit();
+	g_app_data.running = true;
+
+        _start_main_loop();
+
+        rgl_quit();
 
         return true;
 }
 
 void rgl_render_texture(rgl_texture_t *txt, b8 stretch) {
-       if(stretch)      glPixelZoom((f32)_win_w / txt->width,(f32)_win_h / txt->height);
+       if(stretch)      glPixelZoom((f32)g_app_data.width / txt->width, (f32)g_app_data.height / txt->height);
        else             glPixelZoom(1, 1);
 
        glDrawPixels(txt->width, txt->height, GL_RGB, GL_UNSIGNED_BYTE, txt->pixels->rgb);
 }
 
 void rgl_get_window_size(u32 *w, u32 *h) {
-        *w = _win_w;
-        *h = _win_h;
+        *w = g_app_data.width;
+        *h = g_app_data.height;
 }
 
-static void _rgl_start_main_loop() {
+static void _start_main_loop() {
         f32 dt = 0, now = 0, last = 0;
-        while(!glfwWindowShouldClose(_app_data.window)) {
+        while(g_app_data.running) {
                 /* Calculate delta time between frames */
-                now = glfwGetTime();
+                now = RGL_PLATFORM_FUN(get_time);
                 dt = (f32)(now - last);
                 last = now;
 
-                glfwPollEvents();
-                glfwGetWindowSize(_app_data.window, &_win_w, &_win_h);
+		RGL_PLATFORM_FUN(get_window_size, &g_app_data.width, &g_app_data.height);
 
-                glfwGetCursorPos(_app_data.window, &_app_data.mouse_x, &_app_data.mouse_y);
-                _app_data.mouse_y = _win_h - _app_data.mouse_y;
-
+		RGL_PLATFORM_FUN(start_frame);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-                _app_data.desc->update_f(dt);
+                g_app_data.desc->update_f(dt);
 
-                glfwSwapBuffers(_app_data.window);
+		RGL_PLATFORM_FUN(end_frame);
         }
 }
 
-static b8 _rgl_glfw_init() {
-	glfwSetErrorCallback(_rgl_glfw_error_callback);
-        if(!glfwInit()) {
-		RGL_LOG_ERROR("FAILED TO INITIALIZE GLFW");
-                return false;
+void rgl_quit() {
+	g_app_data.running = false;
+
+        if(g_app_data.desc->quit_f) {
+                g_app_data.desc->quit_f();
         }
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-        glfwWindowHint(GLFW_RESIZABLE, true);
+	RGL_PLATFORM_FUN(context_free, g_app_data.plat_cxt);
 
-        _app_data.window = glfwCreateWindow(_app_data.desc->width, _app_data.desc->height, _app_data.desc->title, NULL, NULL);
-        if(!_app_data.window) {
-		RGL_LOG_ERROR("FAILED TO CREATE GLFW WINDOW");
-                return false;
-        }
-
-	glfwMakeContextCurrent(_app_data.window);
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-
-        glfwSwapInterval(0);
-
-        return true;
+	exit(0);
 }
 
-static void _rgl_glfw_error_callback(int code, const char *msg) {
-	RGL_LOG_ERROR("GLFW ERROR [%i]: %s", code, msg);
-}
-
-static void _rgl_quit() {
-        /* Call user defined quit function (if it exists) */
-        if(_app_data.desc->quit_f) {
-                _app_data.desc->quit_f();
-        }
-
-        glfwDestroyWindow(_app_data.window);
-}
-
-static void _rgl_def_update(f32 dt) { 
+static void _def_update(f32 dt) { 
         return;
 }

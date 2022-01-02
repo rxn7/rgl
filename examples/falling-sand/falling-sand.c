@@ -83,7 +83,7 @@ static void app_update(f32 dt) {
                 tick_timer += dt;
         }
         
-        f64 mx, my;
+        s32 mx, my;
         rgl_get_cursor_pos(&mx, &my);
 
         u32 ww, wh;
@@ -95,16 +95,16 @@ static void app_update(f32 dt) {
         if(mx >= 0 && mx < WORLD_WIDTH && my >= 0 && my < WORLD_HEIGHT) {
                 bool _dirty = true;
 
-                if(rgl_is_key_pressed(GLFW_KEY_1))      get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_EMPTY;
-                else if(rgl_is_key_pressed(GLFW_KEY_2)) get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_STONE;
-                else if(rgl_is_key_pressed(GLFW_KEY_3)) get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_SAND;
+                if(rgl_is_key_pressed(RGL_KEY_1))      get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_EMPTY;
+                else if(rgl_is_key_pressed(RGL_KEY_2)) get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_STONE;
+                else if(rgl_is_key_pressed(RGL_KEY_3)) get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_SAND;
                 else _dirty = false;
 
                 if(!dirty) dirty = _dirty;
         }
 
-        if(rgl_is_key_pressed(GLFW_KEY_R)) randomize();
-        if(rgl_is_key_pressed(GLFW_KEY_C)) clear();
+        if(rgl_is_key_just_pressed(RGL_KEY_R)) randomize();
+        if(rgl_is_key_just_pressed(RGL_KEY_C)) clear();
 
         if(dirty) {
                 rgl_texture_clear(buffer);
