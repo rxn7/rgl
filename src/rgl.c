@@ -1,10 +1,11 @@
 #include "rgl.h"
 #include "rgl_log.h"
+#include "rgl_shader.h"
 
-rgl_app_data_t g_app_data = {0};
+rgl_app_data_t g_data = {0};
 
 static void _start_main_loop();
-static void _def_update(f32 dt);
+static void _def_update(f64 dt);
 
 b8 rgl_init(rgl_app_desc_t *desc) {
         if(desc->width <= 0)            desc->width = 960; 
@@ -14,14 +15,16 @@ b8 rgl_init(rgl_app_desc_t *desc) {
         if(desc->res_height <= 0)       desc->res_height = 480;
         if(desc->res_width <= 0)        desc->res_width = 640;
 
-        g_app_data.desc = desc;
-	g_app_data.plat_cxt = RGL_PLATFORM_FUN(context_new, desc->title, desc->width, desc->height);
+        g_data.desc = desc;
+
+	RGL_PLATFORM_FUN(context_initialize, &g_data.plat_cxt, desc->title, desc->width, desc->height);
+	rgl_update_projection();
 
         if(desc->init_f) {
                 desc->init_f();
         }
 
-	g_app_data.running = true;
+	rgl_shader_create_primitives();
 
         _start_main_loop();
 
@@ -30,49 +33,51 @@ b8 rgl_init(rgl_app_desc_t *desc) {
         return true;
 }
 
-void rgl_render_texture(rgl_texture_t *txt, b8 stretch) {
-       if(stretch)      glPixelZoom((f32)g_app_data.width / txt->width, (f32)g_app_data.height / txt->height);
-       else             glPixelZoom(1, 1);
+void rgl_quit() {
+	g_data.running = false;
 
-       glDrawPixels(txt->width, txt->height, GL_RGB, GL_UNSIGNED_BYTE, txt->pixels->rgb);
+        if(g_data.desc->quit_f) {
+                g_data.desc->quit_f();
+        }
+
+	RGL_PLATFORM_FUN(context_destroy, &g_data.plat_cxt);
+
+	exit(0);
 }
 
-void rgl_get_window_size(u32 *w, u32 *h) {
-        *w = g_app_data.width;
-        *h = g_app_data.height;
+void rgl_set_vsync(b8 value) {
+	RGL_PLATFORM_FUN(set_vsync, value);
+}
+
+void rgl_update_projection() {
+	glViewport(0, 0, g_data.width, g_data.height);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-1.0, 1.0, -1.0, 1.0, -1, 1);
+
+	glMatrixMode(GL_MODELVIEW);
 }
 
 static void _start_main_loop() {
-        f32 dt = 0, now = 0, last = 0;
-        while(g_app_data.running) {
+	g_data.running = true;
+
+        f64 dt = 0, now = 0, last = 0;
+        while(g_data.running) {
                 /* Calculate delta time between frames */
                 now = RGL_PLATFORM_FUN(get_time);
                 dt = (f32)(now - last);
                 last = now;
 
-		RGL_PLATFORM_FUN(get_window_size, &g_app_data.width, &g_app_data.height);
-
 		RGL_PLATFORM_FUN(start_frame);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-                g_app_data.desc->update_f(dt);
+                g_data.desc->update_f(dt);
 
 		RGL_PLATFORM_FUN(end_frame);
         }
 }
 
-void rgl_quit() {
-	g_app_data.running = false;
-
-        if(g_app_data.desc->quit_f) {
-                g_app_data.desc->quit_f();
-        }
-
-	RGL_PLATFORM_FUN(context_free, g_app_data.plat_cxt);
-
-	exit(0);
-}
-
-static void _def_update(f32 dt) { 
+static void _def_update(f64 dt) { 
         return;
 }

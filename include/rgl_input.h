@@ -52,8 +52,6 @@ typedef enum rgl_btn_t {
         RGL_MOUSE_LEFT = 0,
         RGL_MOUSE_RIGHT,
         RGL_MOUSE_MIDDLE,
-        RGL_MOUSE_UP,
-        RGL_MOUSE_DOWN,
         RGL_BTN_COUNT,
 } rgl_btn_t;
 

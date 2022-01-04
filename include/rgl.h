@@ -22,15 +22,14 @@ typedef struct rgl_app_desc_t {
 
 typedef struct rgl_app_data_t {
         rgl_app_desc_t *desc;
-	RGL_PLATFORM_CONTEXT_T *plat_cxt;
+	RGL_PLATFORM_CONTEXT_T plat_cxt;
 	bool running;
 	s32 width, height;
 } rgl_app_data_t;
 
-extern rgl_app_data_t g_app_data; /* Defined in rgl.c */
+extern rgl_app_data_t g_data; /* Defined in rgl.c */
 
 b8 rgl_init(rgl_app_desc_t *desc);
 void rgl_quit();
-
-void rgl_get_window_size(u32 *w, u32 *h);
-void rgl_render_texture(rgl_texture_t *txt, b8 stretch);
+void rgl_set_vsync(b8 value);
+void rgl_update_projection();

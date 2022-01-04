@@ -1,10 +1,12 @@
 #pragma once
 
 #include "../rgl_common.h"
-#include "../glad.h"
 
+#include <time.h>
 #include <X11/X.h>
+
 #include <GL/glx.h>
+#include <GL/glext.h>
 
 typedef struct rgl_x11_context_t {
 	Display *dpy;
@@ -16,10 +18,11 @@ typedef struct rgl_x11_context_t {
 	GLXContext glx;
 } rgl_x11_context_t;
 
-rgl_x11_context_t *rgl_x11_context_new(const char *title, s32 width, s32 height);
-void rgl_x11_context_free(rgl_x11_context_t *cxt);
+void rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height);
+void rgl_x11_context_destroy(rgl_x11_context_t *cxt);
 
-f32 rgl_x11_get_time(void);
+f64 rgl_x11_get_time(void);
+void rgl_x11_get_window_size(s32 *width, s32 *height);
 void rgl_x11_start_frame(void);
 void rgl_x11_end_frame(void);
-void rgl_x11_get_window_size(s32 *width, s32 *height);
+void rgl_x11_set_vsync(b8 value);

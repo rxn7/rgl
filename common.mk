@@ -1,9 +1,12 @@
 SRC = -c src/*.c
 INCS = -Iinclude -Isrc
-CFLAGS = -std=gnu99 -Wall -fPIC -O2
+CFLAGS = -std=gnu17 -Wall -fPIC -O2 
+LIBS = -lepoxy
 
-OBJ = glad.o \
-      rgl.o \
+OBJ = rgl.o \
       rgl_texture.o \
       rgl_file.o \
-      rgl_input.o 
+      rgl_input.o \
+      rgl_vbo.o \
+      rgl_sprite.o \
+      rgl_shader.o 

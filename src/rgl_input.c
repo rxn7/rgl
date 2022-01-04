@@ -5,7 +5,7 @@
 
 void rgl_get_cursor_pos(s32 *x, s32 *y) {
 	RGL_PLATFORM_FUN(get_cursor_pos, x, y);
-	*y = g_app_data.height - *y;
+	*y = g_data.height - *y;
 }
 
 bool rgl_is_key_pressed(rgl_key_t key) {

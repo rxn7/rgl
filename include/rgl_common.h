@@ -1,7 +1,12 @@
 #pragma once
 
+#include <string.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 
 typedef int8_t          s8;
 typedef int16_t         s16;
@@ -19,6 +24,6 @@ typedef f32 v2[2];
 typedef f32 v3[3];
 typedef f32 v4[4];
 
-typedef void (*rgl_app_update_t)(f32 dt);
+typedef void (*rgl_app_update_t)(f64 dt);
 typedef void (*rgl_app_quit_t)();
 typedef void (*rgl_app_init_t)();

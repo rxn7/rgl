@@ -1,30 +1,34 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "rgl.h"
 #include "rgl_texture.h"
 
-rgl_texture_t *rgl_texture_new(u32 w, u32 h) {
-        rgl_texture_t *txt = malloc(sizeof(rgl_texture_t));
+void rgl_texture_initialize(rgl_texture_t *txt, u32 w, u32 h) {
         txt->width = w;
         txt->height = h;
         txt->pixels = calloc(w * h, sizeof(rgl_color_t));
 
-        return txt; 
+	glGenTextures(1, &txt->id);
+	glBindTexture(GL_TEXTURE_2D, txt->id);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, txt->pixels);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void rgl_texture_free(rgl_texture_t *txt) {
+void rgl_texture_destroy(rgl_texture_t *txt) {
+	glDeleteTextures(1, &txt->id);
         free(txt->pixels);
-        free(txt);
 }
 
-void rgl_texture_fill_xy(rgl_texture_t *txt, u32 x, u32 y, rgl_color_t col) {
-        txt->pixels[y * txt->width + x] = col;
-}
-
-void rgl_texture_fill(rgl_texture_t *txt, u32 i, rgl_color_t col) {
-        txt->pixels[i] = col;
-}
-
-void rgl_texture_clear(rgl_texture_t *txt) {
-        memset(txt->pixels->rgb, 0, txt->width * txt->height * sizeof(rgl_color_t));
+void rgl_texture_update(rgl_texture_t *txt) {
+	glBindTexture(GL_TEXTURE_2D, txt->id);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, txt->width, txt->height, GL_RGB, GL_UNSIGNED_BYTE, txt->pixels);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
