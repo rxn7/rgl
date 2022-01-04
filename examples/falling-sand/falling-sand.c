@@ -148,38 +148,38 @@ static void move_particle(u32 x, u32 y, u32 xo, u32 yo) {
 }
 
 static void tick() {
-	if(paused) return;
+	if(!paused) {
+		particle_t *part;
+		for(u32 x=0; x<WORLD_WIDTH; ++x) {
+			for(u32 y=0; y<WORLD_HEIGHT; ++y) {
+				if(y <= 0) continue;
+				part = &get_particle(x, y);
 
-        particle_t *part;
-        for(u32 x=0; x<WORLD_WIDTH; ++x) {
-                for(u32 y=0; y<WORLD_HEIGHT; ++y) {
-			if(y <= 0) continue;
-                        part = &get_particle(x, y);
+				switch(part->mat_idx) {
+					case MAT_IDX_SAND: {
+						if(get_particle(x, y-1).mat_idx == MAT_IDX_EMPTY) move_particle(x, y, 0, -1);
+						else {
+							bool check_left = rand() % 2; // 50% chance of checking the left side first.
+							bool can_move_left = x > 0 && get_particle(x-1, y).mat_idx == MAT_IDX_EMPTY && get_particle(x-1, y-1).mat_idx == MAT_IDX_EMPTY; 
+							bool can_move_right = x < WORLD_WIDTH-1 && get_particle(x+1, y).mat_idx == MAT_IDX_EMPTY && get_particle(x+1, y-1).mat_idx == MAT_IDX_EMPTY; 
 
-                        switch(part->mat_idx) {
-                                case MAT_IDX_SAND: {
-                                        if(get_particle(x, y-1).mat_idx == MAT_IDX_EMPTY) move_particle(x, y, 0, -1);
-                                        else {
-                                                bool check_left = rand() % 2; // 50% chance of checking the left side first.
-                                                bool can_move_left = x > 0 && get_particle(x-1, y).mat_idx == MAT_IDX_EMPTY && get_particle(x-1, y-1).mat_idx == MAT_IDX_EMPTY; 
-                                                bool can_move_right = x < WORLD_WIDTH-1 && get_particle(x+1, y).mat_idx == MAT_IDX_EMPTY && get_particle(x+1, y-1).mat_idx == MAT_IDX_EMPTY; 
+							if((check_left || !can_move_right) && can_move_left) move_particle(x, y, -1, -1);
+							else if(can_move_right) move_particle(x, y, +1, -1);
+						} 
+						break;
+					}
+				}
+			}
+		}
 
-                                                if((check_left || !can_move_right) && can_move_left) move_particle(x, y, -1, -1);
-                                                else if(can_move_right) move_particle(x, y, +1, -1);
-                                        } 
-                                        break;
-                                }
-                        }
-                }
-        }
+		change_t *change;
+		for(u32 i=0; i<change_count; ++i) {
+			change = &changes[i];
+			particles[change->idx].mat_idx = change->mat;
+		}
 
-        change_t *change;
-        for(u32 i=0; i<change_count; ++i) {
-                change = &changes[i];
-                particles[change->idx].mat_idx = change->mat;
-        }
-
-        change_count = 0;
+		change_count = 0;
+	}
 
         if(dirty) {
 		rgl_texture_clear(&texture);
