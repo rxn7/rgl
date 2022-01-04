@@ -46,6 +46,7 @@ static KeySym _rgl_key_to_keysym(rgl_key_t key) {
 		case RGL_KEY_8:		 return XK_8;
 		case RGL_KEY_9:		 return XK_9;
 		case RGL_KEY_0:		 return XK_0;
+		case RGL_KEY_ESC:	 return XK_Escape;
                 case RGL_KEY_SPACE:      return XK_space;
                 case RGL_KEY_ARROW_DOWN: return XK_Down;
                 case RGL_KEY_ARROW_UP:   return XK_Up;

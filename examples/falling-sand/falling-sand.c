@@ -47,7 +47,8 @@ static void app_update(f64 dt);
 #define get_particle(x,y) particles[get_particle_idx(x,y)]
 #define is_solid(x,y) materials[get_particle(x,y).mat_idx].solid
 
-static bool dirty = false;
+static b8 paused = false;
+static b8 dirty = false;
 static f32 tick_timer = 0;
 
 static rgl_sprite_t sprite;
@@ -106,6 +107,7 @@ static void app_update(f64 dt) {
 
         if(rgl_is_key_just_pressed(RGL_KEY_R)) randomize();
         if(rgl_is_key_just_pressed(RGL_KEY_C)) clear();
+	if(rgl_is_key_just_pressed(RGL_KEY_ESC)) paused = !paused;
 
 	rgl_sprite_render(&sprite);
 }
@@ -146,6 +148,8 @@ static void move_particle(u32 x, u32 y, u32 xo, u32 yo) {
 }
 
 static void tick() {
+	if(paused) return;
+
         particle_t *part;
         for(u32 x=0; x<WORLD_WIDTH; ++x) {
                 for(u32 y=0; y<WORLD_HEIGHT; ++y) {

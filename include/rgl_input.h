@@ -39,6 +39,7 @@ typedef enum rgl_key_t {
 	RGL_KEY_8,
 	RGL_KEY_9,
 	RGL_KEY_0,
+	RGL_KEY_ESC,
         RGL_KEY_SPACE,
         RGL_KEY_ARROW_UP,
         RGL_KEY_ARROW_DOWN,
