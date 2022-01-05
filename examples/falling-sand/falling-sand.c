@@ -39,9 +39,9 @@ static void tick();
 static void randomize();
 static void clear();
 
-static void app_init();
 static void app_quit();
 static void app_update(f64 dt);
+static void app_init();
                          
 #define get_particle_idx(x,y) (y) * WORLD_WIDTH + (x)
 #define get_particle(x,y) particles[get_particle_idx(x,y)]
@@ -77,15 +77,27 @@ int main(int argc, const char **argv) {
         rgl_init(&desc);
 }
 
+static void app_init() {
+        rgl_texture_initialize(&texture, WORLD_WIDTH, WORLD_HEIGHT);
+	rgl_sprite_initialize(&sprite, &texture);
+
+	rgl_set_vsync(false);
+
+        materials[MAT_IDX_EMPTY] = (material_t){false, RGL_RGB(0, 0, 0)};
+        materials[MAT_IDX_SAND] = (material_t){false, RGL_RGB(255, 255, 0)};
+        materials[MAT_IDX_STONE] = (material_t){true, RGL_RGB(200, 200, 200)};
+
+        randomize();
+}
+
 static void app_update(f64 dt) {
         if(tick_timer >= TICK_INTERVAL) {
                 tick_timer = 0;
                 tick();
-		printf("FPS: %f\n", 1.f/dt);
         } else {
                 tick_timer += dt;
         }
-        
+
         s32 mx, my; 
 	rgl_get_cursor_pos(&mx, &my);
 
@@ -110,19 +122,6 @@ static void app_update(f64 dt) {
 	if(rgl_is_key_just_pressed(RGL_KEY_ESC)) paused = !paused;
 
 	rgl_sprite_render(&sprite);
-}
-
-static void app_init() {
-        rgl_texture_initialize(&texture, WORLD_WIDTH, WORLD_HEIGHT);
-	rgl_sprite_initialize(&sprite, &texture);
-
-	rgl_set_vsync(false);
-
-        materials[MAT_IDX_EMPTY] = (material_t){false, RGL_RGB(0, 0, 0)};
-        materials[MAT_IDX_SAND] = (material_t){false, RGL_RGB(255, 255, 0)};
-        materials[MAT_IDX_STONE] = (material_t){true, RGL_RGB(200, 200, 200)};
-
-        randomize();
 }
 
 static void app_quit() {

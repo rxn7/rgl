@@ -5,7 +5,7 @@ void rgl_vbo_initialize(rgl_vbo_t *vbo, rgl_vertex_t *vertices, u32 vertex_count
 
 	glGenVertexArrays(1, &vbo->vao);
 	glBindVertexArray(vbo->vao);
-
+	
 	glGenBuffers(1, &vbo->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 4 * vertex_count, vertices, GL_STATIC_DRAW);

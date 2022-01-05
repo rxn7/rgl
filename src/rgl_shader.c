@@ -55,9 +55,10 @@ void rgl_shader_create_primitives() {
 		"#version 330 core\n" \
 		"layout (location = 0) in vec2 aPos;\n" \
 		"layout (location = 1) in vec2 aUV;\n" \
+		"uniform mat4 transform;\n" \
 		"out vec2 UV;\n" \
 		"void main() {\n" \
-		"\tgl_Position = vec4(aPos, 0.0, 1.0);\n" \
+		"\tgl_Position = transform * vec4(aPos, 0.0, 1.0);\n" \
 		"\tUV = aUV;\n" \
 		"}\n",
 

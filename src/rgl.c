@@ -59,6 +59,10 @@ void rgl_update_projection() {
 	glMatrixMode(GL_MODELVIEW);
 }
 
+f32 rgl_get_time() {
+	return RGL_PLATFORM_FUN(get_time);
+}
+
 static void _start_main_loop() {
 	g_data.running = true;
 
