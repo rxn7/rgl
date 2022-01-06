@@ -53,22 +53,23 @@ void rgl_shader_create_primitives() {
 	rgl_shader_initialize(&rgl_sprite_shader, 
 		// VERTEX SHADER
 		"#version 330 core\n" \
-		"layout (location = 0) in vec2 aPos;\n" \
-		"layout (location = 1) in vec2 aUV;\n" \
+		"layout (location = 0) in vec2 a_Pos;\n" \
+		"layout (location = 1) in vec2 a_UV;\n" \
 		"uniform mat4 transform;\n" \
 		"out vec2 UV;\n" \
 		"void main() {\n" \
-		"\tgl_Position = transform * vec4(aPos, 0.0, 1.0);\n" \
-		"\tUV = aUV;\n" \
+		"\tgl_Position = transform * vec4(a_Pos, 0.0, 1.0);\n" \
+		"\tUV = a_UV;\n" \
 		"}\n",
 
 		// FRAGMENT SHADER
 		"#version 330 core\n" \
+
 		"out vec4 FragColor;\n" \
 		"in vec2 UV;\n" \
-		"uniform sampler2D Texture;\n" \
+		"uniform sampler2D u_Texture;\n" \
 		"void main() {\n" \
-		"\tFragColor = texture(Texture, UV);\n" \
+		"\tFragColor = texture(u_Texture, UV);\n" \
 		"}\n"
 	);
 }

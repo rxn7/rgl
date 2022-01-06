@@ -65,13 +65,11 @@ int main(int argc, const char **argv) {
 
         rgl_app_desc_t desc = (rgl_app_desc_t){
                 .title = "RGL | Falling Sand",
-                .width = WORLD_WIDTH,
-                .height = WORLD_HEIGHT,
+                .width = 640,
+                .height = 480,
                 .update_f = app_update,
                 .quit_f = app_quit,
                 .init_f = app_init,
-                .res_width = WORLD_WIDTH,
-                .res_height = WORLD_HEIGHT, 
         };
 
         rgl_init(&desc);
