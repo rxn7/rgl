@@ -12,8 +12,6 @@ b8 rgl_init(rgl_app_desc_t *desc) {
         if(desc->height <= 0)           desc->height = 640;
         if(!desc->title)                desc->title = "RGL";
         if(!desc->update_f)             desc->update_f = _def_update;
-        if(desc->res_height <= 0)       desc->res_height = 480;
-        if(desc->res_width <= 0)        desc->res_width = 640;
 
         g_data.desc = desc;
 

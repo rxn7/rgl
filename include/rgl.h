@@ -14,8 +14,6 @@ typedef struct rgl_app_desc_t {
         rgl_app_init_t init_f;
         rgl_app_update_t update_f;
         rgl_app_quit_t quit_f;
-        u32 res_width;
-        u32 res_height;
 } rgl_app_desc_t;
 
 #include "rgl_platform.h"
