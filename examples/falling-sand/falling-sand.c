@@ -4,7 +4,6 @@
 #include <rgl/rgl.h>
 #include <rgl/rgl_input.h>
 #include <rgl/rgl_sprite.h>
-
 #define WORLD_WIDTH 512
 #define WORLD_HEIGHT 512 
 #define WORLD_SIZE WORLD_WIDTH * WORLD_HEIGHT
@@ -32,12 +31,12 @@ typedef struct change_t {
         u32 idx;
         u8 mat;
 } change_t;
-
 static void move_particle(u32 x, u32 y, u32 xo, u32 yo);
 static void draw_particles();
 static void tick();
 static void randomize();
 static void clear();
+static void mouse_draw_line(u32 x, u32 y, u8 mat);
 
 static void app_quit();
 static void app_update(f64 dt);
@@ -46,6 +45,8 @@ static void app_init();
 #define get_particle_idx(x,y) (y) * WORLD_WIDTH + (x)
 #define get_particle(x,y) particles[get_particle_idx(x,y)]
 #define is_solid(x,y) materials[get_particle(x,y).mat_idx].solid
+#define MAX(x,y) (x) > (y) ? (x) : (y)
+#define MIN(x,y) (x) < (y) ? (x) : (y)
 
 static b8 paused = false;
 static b8 dirty = false;
@@ -59,6 +60,9 @@ static change_t changes[MAX_CHANGES_PER_TICK] = {0};
 static material_t materials[MAT_COUNT] = {0};
 
 static u32 change_count = 0;
+
+static u32 _x0 = 0; 
+static u32 _y0 = 0;
 
 int main(int argc, const char **argv) {
         srand(time(0));
@@ -105,19 +109,22 @@ static void app_update(f64 dt) {
         if(mx >= 0 && mx < WORLD_WIDTH && my >= 0 && my < WORLD_HEIGHT) {
                 if(rgl_is_key_pressed(RGL_KEY_1)) {
 			dirty = true;
-			get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_EMPTY;
+			mouse_draw_line((u32)mx, (u32)my, MAT_IDX_EMPTY);
 		} else if(rgl_is_key_pressed(RGL_KEY_2)) {
 			dirty = true;
-			get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_STONE;
+			mouse_draw_line((u32)mx, (u32)my, MAT_IDX_STONE);
 		} else if(rgl_is_key_pressed(RGL_KEY_3)) {
 			dirty = true;
-			get_particle((u32)mx, (u32)my).mat_idx = MAT_IDX_SAND;
+			mouse_draw_line((u32)mx, (u32)my, MAT_IDX_SAND);
 		}
         }
 
         if(rgl_is_key_just_pressed(RGL_KEY_R)) randomize();
         if(rgl_is_key_just_pressed(RGL_KEY_C)) clear();
 	if(rgl_is_key_just_pressed(RGL_KEY_ESC)) paused = !paused;
+
+	_x0 = mx; 
+	_y0 = my; 
 
 	rgl_sprite_render(&sprite);
 }
@@ -201,4 +208,34 @@ static void clear() {
         for(u32 i=0; i<WORLD_SIZE; ++i) {
                 particles[i].mat_idx = MAT_IDX_EMPTY;
         }
+}
+
+static void mouse_draw_line(u32 x1, u32 y1, u8 mat) {
+	s32 dx = abs(x1 - _x0);
+	s32 sx = _x0 < x1 ? 1 : -1;
+	s32 dy = -abs(y1-_y0);
+	s32 sy = _y0 < y1 ? 1 : -1;
+	s32 err = dx + dy;
+
+	while(1) {
+		if(_x0 >= 0 && _x0 < WORLD_WIDTH-1 && _y0 >= 0 && _y0 < WORLD_HEIGHT-1) {
+			get_particle(_x0, _y0).mat_idx = mat;
+		} else {
+			break;
+		}
+
+
+		if(_x0 == x1 && _y0 == y1) break;
+
+		s32 e2 = err*2;
+		if(e2 >= dy) {
+			err += dy;
+			_x0 += sx;
+		}
+
+		if(e2 <= dx) {
+			err += dx;
+			_y0 += sy;
+		}
+	}
 }
