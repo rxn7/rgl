@@ -21,11 +21,7 @@ typedef float           f32;
 typedef double          f64;
 typedef bool            b8;
 
-/*
-typedef f32 v2[2]; 
-typedef f32 v3[3];
-typedef f32 v4[4];
-*/
+#include "rgl_color.h"
 
 typedef void (*rgl_app_update_t)(f64 dt);
 typedef void (*rgl_app_quit_t)();

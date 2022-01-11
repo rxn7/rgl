@@ -10,4 +10,5 @@ OBJ = rgl.o \
       rgl_vbo.o \
       rgl_sprite.o \
       rgl_shader.o \
-      rgl_transform.o
+      rgl_transform.o \
+      rgl_immediate.o

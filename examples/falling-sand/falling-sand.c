@@ -2,10 +2,9 @@
 #include <time.h>
 
 #include <rgl/rgl.h>
-#include <rgl/rgl_input.h>
-#include <rgl/rgl_sprite.h>
-#define WORLD_WIDTH 1024
-#define WORLD_HEIGHT 1024 
+
+#define WORLD_WIDTH 256 
+#define WORLD_HEIGHT 256 
 #define WORLD_SIZE WORLD_WIDTH * WORLD_HEIGHT
 #define MAX_CHANGES_PER_TICK WORLD_SIZE
 
@@ -93,8 +92,6 @@ static void app_init() {
 }
 
 static void app_update(f64 dt) {
-	printf("FPS: %f\n", 1.f / dt);
-
         if(tick_timer >= TICK_INTERVAL) {
                 tick_timer = 0;
                 tick();
@@ -200,7 +197,7 @@ static void randomize() {
         dirty = true;
 
         for(u32 i=0; i<WORLD_SIZE; ++i) {
-                particles[i].mat_idx = rand() % 10 < 2 ? (rand() % MAT_COUNT + 1) : MAT_IDX_EMPTY;
+                particles[i].mat_idx = rand() % 10 < 2 ? (rand() % 10 < 9 ? MAT_IDX_SAND : MAT_IDX_STONE) : MAT_IDX_EMPTY;
         }
 }
 
