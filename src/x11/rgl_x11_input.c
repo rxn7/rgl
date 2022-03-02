@@ -1,7 +1,7 @@
 #include "x11/rgl_x11_input.h"
 #include "rgl.h"
 
-static s32 _cursor_pos[2];
+static vec2 _cursor_pos;
 
 static char _keys[32] = {0};
 static char _prev_keys[32] = {0};
@@ -61,8 +61,12 @@ static KeySym _rgl_key_to_keysym(rgl_key_t key) {
 
 void rgl_x11_input_update() {
 	s32 rx, ry;
+	s32 mx, my;
 	Window win;
-	XQueryPointer(g_data.plat_cxt.dpy, g_data.plat_cxt.win, &win, &win, &rx, &ry, &_cursor_pos[0], &_cursor_pos[1], &_buttons);
+	XQueryPointer(g_data.plat_cxt.dpy, g_data.plat_cxt.win, &win, &win, &rx, &ry, &mx, &my, &_buttons);
+
+	_cursor_pos[0] = mx;
+	_cursor_pos[1] = my;
 
 	XQueryKeymap(g_data.plat_cxt.dpy, _keys);
 }
@@ -75,9 +79,8 @@ void rgl_x11_input_post_update() {
 	_prev_buttons = _buttons;
 }
 
-void rgl_x11_get_cursor_pos(s32 *x, s32 *y) {
-	*x = _cursor_pos[0];
-	*y = _cursor_pos[1];
+void rgl_x11_get_cursor_pos(vec2 vec) {
+	glm_vec2_copy(_cursor_pos, vec);
 }
 
 bool rgl_x11_is_key_pressed(rgl_key_t key) {
@@ -88,6 +91,11 @@ bool rgl_x11_is_key_pressed(rgl_key_t key) {
 bool rgl_x11_is_key_just_pressed(rgl_key_t key) {
 	KeyCode keycode = XKeysymToKeycode(g_data.plat_cxt.dpy, _rgl_key_to_keysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) != 0 && (_prev_keys[keycode / 8] & (1 << (keycode % 8))) == 0;
+}
+
+bool rgl_x11_is_key_just_released(rgl_key_t key) {
+	KeyCode keycode = XKeysymToKeycode(g_data.plat_cxt.dpy, _rgl_key_to_keysym(key));
+	return (_keys[keycode / 8] & (1 << (keycode % 8))) == 0 && (_prev_keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 
 bool rgl_x11_is_btn_pressed(rgl_btn_t btn) {
@@ -106,6 +114,17 @@ bool rgl_x11_is_btn_just_pressed(rgl_btn_t btn) {
 		case RGL_MOUSE_LEFT: return _buttons & Button1Mask && !(_prev_buttons & Button1Mask);
 		case RGL_MOUSE_RIGHT: return _buttons & Button3Mask && !(_prev_buttons & Button3Mask);
 		case RGL_MOUSE_MIDDLE: return _buttons & Button2Mask && !(_prev_buttons & Button2Mask);
+		default: break;
+	}
+
+	return false;
+}
+
+bool rgl_x11_is_btn_just_released(rgl_btn_t btn) {
+	switch(btn) {
+		case RGL_MOUSE_LEFT: return !(_buttons & Button1Mask) && _prev_buttons & Button1Mask;
+		case RGL_MOUSE_RIGHT: return !(_buttons & Button3Mask) && _prev_buttons & Button3Mask;
+		case RGL_MOUSE_MIDDLE: return !(_buttons & Button2Mask) && _prev_buttons & Button2Mask;
 		default: break;
 	}
 

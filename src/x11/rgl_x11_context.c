@@ -50,7 +50,7 @@ void rgl_x11_end_frame(void) {
 	glXSwapBuffers(g_data.plat_cxt.dpy, g_data.plat_cxt.win);
 }
 
-f64 rgl_x11_get_time(void) {
+f32 rgl_x11_get_time(void) {
 	struct timespec time;
 	clock_gettime(CLOCK_MONOTONIC, &time);
 	return time.tv_sec + ((f64)time.tv_nsec * 0.000000001);

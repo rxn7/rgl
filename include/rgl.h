@@ -34,4 +34,5 @@ b8 rgl_init(rgl_app_desc_t *desc);
 void rgl_quit();
 void rgl_set_vsync(b8 value);
 void rgl_update_projection();
+void rgl_get_window_size(s32 *w, s32 *h);
 f32 rgl_get_time();
