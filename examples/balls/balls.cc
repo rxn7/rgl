@@ -16,7 +16,7 @@ extern "C" {
 #define HEIGHT 480
 #define MASS(b) (b->radius*10.0f)
 
-enum collision_type_t : u8{
+enum collision_type_t : bool {
 	COLLISION_WITH_BALL,
 	COLLISION_WITH_WALL,
 };
