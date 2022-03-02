@@ -64,11 +64,11 @@ f32 rgl_get_time() {
 static void _start_main_loop() {
 	g_data.running = true;
 
-        f64 dt = 0, now = 0, last = 0;
+        f64 dt = 0, now = RGL_PLATFORM_FUN(get_time), last = now;
         while(g_data.running) {
                 /* Calculate delta time between frames */
                 now = RGL_PLATFORM_FUN(get_time);
-                dt = (f32)(now - last);
+		dt = (f32)(now - last);
                 last = now;
 
 		RGL_PLATFORM_FUN(start_frame);

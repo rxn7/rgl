@@ -21,6 +21,9 @@ typedef float           f32;
 typedef double          f64;
 typedef bool            b8;
 
+#define PI_F 3.1415926f
+#define PI_2F 2 * PI_F
+
 #include "rgl_color.h"
 
 typedef void (*rgl_app_update_t)(f64 dt);

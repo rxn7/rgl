@@ -8,6 +8,7 @@
 #include "rgl_texture.h"
 #include "rgl_sprite.h"
 #include "rgl_input.h"
+#include "rgl_immediate.h"
 
 typedef struct rgl_app_desc_t {
         const char *title;
