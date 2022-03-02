@@ -10,7 +10,7 @@ static Atom _wm_delete_msg;
 
 static void _process_event();
 
-void rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height) {
+void rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height) { 
 	cxt->dpy = XOpenDisplay(0);
 	cxt->root = DefaultRootWindow(cxt->dpy);
 	cxt->visual_info = glXChooseVisual(cxt->dpy, 0, (s32[]){GLX_RGBA,GLX_RED_SIZE,1,GLX_GREEN_SIZE,1,GLX_BLUE_SIZE,1,GLX_DOUBLEBUFFER, None});

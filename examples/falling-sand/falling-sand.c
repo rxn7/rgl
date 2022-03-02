@@ -1,6 +1,4 @@
 #include <stdlib.h>
-#include <time.h>
-
 #include <rgl/rgl.h>
 
 #define WORLD_WIDTH 256 
