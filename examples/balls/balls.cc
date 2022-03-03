@@ -1,46 +1,39 @@
 #include <unistd.h>
-#include <vector>
+#include <vector> 
 #include <thread>
 
-extern "C" {
+extern "C" { 
 	#include <rgl/rgl.h>
 }
 
-#define RANDOM_INITIAL_VELOCITY 4000
-
-#define MAX_RADIUS 40.f
-#define MIN_RADIUS 5.f
-
-#define BALL_COUNT 200
+/* Settings */
+#define RANDOM_INITIAL_VELOCITY 2000
+#define MAX_RADIUS 20.f
+#define MIN_RADIUS 15.f
+#define GRAVITY 980
+#define FRICTION 0.99f
+#define START_BALL_COUNT 500
 #define WIDTH 640
 #define HEIGHT 480
-#define MASS(b) (b->radius*10.0f)
-
-enum collision_type_t : bool {
-	COLLISION_WITH_BALL,
-	COLLISION_WITH_WALL,
-};
-
-enum wall_type_t : bool {
-	WALL_HORIZONTAL,
-	WALL_VERTICAL,
-};
 
 struct ball_t {
 	rgl_color_t color;
-	vec2 pos;
-	vec2 vel;
-	vec2 accel;
+	v2 pos;
+	v2 vel;
 	f32 radius;
 };
 
 struct collision_t {
-	collision_type_t type;
+	enum : bool {
+		COLLISION_W_WALL,
+		COLLISION_W_BALL,
+	} type;
+
 	ball_t *a;
 
 	union {
+		v2 pos;
 		ball_t *b;
-		wall_type_t wall_type;
 	};
 };
 
@@ -48,22 +41,24 @@ void app_quit();
 void app_update(f32 dt);
 void app_init();
 
+void init_walls();
 void init_balls();
 void update_balls();
 void draw_balls();
-void add_ball(vec2 pos);
-void update_thread_func();
-bool is_point_in_ball(ball_t *ball, vec2 point);
+void add_ball(v2 pos);
+void thr_physics_func();
+bool is_point_in_ball(ball_t *ball, v2 point);
 
-u32 id_count = 0;
 ball_t *selected_ball = NULL;
-std::thread update_thread;
-
-bool running = true;
 std::vector<ball_t> vec_balls;
 
+std::thread thr_physics;
+
+bool gravity = false;
+bool running = true;
+
 int main(int argc, const char **argv) {
-        rgl_app_desc_t desc = (rgl_app_desc_t){
+        rgl_app_desc_t desc = {
                 .title = "RGL | Balls",
                 .height = HEIGHT,
                 .width = WIDTH,
@@ -79,15 +74,15 @@ void app_init() {
         srand(time(0));
 
 	init_balls();
-	update_thread = std::thread(update_thread_func);
+	thr_physics = std::thread(thr_physics_func);
 }
 
 void app_update(f32 dt) {
 	bool left_pressed = rgl_is_button_pressed(RGL_MOUSE_LEFT);
 	bool right_pressed = rgl_is_button_pressed(RGL_MOUSE_RIGHT);
 
-	vec2 mouse_pos;
-	rgl_get_cursor_pos(mouse_pos);
+	v2 mouse_pos;
+	rgl_get_cursor_pos(&mouse_pos);
 
 	if(left_pressed || right_pressed) {
 		if(selected_ball == NULL) {
@@ -98,29 +93,49 @@ void app_update(f32 dt) {
 				}
 			}
 		} else if(left_pressed){
-			for(u8 i=0;i<2;++i) {
-				selected_ball->accel[i] = 0;
-				selected_ball->vel[i] = -5.0f * (selected_ball->pos[i] - mouse_pos[i]);
-			}
+			selected_ball->vel.x = -5.0f * (selected_ball->pos.x - mouse_pos.x);
+			selected_ball->vel.y = -5.0f * (selected_ball->pos.y - mouse_pos.y);
 		}
 	} else {
 		if(rgl_is_button_just_released(RGL_MOUSE_RIGHT) && selected_ball != NULL) {
-			for(u8 i=0;i<2;++i) {
-				selected_ball->accel[i] = 0;
-				selected_ball->vel[i] = -5.0f * (mouse_pos[i] - selected_ball->pos[i]);
-			}
+			selected_ball->vel.x = 5.0f * (selected_ball->pos.x - mouse_pos.x);
+			selected_ball->vel.y = 5.0f * (selected_ball->pos.y - mouse_pos.y);
 		}
 
 		selected_ball = NULL;
 	}
 
 	if(rgl_is_key_just_pressed(RGL_KEY_N)) {
-		vec2 pos;
-		rgl_get_cursor_pos(pos);
-
-		printf("%f ; %f\n", pos[0], pos[1]);
+		v2 pos;
+		rgl_get_cursor_pos(&pos);
 
 		add_ball(pos);
+	}
+
+	if(rgl_is_key_just_pressed(RGL_KEY_C)) {
+		vec_balls.clear();
+	}
+
+	if(rgl_is_key_just_pressed(RGL_KEY_G)) {
+		gravity = !gravity;
+	}
+
+	for(ball_t &ball : vec_balls) {
+		/* Apply drag */
+		ball.vel.x *= FRICTION;
+		ball.vel.y *= FRICTION;
+
+		/* Apply gravity */
+		if(gravity) {
+			ball.vel.y += GRAVITY * dt;
+		}
+
+		ball.pos.x += ball.vel.x * dt;
+		ball.pos.y += ball.vel.y * dt;
+
+		if(rgl_v2_len(&ball.vel) < 0.01f) {
+			rgl_v2_zero(&ball.vel);
+		}
 	}
 
 	draw_balls();
@@ -128,88 +143,64 @@ void app_update(f32 dt) {
 
 void app_quit() {
 	running = false;
-	update_thread.join();
+	thr_physics.join();
 }
 
-bool is_point_in_ball(ball_t *ball, vec2 point) {
-	vec2 delta_pos;
-	for(u8 i=0;i<2;++i) delta_pos[i] = ball->pos[i] - point[i];
-	
-	return delta_pos[0]*delta_pos[0] + delta_pos[1]*delta_pos[1] < (ball->radius * ball->radius);
-}
-
-void update_thread_func() {
-	f32 now, last = rgl_get_time(), dt;
-
+void thr_physics_func() {
 	std::vector<collision_t> vec_collisions;
 
 	while(running) {
-		vec_collisions.clear();
-
-		now = rgl_get_time();
-		dt = now - last;
-		last = now;
-
-		for(ball_t &ball : vec_balls) {
-			for(u8 i=0; i<2; ++i) {
-				ball.accel[i] = -ball.vel[i] * 0.9f; /* Drag */
-				ball.vel[i] += ball.accel[i] * dt;
-				ball.pos[i] += ball.vel[i] * dt;
-			}
-
-			if(ball.vel[0]*ball.vel[0] + ball.vel[1]*ball.vel[1] < 0.01f) {
-				glm_vec2_copy((float *)VEC2_ZERO, ball.accel);
-			}
-		}
-
 		u32 i=0; 
 
 		/* Static colliisions */
 		for(ball_t &ball : vec_balls) {
 			u32 j=0;
 
-			/* Wall collisions */
 			/* Left wall */
-			if(ball.pos[0] - ball.radius <= 0) {
-				ball.pos[0] = ball.radius;
-				vec_collisions.push_back({ COLLISION_WITH_WALL, &ball, { .wall_type = WALL_VERTICAL } });
+			if(ball.pos.x < ball.radius) {
+				ball.pos.x = ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {-1, ball.pos.y} } });
 			} 
 			/* Right wall */
-			else if(ball.pos[0] + ball.radius >= g_data.width) {
-				ball.pos[0] = g_data.width - ball.radius;
-				vec_collisions.push_back({ COLLISION_WITH_WALL, &ball, { .wall_type = WALL_VERTICAL } });
-			}
-			/* Bottom wall */
-			if(ball.pos[1] - ball.radius <= 0) {
-				ball.pos[1] = ball.radius;
-				vec_collisions.push_back({ COLLISION_WITH_WALL, &ball, { .wall_type = WALL_HORIZONTAL } });
-			}
+			else if(ball.pos.x + ball.radius > g_data.width) {
+				ball.pos.x = g_data.width - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {(f32)g_data.width+1, ball.pos.y} } });
+			} 
 			/* Top wall */
-			else if(ball.pos[1] + ball.radius >= g_data.height) {
-				ball.pos[1] = g_data.height - ball.radius;
-				vec_collisions.push_back({ COLLISION_WITH_WALL, &ball, { .wall_type = WALL_HORIZONTAL } });
-			}
+			if(ball.pos.y < ball.radius) {
+				ball.pos.y = ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, -1} } });
+			} 
+			/* Bottom wall */
+			else if(ball.pos.y + ball.radius > g_data.height) {
+				ball.pos.y = g_data.height - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, (f32)g_data.height+1} } });
+			} 
 
 			/* Overlap collisions */
 			for(ball_t &target : vec_balls) {
-				if(i == j++) continue; /* Ignore checking ball against itself */
+				/* Ignore checking ball against itself */
+				if(i == j++) continue; 
 
-				vec2 delta_pos;
-				for(u8 i=0; i<2; ++i) delta_pos[i] = ball.pos[i] - target.pos[i];
-
-				f32 radius_sum = ball.radius + target.radius;
+				v2 delta_pos = {
+					.x = ball.pos.x - target.pos.x,
+					.y = ball.pos.y - target.pos.y,
+				};
 
 				/* If balls overlap */
-				if(delta_pos[0]*delta_pos[0] + delta_pos[1]*delta_pos[1] <= radius_sum * radius_sum) { 
-					vec_collisions.push_back({ COLLISION_WITH_BALL, &ball, { .b = &target } });
+				if(delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y <= (ball.radius + target.radius) * (ball.radius + target.radius)) { 
+					vec_collisions.push_back({ collision_t::COLLISION_W_BALL, &ball, { .b = &target } });
 
-					f32 dist = sqrtf(delta_pos[0]*delta_pos[0] + delta_pos[1]*delta_pos[1]);
-					f32 overlap = (dist - ball.radius - target.radius) * 0.5f;
+					f32 dist = rgl_v2_len(&delta_pos);
+					f32 overlap = (dist - ball.radius - target.radius) * 0.5f / dist;
 
-					for(u8 i=0; i<2; ++i) {
-						ball.pos[i] -= overlap * delta_pos[i] / dist;
-						target.pos[i] += overlap * delta_pos[i] / dist;
-					}
+					v2 overlap_move = {
+						.x = overlap * delta_pos.x,
+						.y = overlap * delta_pos.y,
+					};
+
+					rgl_v2_sub(&ball.pos, &overlap_move, &ball.pos);
+					rgl_v2_add(&target.pos, &overlap_move, &target.pos);
 				}
 			}
 
@@ -218,35 +209,44 @@ void update_thread_func() {
 
 		/* Dynamic collisions */
 		for(collision_t &collision : vec_collisions) {
-			if(collision.type == COLLISION_WITH_BALL) {
+			if(collision.type == collision_t::COLLISION_W_BALL) {
 				ball_t *a = collision.a;
 				ball_t *b = collision.b;
 
-				vec2 delta_pos;
-				for(u8 i=0; i<2; ++i) delta_pos[i] = a->pos[i] - b->pos[i];
+				v2 delta_pos;
+				rgl_v2_sub(&a->pos, &b->pos, &delta_pos);
 
-				vec2 delta_vel;
-				for(u8 i=0; i<2; ++i) delta_vel[i] = a->vel[i] - b->vel[i];
+				v2 delta_vel;
+				rgl_v2_sub(&a->vel, &b->vel, &delta_vel);
 
-				f32 dist = sqrtf(delta_pos[0]*delta_pos[0] + delta_pos[1]*delta_pos[1]);
+				f32 dist = rgl_v2_len(&delta_pos);
 
-				vec2 normal;
-				for(u8 i=0; i<2; ++i) normal[i] = (b->pos[i] - a->pos[i]) / dist;
+				v2 normal = {
+					.x = (b->pos.x - a->pos.x) / dist,
+					.y = (b->pos.y - a->pos.y) / dist,
+				};
 
-				f32 p = 2.0f * (normal[0] * delta_vel[0] + normal[1] * delta_vel[1]) / (MASS(a) + MASS(b));
+				f32 p = 2.0f * (normal.x * delta_vel.x + normal.y * delta_vel.y) / (a->radius + b->radius);
 
-				for(u8 i=0; i<2; ++i) {
-					a->vel[i] -= p * MASS(b) * normal[i];
-					b->vel[i] += p * MASS(a) * normal[i];
-				}
+				a->vel.x -= p * b->radius * normal.x;
+				a->vel.y -= p * b->radius * normal.y;
+
+				b->vel.x += p * a->radius * normal.x;
+				b->vel.y += p * a->radius * normal.y;
 			} else {
 				ball_t *ball = collision.a;
 
-				// TODO: I'm not sure if this is accurate
-				if(collision.wall_type == WALL_VERTICAL) ball->vel[0] *= -1;
-				else ball->vel[1] *= -1;
+				v2 normal = {
+					.x = (collision.pos.x - ball->pos.x) / ball->radius,
+					.y = (collision.pos.y - ball->pos.y) / ball->radius,
+				};
+
+				if(fabs(normal.x) > 0.1f) ball->vel.x *= -1;
+				if(fabs(normal.y) > 0.1f) ball->vel.y *= -1;
 			}
 		}
+
+		vec_collisions.clear();
 	}
 }
 
@@ -256,37 +256,46 @@ void draw_balls() {
 	}
 
 	if(selected_ball != NULL) {
-		rgl_immediate_draw_circle(RGL_RED, selected_ball->pos, selected_ball->radius * 0.25f);
+		rgl_immediate_draw_circle(RGL_RED, selected_ball->pos, selected_ball->radius * .25f);
 
-		vec2 mouse_pos;
-		rgl_get_cursor_pos(mouse_pos);
+		v2 mouse_pos;
+		rgl_get_cursor_pos(&mouse_pos);
 
 		rgl_immediate_draw_line(RGL_BLUE, selected_ball->pos, mouse_pos, 5);
 	}
 }
 
 void init_balls() {
-	vec2 pos;
-	for(u32 i=0; i<BALL_COUNT; ++i) {
-		pos[0] = (f32)(rand() % WIDTH);
-		pos[1] = (f32)(rand() % HEIGHT);
+	v2 pos;
+	for(u32 i=0; i<START_BALL_COUNT; ++i) {
+		pos.x = (f32)(rand() % WIDTH);
+		pos.y = (f32)(rand() % HEIGHT);
 
 		add_ball(pos);
 	}
 }
 
-void add_ball(vec2 pos) {
+void add_ball(v2 pos) {
 	static const f32 HALF_RANDOM_INITIAL_VELOCITY = RANDOM_INITIAL_VELOCITY * 0.5f;
 
 	ball_t ball = {
-		.color = { .rgb = { (u8)RAND_255, (u8)RAND_255, (u8)RAND_255 } },
+		.color = { .rgb = { (u8)(RAND_255), (u8)(RAND_255), (u8)(RAND_255) } },
 		.radius = (MAX_RADIUS - MIN_RADIUS) * ((f32)rand() / RAND_MAX) + MIN_RADIUS,
 	};
 
-	for(u8 i=0;i<2;++i) {
-		ball.vel[i] = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
-		ball.pos[i] = pos[i];
-	}
+	ball.vel.x = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
+	ball.vel.y = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
+
+	rgl_v2_cpy(&pos, &ball.pos);
 
 	vec_balls.push_back(ball);
+}
+
+bool is_point_in_ball(ball_t *ball, v2 point) {
+	v2 delta_pos = {
+		.x = ball->pos.x - point.x,
+		.y = ball->pos.y - point.y,
+	};
+	
+	return delta_pos.x*delta_pos.x + delta_pos.y*delta_pos.y < (ball->radius * ball->radius);
 }

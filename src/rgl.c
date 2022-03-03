@@ -7,8 +7,6 @@ rgl_app_data_t g_data = {0};
 static void _start_main_loop();
 static void _def_update(f32 dt);
 
-const vec2 VEC2_ZERO = GLM_VEC2_ZERO_INIT;
-
 b8 rgl_init(rgl_app_desc_t *desc) {
 	/* Sanity checks */
         if(desc->width <= 0)            desc->width = 960; 

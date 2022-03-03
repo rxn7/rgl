@@ -5,14 +5,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
-#include <cglm/cglm.h>
-
-extern const vec2 VEC2_ZERO; /* Definition in rgl.c */
 
 #define PI_F 3.1415926f
 #define PI_2F 2.0f*PI_F
+
+#define RAND_255 (rand() % 256) 
 
 typedef int8_t          s8;
 typedef int16_t         s16;
@@ -27,6 +27,7 @@ typedef double          f64;
 typedef bool            b8;
 
 #include "rgl_color.h"
+#include "rgl_v2.h"
 
 typedef void (*rgl_app_update_t)(f32 dt);
 typedef void (*rgl_app_quit_t)();

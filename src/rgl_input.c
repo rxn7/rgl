@@ -3,7 +3,7 @@
 #include "rgl_input.h"
 #include "rgl.h"
 
-void rgl_get_cursor_pos(vec2 vec) {
+void rgl_get_cursor_pos(v2 *vec) {
 	RGL_PLATFORM_FUN(get_cursor_pos, vec);
 }
 

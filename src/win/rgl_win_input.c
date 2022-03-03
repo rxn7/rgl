@@ -1,7 +1,7 @@
 #include "x11/rgl_x11_input.h"
 #include "rgl.h"
 
-static v2 _cursor_pos;
+static vec2 _cursor_pos;
 
 static char _keys[32] = {0};
 static char _prev_keys[32] = {0};
@@ -65,8 +65,8 @@ void rgl_x11_input_update() {
 	Window win;
 	XQueryPointer(g_data.plat_cxt.dpy, g_data.plat_cxt.win, &win, &win, &rx, &ry, &mx, &my, &_buttons);
 
-	_cursor_pos.x = mx;
-	_cursor_pos.y = my;
+	_cursor_pos[0] = mx;
+	_cursor_pos[1] = my;
 
 	XQueryKeymap(g_data.plat_cxt.dpy, _keys);
 }
@@ -79,8 +79,8 @@ void rgl_x11_input_post_update() {
 	_prev_buttons = _buttons;
 }
 
-void rgl_x11_get_cursor_pos(v2 *vec) {
-	rgl_v2_cpy(&_cursor_pos, vec);
+void rgl_x11_get_cursor_pos(vec2 vec) {
+	glm_vec2_copy(_cursor_pos, vec);
 }
 
 bool rgl_x11_is_key_pressed(rgl_key_t key) {

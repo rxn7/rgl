@@ -2,10 +2,12 @@
 
 #include "rgl_vbo.h"
 #include "rgl_texture.h"
-#include "rgl_transform.h"
 
 typedef struct rgl_sprite_t {
-	rgl_transform_t transform;
+	v2 position;
+	v2 scale;
+	f32 rotation;	
+
 	rgl_vbo_t vbo;
 	rgl_texture_t *texture;
 } rgl_sprite_t;

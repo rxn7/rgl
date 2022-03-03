@@ -6,7 +6,7 @@
 void rgl_x11_input_update();
 void rgl_x11_input_post_update();
 
-void rgl_x11_get_cursor_pos(v2 *vec);
+void rgl_x11_get_cursor_pos(vec2 vec);
 
 bool rgl_x11_is_key_pressed(rgl_key_t key);
 bool rgl_x11_is_key_just_pressed(rgl_key_t key);
