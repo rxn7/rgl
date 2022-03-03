@@ -41,7 +41,6 @@ void app_quit();
 void app_update(f32 dt);
 void app_init();
 
-void init_walls();
 void init_balls();
 void update_balls();
 void draw_balls();
