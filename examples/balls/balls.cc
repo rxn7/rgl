@@ -118,6 +118,8 @@ void app_update(f32 dt) {
 		vec2 pos;
 		rgl_get_cursor_pos(pos);
 
+		printf("%f ; %f\n", pos[0], pos[1]);
+
 		add_ball(pos);
 	}
 
@@ -281,7 +283,10 @@ void add_ball(vec2 pos) {
 		.radius = (MAX_RADIUS - MIN_RADIUS) * ((f32)rand() / RAND_MAX) + MIN_RADIUS,
 	};
 
-	for(u8 i=0;i<2;++i) ball.vel[i] = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
+	for(u8 i=0;i<2;++i) {
+		ball.vel[i] = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
+		ball.pos[i] = pos[i];
+	}
 
 	vec_balls.push_back(ball);
 }
