@@ -13,6 +13,7 @@
 
 #define RAND_F ((f32)rand() / (f32)RAND_MAX)
 #define RAND_255 (rand() % 256) 
+#define RAND_RANGE_F(min, max) (RAND_F * (max-min) + min)
 
 typedef int8_t          s8;
 typedef int16_t         s16;
