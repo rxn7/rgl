@@ -2,7 +2,7 @@
 #include "rgl_log.h"
 #include "rgl_shader.h"
 
-rgl_app_data_t g_data = {0};
+rgl_app_data_t *g_rgl_data = 0;
 
 static void _start_main_loop();
 static void _def_update(f32 dt);
@@ -13,13 +13,14 @@ b8 rgl_init(rgl_app_desc_t *desc) {
         if(desc->height <= 0)           desc->height = 640;
         if(!desc->title)                desc->title = "RGL";
         if(!desc->update_f)             desc->update_f = _def_update;
-        g_data.desc = desc;
-
-	/* Initialize platform context */;
-	RGL_PLATFORM_FUN(context_initialize, &g_data.plat_cxt, desc->title, desc->width, desc->height);
+	g_rgl_data = malloc(sizeof(rgl_app_data_t));
+	if(!rgl_app_data_create(g_rgl_data, desc)) {
+		RGL_LOG_ERROR("Failed to create global app data");
+		return false;
+	}
 
 	rgl_update_projection();
-	rgl_shader_create_primitives();
+	rgl_shader_create_defaults();
 
 	/* Call user-defined init func */
         if(desc->init_f) {
@@ -34,15 +35,17 @@ b8 rgl_init(rgl_app_desc_t *desc) {
 }
 
 void rgl_quit() {
-	g_data.running = false;
+	g_rgl_data->running = false;
 
 	/* Call user-defined quit func */
-        if(g_data.desc->quit_f) {
-                g_data.desc->quit_f();
+        if(g_rgl_data->desc->quit_f) {
+                g_rgl_data->desc->quit_f();
         }
 
-	/* Destroy platform context */
-	RGL_PLATFORM_FUN(context_destroy, &g_data.plat_cxt);
+	rgl_shader_destroy_defaults();
+
+	rgl_app_data_destroy(g_rgl_data);
+	free(g_rgl_data);
 
 	exit(0);
 }
@@ -52,22 +55,13 @@ void rgl_set_vsync(b8 value) {
 }
 
 void rgl_update_projection() {
-	glViewport(0, 0, g_data.width, g_data.height);
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-
-	//glOrtho(-1.0, 1.0, -1.0, 1.0, -1, 1);
-
-	/*
-	f32 hw = g_data.width * 0.5f;
-	f32 hh = g_data.height * 0.5f;
-	glOrtho(-hw, hw, -hh, hh, -1, 1);
-	*/
-
-	glOrtho(0, g_data.width, g_data.height, 0, -1, 1);
-
+	glViewport(0, 0, g_rgl_data->width, g_rgl_data->height);
 	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glOrtho(0, g_rgl_data->width, g_rgl_data->height, 0, -1, 1);
+	rgl_mat4_ortho(g_rgl_data->projection_matrix, 0, g_rgl_data->width, g_rgl_data->height, 0, -1, 1);
 }
 
 f32 rgl_get_time() {
@@ -75,15 +69,42 @@ f32 rgl_get_time() {
 }
 
 void rgl_get_window_size(s32 *w, s32 *h) {
-	*w = g_data.width;
-	*h = g_data.height;
+	*w = g_rgl_data->width;
+	*h = g_rgl_data->height;
+}
+
+b8 rgl_app_data_create(rgl_app_data_t *data, rgl_app_desc_t *desc) {
+        data->desc = desc;
+	data->width = desc->width;
+	data->height = desc->width;
+
+	data->plat_cxt = malloc(sizeof(RGL_PLATFORM_CONTEXT_T));
+	if(!RGL_PLATFORM_FUN(context_initialize, data->plat_cxt, desc->title, desc->width, desc->height)) {
+		RGL_LOG_ERROR("Failed to initialize platform context");
+		return false;
+	}
+
+	data->audio_dev = malloc(sizeof(rgl_audio_device_t));
+	if(!rgl_audio_device_create(data->audio_dev)) {
+		return false;
+	}
+
+	return true;
+}
+
+void rgl_app_data_destroy(rgl_app_data_t *data) {
+	RGL_PLATFORM_FUN(context_destroy, data->plat_cxt);
+	free(data->plat_cxt);
+
+	rgl_audio_device_destroy(data->audio_dev);
+	free(data->audio_dev);
 }
 
 static void _start_main_loop() {
-	g_data.running = true;
+	g_rgl_data->running = true;
 
         f32 dt = 0, now = RGL_PLATFORM_FUN(get_time), last = now;
-        while(g_data.running) {
+        while(g_rgl_data->running) {
                 /* Calculate delta time between frames */
                 now = RGL_PLATFORM_FUN(get_time);
 		dt = (f32)(now - last);
@@ -93,7 +114,7 @@ static void _start_main_loop() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		/* Call user-defined update func */
-                g_data.desc->update_f(dt);
+                g_rgl_data->desc->update_f(dt);
 
 		RGL_PLATFORM_FUN(end_frame);
         }

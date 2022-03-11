@@ -1,4 +1,3 @@
-#include <unistd.h>
 #include <vector> 
 #include <thread>
 
@@ -13,8 +12,6 @@ extern "C" {
 #define GRAVITY 980
 #define FRICTION 0.99f
 #define START_BALL_COUNT 500
-#define WIDTH 640
-#define HEIGHT 480
 
 struct ball_t {
 	rgl_color_t color;
@@ -22,9 +19,8 @@ struct ball_t {
 	v2 vel;
 	f32 radius;
 };
-
 struct collision_t {
-	enum : bool {
+	enum : b8 {
 		COLLISION_W_WALL,
 		COLLISION_W_BALL,
 	} type;
@@ -46,27 +42,29 @@ void update_balls();
 void draw_balls();
 void add_ball(v2 pos);
 void thr_physics_func();
-bool is_point_in_ball(ball_t *ball, v2 point);
+b8 is_point_in_ball(ball_t *ball, v2 point);
 
-ball_t *selected_ball = NULL;
 std::vector<ball_t> vec_balls;
-
 std::thread thr_physics;
 
-bool gravity = false;
-bool running = true;
+ball_t *selected_ball = NULL;
+
+b8 gravity = false;
+b8 running = true;
 
 int main(int argc, const char **argv) {
         rgl_app_desc_t desc = {
                 .title = "RGL | Balls",
-                .height = HEIGHT,
-                .width = WIDTH,
+                .height = 640,
+                .width = 480,
                 .init_f = app_init,
                 .update_f = app_update,
                 .quit_f = app_quit,
         };
 
-        rgl_init(&desc);
+        if(!rgl_init(&desc)) {
+		return -1;
+	}
 }
 
 void app_init() {
@@ -77,8 +75,8 @@ void app_init() {
 }
 
 void app_update(f32 dt) {
-	bool left_pressed = rgl_is_button_pressed(RGL_MOUSE_LEFT);
-	bool right_pressed = rgl_is_button_pressed(RGL_MOUSE_RIGHT);
+	b8 left_pressed = rgl_is_button_pressed(RGL_MOUSE_LEFT);
+	b8 right_pressed = rgl_is_button_pressed(RGL_MOUSE_RIGHT);
 
 	v2 mouse_pos;
 	rgl_get_cursor_pos(&mouse_pos);
@@ -107,16 +105,19 @@ void app_update(f32 dt) {
 	if(rgl_is_key_just_pressed(RGL_KEY_N)) {
 		v2 pos;
 		rgl_get_cursor_pos(&pos);
-
 		add_ball(pos);
+
+		printf("Adding a new ball at position: [%f, %f]\n", pos.x, pos.y);
 	}
 
 	if(rgl_is_key_just_pressed(RGL_KEY_C)) {
 		vec_balls.clear();
+		printf("Clearing all balls\n");
 	}
 
 	if(rgl_is_key_just_pressed(RGL_KEY_G)) {
 		gravity = !gravity;
+		printf("Toggling gravity\n");
 	}
 
 	for(ball_t &ball : vec_balls) {
@@ -161,9 +162,9 @@ void thr_physics_func() {
 				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {-1, ball.pos.y} } });
 			} 
 			/* Right wall */
-			else if(ball.pos.x + ball.radius > g_data.width) {
-				ball.pos.x = g_data.width - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {(f32)g_data.width+1, ball.pos.y} } });
+			else if(ball.pos.x + ball.radius > g_rgl_data->width) {
+				ball.pos.x = g_rgl_data->width - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {(f32)g_rgl_data->width+1, ball.pos.y} } });
 			} 
 			/* Top wall */
 			if(ball.pos.y < ball.radius) {
@@ -171,9 +172,9 @@ void thr_physics_func() {
 				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, -1} } });
 			} 
 			/* Bottom wall */
-			else if(ball.pos.y + ball.radius > g_data.height) {
-				ball.pos.y = g_data.height - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, (f32)g_data.height+1} } });
+			else if(ball.pos.y + ball.radius > g_rgl_data->height) {
+				ball.pos.y = g_rgl_data->height - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, (f32)g_rgl_data->height+1} } });
 			} 
 
 			/* Overlap collisions */
@@ -255,7 +256,7 @@ void draw_balls() {
 	}
 
 	if(selected_ball != NULL) {
-		rgl_immediate_draw_circle(RGL_RED, selected_ball->pos, selected_ball->radius * .25f);
+		rgl_immediate_draw_circle_outline(RGL_RED, selected_ball->pos, selected_ball->radius, 3.f);
 
 		v2 mouse_pos;
 		rgl_get_cursor_pos(&mouse_pos);
@@ -267,8 +268,8 @@ void draw_balls() {
 void init_balls() {
 	v2 pos;
 	for(u32 i=0; i<START_BALL_COUNT; ++i) {
-		pos.x = (f32)(rand() % WIDTH);
-		pos.y = (f32)(rand() % HEIGHT);
+		pos.x = (f32)(rand() % g_rgl_data->width);
+		pos.y = (f32)(rand() % g_rgl_data->height);
 
 		add_ball(pos);
 	}
@@ -290,7 +291,7 @@ void add_ball(v2 pos) {
 	vec_balls.push_back(ball);
 }
 
-bool is_point_in_ball(ball_t *ball, v2 point) {
+b8 is_point_in_ball(ball_t *ball, v2 point) {
 	v2 delta_pos = {
 		.x = ball->pos.x - point.x,
 		.y = ball->pos.y - point.y,

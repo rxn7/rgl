@@ -23,5 +23,9 @@ inline void rgl_texture_clear(rgl_texture_t *txt) {
 }
 
 void rgl_texture_update(rgl_texture_t *txt);
-void rgl_texture_initialize(rgl_texture_t *txt, u32 w, u32 h);
-void rgl_texture_destroy(rgl_texture_t *txt);
+
+b8 rgl_texture_create(rgl_texture_t *txt, u32 w, u32 h);
+b8 rgl_texture_create_from_pixels(rgl_texture_t *txt, u32 w, u32 h, u8 *pixels);
+b8 rgl_texture_create_from_bmp(rgl_texture_t *txt, const char *bmp_file);
+
+b8 rgl_texture_destroy(rgl_texture_t *txt);

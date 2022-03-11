@@ -63,12 +63,12 @@ void rgl_x11_input_update() {
 	s32 rx, ry;
 	s32 mx, my;
 	Window win;
-	XQueryPointer(g_data.plat_cxt.dpy, g_data.plat_cxt.win, &win, &win, &rx, &ry, &mx, &my, &_buttons);
+	XQueryPointer(g_rgl_data->plat_cxt->dpy, g_rgl_data->plat_cxt->win, &win, &win, &rx, &ry, &mx, &my, &_buttons);
 
 	_cursor_pos.x = mx;
 	_cursor_pos.y = my;
 
-	XQueryKeymap(g_data.plat_cxt.dpy, _keys);
+	XQueryKeymap(g_rgl_data->plat_cxt->dpy, _keys);
 }
 
 void rgl_x11_input_post_update() {
@@ -84,17 +84,17 @@ void rgl_x11_get_cursor_pos(v2 *vec) {
 }
 
 bool rgl_x11_is_key_pressed(rgl_key_t key) {
-	KeyCode keycode = XKeysymToKeycode(g_data.plat_cxt.dpy, _rgl_key_to_keysym(key));
+	KeyCode keycode = XKeysymToKeycode(g_rgl_data->plat_cxt->dpy, _rgl_key_to_keysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 
 bool rgl_x11_is_key_just_pressed(rgl_key_t key) {
-	KeyCode keycode = XKeysymToKeycode(g_data.plat_cxt.dpy, _rgl_key_to_keysym(key));
+	KeyCode keycode = XKeysymToKeycode(g_rgl_data->plat_cxt->dpy, _rgl_key_to_keysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) != 0 && (_prev_keys[keycode / 8] & (1 << (keycode % 8))) == 0;
 }
 
 bool rgl_x11_is_key_just_released(rgl_key_t key) {
-	KeyCode keycode = XKeysymToKeycode(g_data.plat_cxt.dpy, _rgl_key_to_keysym(key));
+	KeyCode keycode = XKeysymToKeycode(g_rgl_data->plat_cxt->dpy, _rgl_key_to_keysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) == 0 && (_prev_keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 

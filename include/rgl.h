@@ -4,11 +4,11 @@
 #include <stdlib.h>
 
 #include "rgl_common.h"
-#include "rgl_color.h"
 #include "rgl_texture.h"
 #include "rgl_sprite.h"
 #include "rgl_input.h"
 #include "rgl_immediate.h"
+#include "rgl_audio.h"
 
 typedef struct rgl_app_desc_t {
         const char *title;
@@ -23,12 +23,18 @@ typedef struct rgl_app_desc_t {
 
 typedef struct rgl_app_data_t {
         rgl_app_desc_t *desc;
-	RGL_PLATFORM_CONTEXT_T plat_cxt;
-	bool running;
+	rgl_audio_device_t *audio_dev;
+	RGL_PLATFORM_CONTEXT_T *plat_cxt;
+
+	b8 running;
 	s32 width, height;
+	mat4 projection_matrix;
 } rgl_app_data_t;
 
-extern rgl_app_data_t g_data; /* Defined in rgl.c */
+b8 rgl_app_data_create(rgl_app_data_t *data, rgl_app_desc_t *desc);
+void rgl_app_data_destroy(rgl_app_data_t *data);
+
+extern rgl_app_data_t *g_rgl_data; /* Defined in rgl.c */
 
 b8 rgl_init(rgl_app_desc_t *desc);
 void rgl_quit();

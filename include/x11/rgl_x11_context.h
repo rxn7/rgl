@@ -5,20 +5,18 @@
 #include <time.h>
 #include <X11/X.h>
 
-#include <GL/glx.h>
-#include <GL/glext.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 
 typedef struct rgl_x11_context_t {
 	Display *dpy;
 	Window win, root;
-	XVisualInfo *visual_info;
 	XWindowAttributes win_attr;
-	XSetWindowAttributes set_win_attr;
 	XEvent event;
 	GLXContext glx;
 } rgl_x11_context_t;
 
-void rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height);
+b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height);
 void rgl_x11_context_destroy(rgl_x11_context_t *cxt);
 
 f32 rgl_x11_get_time(void);

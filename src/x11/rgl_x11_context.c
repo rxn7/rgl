@@ -1,5 +1,5 @@
 #include "x11/rgl_x11_context.h"
-#include "x11/rgl_x11_input.h"
+#include "x11/rgl_x11_input.h" 
 #include "rgl.h"
 
 #include <stdlib.h> 
@@ -10,22 +10,61 @@ static Atom _wm_delete_msg;
 
 static void _process_event();
 
-void rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height) { 
+b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height) { 
 	cxt->dpy = XOpenDisplay(0);
 	cxt->root = DefaultRootWindow(cxt->dpy);
-	cxt->visual_info = glXChooseVisual(cxt->dpy, 0, (s32[]){GLX_RGBA,GLX_RED_SIZE,1,GLX_GREEN_SIZE,1,GLX_BLUE_SIZE,1,GLX_DOUBLEBUFFER, None});
-	cxt->set_win_attr.colormap = XCreateColormap(cxt->dpy, cxt->root, cxt->visual_info->visual, AllocNone);
-	cxt->set_win_attr.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | KeyReleaseMask | ButtonReleaseMask;
-	cxt->win = XCreateWindow(cxt->dpy, cxt->root, 0, 0, width, height, 0, cxt->visual_info->depth, InputOutput, cxt->visual_info->visual, CWColormap | CWEventMask, &cxt->set_win_attr);
+
+	s32 visual_attribs[] = {
+		GLX_RENDER_TYPE, GLX_RGBA_BIT,
+		GLX_DOUBLEBUFFER, true,
+		GLX_RED_SIZE, 1,
+		GLX_GREEN_SIZE, 1,
+		GLX_BLUE_SIZE, 1,
+		None
+	};
+
+	s32 fbcount;
+	GLXFBConfig *fbc = glXChooseFBConfig(cxt->dpy, DefaultScreen(cxt->dpy), visual_attribs, &fbcount);
+	if(!fbc) {
+		RGL_LOG_ERROR("Failed to retrieve the GLX framebuffer config");
+		return false;
+	}
+
+	XVisualInfo *vi = glXGetVisualFromFBConfig(cxt->dpy, fbc[0]);
+
+	XSetWindowAttributes swa;
+	swa.colormap = XCreateColormap(cxt->dpy, cxt->root, vi->visual, AllocNone);
+	swa.border_pixel = 0;
+	swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | KeyReleaseMask | ButtonReleaseMask;
+
+	cxt->win = XCreateWindow(cxt->dpy, cxt->root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa);
+	if(!cxt->win) {
+		RGL_LOG_ERROR("Failed to create the Xorg window.");
+		return false;
+	}
 
 	XMapRaised(cxt->dpy, cxt->win);
 	XStoreName(cxt->dpy, cxt->win, title);
 
-	cxt->glx = glXCreateContext(cxt->dpy, cxt->visual_info, NULL, true);
+	s32 cxt_attribs[] = {
+		GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
+		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+		GLX_CONTEXT_MINOR_VERSION_ARB, 3,
+		None
+	};
+
+	cxt->glx = glXCreateContextAttribsARB(cxt->dpy, fbc[0], NULL, true, cxt_attribs);
+	if(!cxt->glx) {
+		RGL_LOG_ERROR("Failed to create GLX context.");
+		return false;
+	}
+
 	glXMakeCurrent(cxt->dpy, cxt->win, cxt->glx);
 
 	_wm_delete_msg = XInternAtom(cxt->dpy, "WM_DELETE_WINDOW", false);
 	XSetWMProtocols(cxt->dpy, cxt->win, &_wm_delete_msg, 1);
+
+	return true;
 }
 
 void rgl_x11_context_destroy(rgl_x11_context_t *cxt) {
@@ -37,8 +76,8 @@ void rgl_x11_context_destroy(rgl_x11_context_t *cxt) {
 }
 
 void rgl_x11_start_frame(void) {
-	while(XPending(g_data.plat_cxt.dpy)) {
-		XNextEvent(g_data.plat_cxt.dpy, &g_data.plat_cxt.event);
+	while(XPending(g_rgl_data->plat_cxt->dpy)) {
+		XNextEvent(g_rgl_data->plat_cxt->dpy, &g_rgl_data->plat_cxt->event);
 		_process_event();
 	}
 
@@ -47,7 +86,7 @@ void rgl_x11_start_frame(void) {
 
 void rgl_x11_end_frame(void) {
 	rgl_x11_input_post_update();
-	glXSwapBuffers(g_data.plat_cxt.dpy, g_data.plat_cxt.win);
+	glXSwapBuffers(g_rgl_data->plat_cxt->dpy, g_rgl_data->plat_cxt->win);
 }
 
 f32 rgl_x11_get_time(void) {
@@ -57,22 +96,22 @@ f32 rgl_x11_get_time(void) {
 }
 
 void rgl_x11_set_vsync(b8 value) {
-	glXSwapIntervalEXT(g_data.plat_cxt.dpy, g_data.plat_cxt.win, value);
+	glXSwapIntervalEXT(g_rgl_data->plat_cxt->dpy, g_rgl_data->plat_cxt->win, value);
 }
 
 static void _process_event() {
-	switch(g_data.plat_cxt.event.type) {
+	switch(g_rgl_data->plat_cxt->event.type) {
 		case ClientMessage:
-			if(g_data.plat_cxt.event.xclient.data.l[0] == _wm_delete_msg) {
+			if(g_rgl_data->plat_cxt->event.xclient.data.l[0] == _wm_delete_msg) {
 				rgl_quit();
 			}
 
 			break;
 
 		case Expose:
-			XGetWindowAttributes(g_data.plat_cxt.dpy, g_data.plat_cxt.win, &g_data.plat_cxt.win_attr);
-			g_data.width = g_data.plat_cxt.win_attr.width;
-			g_data.height = g_data.plat_cxt.win_attr.height;
+			XGetWindowAttributes(g_rgl_data->plat_cxt->dpy, g_rgl_data->plat_cxt->win, &g_rgl_data->plat_cxt->win_attr);
+			g_rgl_data->width = g_rgl_data->plat_cxt->win_attr.width;
+			g_rgl_data->height = g_rgl_data->plat_cxt->win_attr.height;
 			rgl_update_projection();
 			break;
 	}

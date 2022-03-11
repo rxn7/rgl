@@ -1,2 +1,2 @@
 all:
-	g++ balls.cc -lrgl -lm -o balls -O3
+	g++ balls.cc -lm -o balls -lrgl

@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include <math.h>
 #include <epoxy/gl.h>
-#include <epoxy/glx.h>
 
 #define PI_F 3.1415926f
 #define PI_2F 2.0f*PI_F
@@ -25,9 +24,12 @@ typedef uint64_t        u64;
 typedef float           f32;
 typedef double          f64;
 typedef bool            b8;
+typedef u32		id_t;
 
-#include "rgl_color.h"
 #include "rgl_v2.h"
+#include "rgl_color.h"
+#include "rgl_mat4.h"
+#include "rgl_log.h"
 
 typedef void (*rgl_app_update_t)(f32 dt);
 typedef void (*rgl_app_quit_t)();
