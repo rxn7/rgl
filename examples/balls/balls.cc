@@ -323,7 +323,6 @@ void play_bounce_sound(v2 pos, f32 gain) {
 	}
 
 	f32 pitch = RAND_RANGE_F(0.9f, 1.1f);
-	printf("Pitch: %f\n", pitch);
 
 	rgl_audio_source_set_gain(source, gain);
 	rgl_audio_source_set_pitch(source, pitch);
