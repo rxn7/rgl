@@ -26,8 +26,7 @@ b8 rgl_audio_context_create(rgl_audio_context_t *cxt) {
 	}
 
 	if(!alcMakeContextCurrent(cxt->cxt)) {
-		RGL_LOG_ERROR("Failed to make OpenAL context current");
-		return false;
+		RGL_LOG_ERROR("Failed to make OpenAL context current"); return false;
 	}
 
 	return true;
@@ -121,6 +120,18 @@ void rgl_audio_source_stop(rgl_audio_source_t *source) {
 void rgl_audio_source_set_looping(rgl_audio_source_t *source, b8 looping) {
 	source->looping = looping;
 	alSourcei(source->id, AL_LOOPING, looping);
+}
+
+void rgl_audio_source_set_gain(rgl_audio_source_t *source, f32 gain) {
+	alSourcef(source->id, AL_GAIN, gain);
+}
+
+void rgl_audio_source_set_position(rgl_audio_source_t *source, v2 pos) {
+	alSource3f(source->id, AL_POSITION, pos.x, pos.y, 0.0f);
+}
+
+void rgl_audio_source_set_pitch(rgl_audio_source_t *source, f32 pitch) {
+	alSourcef(source->id, AL_PITCH, pitch);
 }
 
 b8 rgl_audio_source_is_playing(rgl_audio_source_t *source) {

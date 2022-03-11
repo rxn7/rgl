@@ -32,4 +32,7 @@ void rgl_audio_source_destroy(rgl_audio_source_t *source);
 void rgl_audio_source_play(rgl_audio_source_t *source);
 void rgl_audio_source_stop(rgl_audio_source_t *source);
 void rgl_audio_source_set_loop(rgl_audio_source_t *source, b8 looping);
+void rgl_audio_source_set_gain(rgl_audio_source_t *source, f32 gain);
+void rgl_audio_source_set_position(rgl_audio_source_t *source, v2 pos);
+void rgl_audio_source_set_pitch(rgl_audio_source_t *source, f32 pitch);
 b8 rgl_audio_source_is_playing(rgl_audio_source_t *source);

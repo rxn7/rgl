@@ -11,6 +11,7 @@
 #define PI_F 3.1415926f
 #define PI_2F 2.0f*PI_F
 
+#define RAND_F ((f32)rand() / (f32)RAND_MAX)
 #define RAND_255 (rand() % 256) 
 
 typedef int8_t          s8;

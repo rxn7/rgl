@@ -13,14 +13,15 @@ extern "C" {
 #define GRAVITY 980
 #define FRICTION 0.99f
 #define START_BALL_COUNT 100
+#define MAX_AUDIO_SOURCES 10
 
 struct ball_t {
-	rgl_audio_source_t audio_source;
 	rgl_color_t color;
 	v2 pos;
 	v2 vel;
 	f32 radius;
 };
+
 struct collision_t {
 	enum : b8 {
 		COLLISION_W_WALL,
@@ -38,7 +39,7 @@ struct collision_t {
 void app_quit();
 void app_update(f32 dt);
 void app_init();
-
+void play_bounce_sound(v2 pos, f32 gain);
 void init_balls();
 void update_balls();
 void draw_balls();
@@ -50,8 +51,11 @@ std::vector<ball_t> vec_balls;
 std::thread thr_physics;
 ball_t *selected_ball = NULL;
 b8 gravity = false;
+b8 muted = false;
 b8 running = true;
+f32 dt;
 rgl_audio_buffer_t *bounce_audio_buffer;
+rgl_audio_source_t *audio_sources;
 
 int main(int argc, const char **argv) {
         rgl_app_desc_t desc = {
@@ -71,14 +75,28 @@ int main(int argc, const char **argv) {
 void app_init() {
         srand(time(0));
 
-	bounce_audio_buffer = new rgl_audio_buffer_t;
+	bounce_audio_buffer = (rgl_audio_buffer_t *)malloc(sizeof(rgl_audio_buffer_t));
 	rgl_audio_buffer_create_from_vorbis(bounce_audio_buffer, "bounce.ogg");
+
+	audio_sources = (rgl_audio_source_t *)calloc(MAX_AUDIO_SOURCES, sizeof(rgl_audio_source_t));
+	for(u32 i=0; i<MAX_AUDIO_SOURCES; ++i) {
+		rgl_audio_source_create(&audio_sources[i], bounce_audio_buffer);
+	}
 
 	init_balls();
 	thr_physics = std::thread(thr_physics_func);
 }
 
-void app_update(f32 dt) {
+void app_quit() {
+	running = false;
+	free(bounce_audio_buffer);
+	free(audio_sources);
+	thr_physics.join();
+}
+
+void app_update(f32 _dt) {
+	dt = _dt;
+
 	b8 left_pressed = rgl_is_button_pressed(RGL_MOUSE_LEFT);
 	b8 right_pressed = rgl_is_button_pressed(RGL_MOUSE_RIGHT);
 
@@ -124,6 +142,11 @@ void app_update(f32 dt) {
 		printf("Gravity: %s\n", gravity ? "ON" : "OFF");
 	}
 
+	if(rgl_is_key_just_pressed(RGL_KEY_M)) {
+		muted = !muted;
+		printf("Mute: %s\n", muted ? "ON" : "OFF");
+	}
+
 	for(ball_t &ball : vec_balls) {
 		/* Apply drag */
 		ball.vel.x *= FRICTION;
@@ -143,12 +166,6 @@ void app_update(f32 dt) {
 	}
 
 	draw_balls();
-}
-
-void app_quit() {
-	running = false;
-	delete bounce_audio_buffer;
-	thr_physics.join();
 }
 
 void thr_physics_func() {
@@ -214,7 +231,14 @@ void thr_physics_func() {
 
 		/* Dynamic collisions */
 		for(collision_t &collision : vec_collisions) {
-			rgl_audio_source_play(&collision.a->audio_source);
+			f32 speed = rgl_v2_len(&collision.a->vel);
+
+			f32 gain = speed / 1000;
+			if(gain > 1.f) gain = 1.f;
+
+			if(speed > 3.f) {
+				play_bounce_sound(collision.a->pos, gain);
+			}
 
 			if(collision.type == collision_t::COLLISION_W_BALL) {
 				ball_t *a = collision.a;
@@ -282,6 +306,30 @@ void init_balls() {
 	}
 }
 
+void play_bounce_sound(v2 pos, f32 gain) {
+	if(muted) return;
+
+	rgl_audio_source_t *source = 0;
+	for(u32 i=0; i<MAX_AUDIO_SOURCES; ++i) {
+		if(!rgl_audio_source_is_playing(&audio_sources[i])) {
+			source = &audio_sources[i];
+			break;
+		}
+	}
+
+	/* If couldn't find any free audio source, use the first audio source */
+	if(!source) {
+		source = &audio_sources[0];
+	}
+
+	f32 pitch = RAND_F + 0.5f / 2.f;
+	printf("Pitch: %f\n", pitch);
+
+	rgl_audio_source_set_gain(source, gain);
+	rgl_audio_source_set_pitch(source, pitch);
+	rgl_audio_source_play(source);
+}
+
 void add_ball(v2 pos) {
 	static const f32 HALF_RANDOM_INITIAL_VELOCITY = RANDOM_INITIAL_VELOCITY * 0.5f;
 
@@ -289,8 +337,6 @@ void add_ball(v2 pos) {
 		.color = { .rgb = { (u8)(RAND_255), (u8)(RAND_255), (u8)(RAND_255) } },
 		.radius = (MAX_RADIUS - MIN_RADIUS) * ((f32)rand() / RAND_MAX) + MIN_RADIUS,
 	};
-
-	rgl_audio_source_create(&ball.audio_source, bounce_audio_buffer);
 
 	ball.vel.x = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
 	ball.vel.y = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
