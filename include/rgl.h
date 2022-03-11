@@ -10,6 +10,10 @@
 #include "rgl_immediate.h"
 #include "rgl_audio.h"
 
+#ifdef RGL_DEBUG
+	#warning Debug mode for RGL is enabled. Debug mode adds additional checks and logs. Undefine RGL_DEBUG to disable.
+#endif
+
 typedef struct rgl_app_desc_t {
         const char *title;
         u16 height;
@@ -23,7 +27,7 @@ typedef struct rgl_app_desc_t {
 
 typedef struct rgl_app_data_t {
         rgl_app_desc_t *desc;
-	rgl_audio_device_t *audio_dev;
+	rgl_audio_context_t *audio_cxt;
 	RGL_PLATFORM_CONTEXT_T *plat_cxt;
 
 	b8 running;

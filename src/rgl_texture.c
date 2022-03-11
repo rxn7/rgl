@@ -7,10 +7,12 @@
 static void _apply_parameters();
 
 b8 rgl_texture_create(rgl_texture_t *txt, u32 w, u32 h) {
+#ifdef RGL_DEBUG
 	if(!txt) {
 		RGL_LOG_ERROR("Can't create texture with null pointer");
 		return false;
 	}
+#endif
 
         txt->width = w;
         txt->height = h;
@@ -31,10 +33,12 @@ b8 rgl_texture_create(rgl_texture_t *txt, u32 w, u32 h) {
 }
 
 b8 rgl_texture_create_from_pixels(rgl_texture_t *txt, u32 w, u32 h, u8 *pixels) {
+#ifdef RGL_DEBUG
 	if(!txt) {
 		RGL_LOG_ERROR("Can't create texture with null pointer");
 		return false;
 	}
+#endif
 
         txt->width = w;
         txt->height = h;
@@ -55,10 +59,12 @@ b8 rgl_texture_create_from_pixels(rgl_texture_t *txt, u32 w, u32 h, u8 *pixels) 
 }
 
 b8 rgl_texture_create_from_bmp(rgl_texture_t *txt, const char *bmp_file) {
+#ifdef RGL_DEBUG
 	if(!txt) {
 		RGL_LOG_ERROR("Can't create texture with null pointer");
 		return false;
 	}
+#endif
 
 	FILE *f = fopen(bmp_file, "rb");
 	if(!f) {
@@ -93,10 +99,12 @@ b8 rgl_texture_create_from_bmp(rgl_texture_t *txt, const char *bmp_file) {
 }
 
 b8 rgl_texture_destroy(rgl_texture_t *txt) {
+#ifdef RGL_DEBUG
 	if(!txt) {
 		RGL_LOG_ERROR("Can't destroy texture with null pointer");
 		return false;
 	}
+#endif
 
 	glDeleteTextures(1, &txt->id);
         free(txt->pixels);

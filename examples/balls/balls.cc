@@ -1,6 +1,7 @@
 #include <vector> 
 #include <thread>
 
+#define RGL_DEBUG
 extern "C" { 
 	#include <rgl/rgl.h>
 }
@@ -11,9 +12,10 @@ extern "C" {
 #define MIN_RADIUS 15.f
 #define GRAVITY 980
 #define FRICTION 0.99f
-#define START_BALL_COUNT 500
+#define START_BALL_COUNT 100
 
 struct ball_t {
+	rgl_audio_source_t audio_source;
 	rgl_color_t color;
 	v2 pos;
 	v2 vel;
@@ -46,11 +48,10 @@ b8 is_point_in_ball(ball_t *ball, v2 point);
 
 std::vector<ball_t> vec_balls;
 std::thread thr_physics;
-
 ball_t *selected_ball = NULL;
-
 b8 gravity = false;
 b8 running = true;
+rgl_audio_buffer_t *bounce_audio_buffer;
 
 int main(int argc, const char **argv) {
         rgl_app_desc_t desc = {
@@ -69,6 +70,9 @@ int main(int argc, const char **argv) {
 
 void app_init() {
         srand(time(0));
+
+	bounce_audio_buffer = new rgl_audio_buffer_t;
+	rgl_audio_buffer_create_from_vorbis(bounce_audio_buffer, "bounce.ogg");
 
 	init_balls();
 	thr_physics = std::thread(thr_physics_func);
@@ -117,7 +121,7 @@ void app_update(f32 dt) {
 
 	if(rgl_is_key_just_pressed(RGL_KEY_G)) {
 		gravity = !gravity;
-		printf("Toggling gravity\n");
+		printf("Gravity: %s\n", gravity ? "ON" : "OFF");
 	}
 
 	for(ball_t &ball : vec_balls) {
@@ -143,6 +147,7 @@ void app_update(f32 dt) {
 
 void app_quit() {
 	running = false;
+	delete bounce_audio_buffer;
 	thr_physics.join();
 }
 
@@ -209,6 +214,8 @@ void thr_physics_func() {
 
 		/* Dynamic collisions */
 		for(collision_t &collision : vec_collisions) {
+			rgl_audio_source_play(&collision.a->audio_source);
+
 			if(collision.type == collision_t::COLLISION_W_BALL) {
 				ball_t *a = collision.a;
 				ball_t *b = collision.b;
@@ -282,6 +289,8 @@ void add_ball(v2 pos) {
 		.color = { .rgb = { (u8)(RAND_255), (u8)(RAND_255), (u8)(RAND_255) } },
 		.radius = (MAX_RADIUS - MIN_RADIUS) * ((f32)rand() / RAND_MAX) + MIN_RADIUS,
 	};
+
+	rgl_audio_source_create(&ball.audio_source, bounce_audio_buffer);
 
 	ball.vel.x = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
 	ball.vel.y = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;

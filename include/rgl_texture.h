@@ -4,7 +4,7 @@
 #include "rgl_color.h"
 
 typedef struct rgl_texture_t {
-	id_t id;
+	u32 id;
         u32 width;
         u32 height;
         rgl_color_t *pixels;

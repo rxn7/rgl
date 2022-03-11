@@ -1,7 +1,7 @@
 SRC = -c src/*.c
 INCS = -Iinclude -Isrc
 CFLAGS = -std=gnu17 -Wall -fPIC
-LIBS = -lepoxy -lm -lopenal -lsndfile
+LIBS = -lepoxy -lm -lsoundio -lopenal
 
 OBJ = rgl.o \
       rgl_texture.o \

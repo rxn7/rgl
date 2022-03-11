@@ -24,7 +24,6 @@ typedef uint64_t        u64;
 typedef float           f32;
 typedef double          f64;
 typedef bool            b8;
-typedef u32		id_t;
 
 #include "rgl_v2.h"
 #include "rgl_color.h"

@@ -13,6 +13,7 @@ b8 rgl_init(rgl_app_desc_t *desc) {
         if(desc->height <= 0)           desc->height = 640;
         if(!desc->title)                desc->title = "RGL";
         if(!desc->update_f)             desc->update_f = _def_update;
+
 	g_rgl_data = malloc(sizeof(rgl_app_data_t));
 	if(!rgl_app_data_create(g_rgl_data, desc)) {
 		RGL_LOG_ERROR("Failed to create global app data");
@@ -84,8 +85,8 @@ b8 rgl_app_data_create(rgl_app_data_t *data, rgl_app_desc_t *desc) {
 		return false;
 	}
 
-	data->audio_dev = malloc(sizeof(rgl_audio_device_t));
-	if(!rgl_audio_device_create(data->audio_dev)) {
+	data->audio_cxt = malloc(sizeof(rgl_audio_context_t));
+	if(!rgl_audio_context_create(data->audio_cxt)) {
 		return false;
 	}
 
@@ -96,8 +97,8 @@ void rgl_app_data_destroy(rgl_app_data_t *data) {
 	RGL_PLATFORM_FUN(context_destroy, data->plat_cxt);
 	free(data->plat_cxt);
 
-	rgl_audio_device_destroy(data->audio_dev);
-	free(data->audio_dev);
+	rgl_audio_context_destroy(data->audio_cxt);
+	free(data->audio_cxt);
 }
 
 static void _start_main_loop() {

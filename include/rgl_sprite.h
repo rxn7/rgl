@@ -15,3 +15,6 @@ typedef struct rgl_sprite_t {
 b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture);
 b8 rgl_sprite_destroy(rgl_sprite_t *sprite);
 void rgl_sprite_render(rgl_sprite_t *sprite);
+
+void rgl_sprite_shader_create();
+void rgl_sprite_shader_destroy();

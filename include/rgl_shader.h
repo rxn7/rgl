@@ -3,11 +3,9 @@
 #include "rgl_common.h"
 
 typedef struct rgl_shader_t {
-	id_t id;
+	u32 id;
 	u32 *uniform_locations;
 } rgl_shader_t;
-
-extern rgl_shader_t *g_rgl_sprite_shader;
 
 void rgl_shader_create_defaults();
 void rgl_shader_destroy_defaults();
