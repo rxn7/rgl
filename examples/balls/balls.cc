@@ -172,7 +172,7 @@ void app_update(f32 _dt) {
 				rgl_v2_zero(&ball.vel);
 			}
 
-                        if(rgl_is_key_just_pressed(RGL_KEY_P)){
+                        if(rgl_is_key_just_pressed(RGL_KEY_I)){
                                 ball.radius *= 1.1f;
                               
                         }else if(rgl_is_key_just_pressed(RGL_KEY_O)){
