@@ -13,7 +13,7 @@ const rgl_vertex_t _vertices[] = {
 	{ {1,1},	{1,1} },
 };
 
-b8 rgl_create(rgl_sprite_t *sprite, rgl_texture_t *texture) {
+b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture) {
 #ifdef RGL_DEBUG
 	if(!sprite) {
 		RGL_LOG_ERROR("Can't create sprite with null pointer");

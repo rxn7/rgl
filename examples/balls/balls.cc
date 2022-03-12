@@ -183,13 +183,9 @@ void thr_physics_func() {
 	while(running) {
 		usleep(1);
 
-		if(paused) {
-			sleep(0.5f);
-			continue;
-		}
+		if(paused) continue;
 
 		u32 i=0; 
-
 		/* Static colliisions */
 		for(ball_t &ball : vec_balls) {
 			u32 j=0;
