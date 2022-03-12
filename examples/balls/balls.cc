@@ -13,7 +13,7 @@ extern "C" {
 #define MIN_RADIUS 15.f
 #define GRAVITY 980
 #define FRICTION 0.99f
-#define START_BALL_COUNT 0
+#define START_BALL_COUNT 100
 #define MAX_AUDIO_SOURCES 10
 
 struct ball_t {
