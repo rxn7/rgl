@@ -34,7 +34,7 @@ b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture) {
 	return true;
 }
 
-b8 rgl_destroy(rgl_sprite_t *sprite) {
+b8 rgl_sprite_destroy(rgl_sprite_t *sprite) {
 #ifdef RGL_DEBUG
 	if(!sprite) {
 		RGL_LOG_ERROR("Can't destroy sprite with null pointer");
@@ -50,7 +50,7 @@ b8 rgl_destroy(rgl_sprite_t *sprite) {
 	return true;
 }
 
-void rgl_render(rgl_sprite_t *sprite) {	
+void rgl_sprite_render(rgl_sprite_t *sprite) {	
 #ifdef RGL_DEBUG
 	if(!sprite) {
 		RGL_LOG_ERROR("Can't render sprite with null pointer");
