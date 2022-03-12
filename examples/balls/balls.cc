@@ -1,5 +1,6 @@
 #include <vector> 
 #include <thread>
+#include <unistd.h>
 
 #define RGL_DEBUG
 extern "C" { 
@@ -12,7 +13,7 @@ extern "C" {
 #define MIN_RADIUS 15.f
 #define GRAVITY 980
 #define FRICTION 0.99f
-#define START_BALL_COUNT 100
+#define START_BALL_COUNT 0
 #define MAX_AUDIO_SOURCES 10
 
 struct ball_t {
@@ -53,6 +54,7 @@ ball_t *selected_ball = NULL;
 b8 gravity = false;
 b8 muted = false;
 b8 running = true;
+b8 paused = false;
 f32 dt;
 rgl_audio_buffer_t *bounce_audio_buffer;
 rgl_audio_source_t *audio_sources;
@@ -147,21 +149,28 @@ void app_update(f32 _dt) {
 		printf("Mute: %s\n", muted ? "ON" : "OFF");
 	}
 
-	for(ball_t &ball : vec_balls) {
-		/* Apply drag */
-		ball.vel.x *= FRICTION;
-		ball.vel.y *= FRICTION;
+	if(rgl_is_key_just_pressed(RGL_KEY_P)) {
+		paused = !paused;
+		printf("Paused: %s\n", paused ? "ON" : "OFF");
+	}
 
-		/* Apply gravity */
-		if(gravity) {
-			ball.vel.y += GRAVITY * dt;
-		}
+	if(!paused) {
+		for(ball_t &ball : vec_balls) {
+			/* Apply drag */
+			ball.vel.x *= FRICTION;
+			ball.vel.y *= FRICTION;
 
-		ball.pos.x += ball.vel.x * dt;
-		ball.pos.y += ball.vel.y * dt;
+			/* Apply gravity */
+			if(gravity) {
+				ball.vel.y += GRAVITY * dt;
+			}
 
-		if(rgl_v2_len(&ball.vel) < 0.01f) {
-			rgl_v2_zero(&ball.vel);
+			ball.pos.x += ball.vel.x * dt;
+			ball.pos.y += ball.vel.y * dt;
+
+			if(rgl_v2_len(&ball.vel) < 0.01f) {
+				rgl_v2_zero(&ball.vel);
+			}
 		}
 	}
 
@@ -172,6 +181,13 @@ void thr_physics_func() {
 	std::vector<collision_t> vec_collisions;
 
 	while(running) {
+		usleep(1);
+
+		if(paused) {
+			sleep(0.5f);
+			continue;
+		}
+
 		u32 i=0; 
 
 		/* Static colliisions */
