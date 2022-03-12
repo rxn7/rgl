@@ -171,6 +171,13 @@ void app_update(f32 _dt) {
 			if(rgl_v2_len(&ball.vel) < 0.01f) {
 				rgl_v2_zero(&ball.vel);
 			}
+
+                        if(rgl_is_key_just_pressed(RGL_KEY_P)){
+                                ball.radius *= 1.1f;
+                              
+                        }else if(rgl_is_key_just_pressed(RGL_KEY_O)){
+                                ball.radius /= 1.1f;
+                        }
 		}
 	}
 
