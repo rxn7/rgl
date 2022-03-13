@@ -12,12 +12,14 @@ void rgl_mat4_identity(mat4 mat) {
 }
 
 void rgl_mat4_ortho(mat4 mat, f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far) {
-	mat[1] = 2.f / (right - left);
+	rgl_mat4_identity(mat);
+	mat[0] = 2.f / (right - left);
 	mat[5] = 2.f / (top - bottom);
 	mat[10] = - 2.f / (z_far - z_near);
 	mat[12] = - (right + left) / (right - left);
 	mat[13] = - (top + bottom) / (top - bottom);
 	mat[14] = - (z_far + z_near) / (z_far - z_near);
+	mat[15] = 1;
 }
 
 void rgl_mat4_mul(mat4 a, mat4 b) {

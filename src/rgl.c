@@ -4,6 +4,7 @@
 
 rgl_app_data_t *g_rgl_data = 0;
 
+static void _setup_opengl();
 static void _start_main_loop();
 static void _def_update(f32 dt);
 
@@ -20,6 +21,7 @@ b8 rgl_init(rgl_app_desc_t *desc) {
 		return false;
 	}
 
+	_setup_opengl();
 	rgl_update_projection();
 	rgl_shader_create_defaults();
 
@@ -59,9 +61,10 @@ void rgl_update_projection() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, g_rgl_data->width, g_rgl_data->height);
+	glOrtho(0, g_rgl_data->width, g_rgl_data->height, 0, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glOrtho(0, g_rgl_data->width, g_rgl_data->height, 0, -1, 1);
+
 	rgl_mat4_ortho(g_rgl_data->projection_matrix, 0, g_rgl_data->width, g_rgl_data->height, 0, -1, 1);
 }
 
@@ -99,6 +102,12 @@ void rgl_app_data_destroy(rgl_app_data_t *data) {
 
 	rgl_audio_context_destroy(data->audio_cxt);
 	free(data->audio_cxt);
+}
+
+static void _setup_opengl() {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glClearColor((f32)g_rgl_data->desc->background_color.r / 255.f, (f32)g_rgl_data->desc->background_color.g / 255.f, (f32)g_rgl_data->desc->background_color.b / 255.f, 1.f);
 }
 
 static void _start_main_loop() {

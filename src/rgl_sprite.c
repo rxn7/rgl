@@ -5,25 +5,26 @@
 rgl_shader_t *_shader = 0;
 
 const rgl_vertex_t _vertices[] = {
-	{ {1, 1},	{1,1} },
-	{ {-1, 1},	{0,1} },
-	{ {-1,-1},	{0,0} },
-	{ {-1,-1},	{0,0} },
-	{ {1,-1},	{1,0} },
-	{ {1,1},	{1,1} },
+	{ {-1, -1},	{0,0} },
+	{ { 1, -1},	{1,0} },
+	{ { 1,  1},	{1,1} },
+	{ {-1,  1},	{0,1} },
 };
 
-b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture) {
+b8 rgl_sprite_create(rgl_sprite_t *sprite) {
 #ifdef RGL_DEBUG
 	if(!sprite) {
-		RGL_LOG_ERROR("Can't create sprite with null pointer");
+		RGL_LOG_ERROR("Can't create null pointer sprite");
 		return false;
 	}
 #endif
+	if(!sprite->texture) {
+		RGL_LOG_ERROR("Can't sprite with null pointer texture");
+		return false;
+	}
 
-	sprite->texture = texture;
 	sprite->rotation = 0;
-	sprite->size = (v2){texture->width, texture->height};
+	sprite->size = (v2){sprite->texture->width, sprite->texture->height};
 	sprite->position = (v2){0,0};
 
 	if(!rgl_vao_create(&sprite->vao, _vertices, sizeof(_vertices) / sizeof(_vertices[0]))) {
@@ -53,8 +54,12 @@ b8 rgl_sprite_destroy(rgl_sprite_t *sprite) {
 void rgl_sprite_render(rgl_sprite_t *sprite) {	
 #ifdef RGL_DEBUG
 	if(!sprite) {
-		RGL_LOG_ERROR("Can't render sprite with null pointer");
+		RGL_LOG_ERROR("Can't render null pointer sprite");
 		return;
+	}
+
+	if(!sprite->texture) {
+		RGL_LOG_ERROR("Can't render sprite with null pointer texture");
 	}
 #endif
 
@@ -82,7 +87,7 @@ void rgl_sprite_render(rgl_sprite_t *sprite) {
 	glUniformMatrix4fv(_shader->uniform_locations[0], 1, false, (float *)g_rgl_data->projection_matrix);
 	glUniformMatrix4fv(_shader->uniform_locations[1], 1, false, (float *)model_matrix);
 
-	rgl_vao_render(GL_TRIANGLES, &sprite->vao);
+	rgl_vao_render(GL_QUADS, &sprite->vao);
 
 	glUseProgram(0);
 	glBindTexture(GL_TEXTURE_2D, 0);

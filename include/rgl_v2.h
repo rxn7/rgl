@@ -7,6 +7,7 @@ typedef struct v2 {
 } v2;
 
 void rgl_v2_cpy(v2 *a, v2 *dest);
+void rgl_v2_setf(v2 *a, f32 v);
 
 void rgl_v2_zero(v2 *a);
 

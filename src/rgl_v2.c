@@ -6,6 +6,11 @@ void rgl_v2_cpy(v2 *a, v2 *dest) {
 	dest->y = a->y;
 }
 
+void rgl_v2_setf(v2 *a, f32 v) {
+	a->x = v;
+	a->y = v;
+}
+
 void rgl_v2_zero(v2 *a) {
 	a->x = 0;
 	a->y = 0;

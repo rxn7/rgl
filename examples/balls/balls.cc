@@ -1,12 +1,3 @@
-#include <vector> 
-#include <thread>
-#include <unistd.h>
-
-#define RGL_DEBUG
-extern "C" { 
-	#include <rgl/rgl.h>
-}
-
 /* Settings */
 #define RANDOM_INITIAL_VELOCITY 2000
 #define MAX_RADIUS 20.f
@@ -15,6 +6,14 @@ extern "C" {
 #define FRICTION 0.99f
 #define START_BALL_COUNT 100
 #define MAX_AUDIO_SOURCES 10
+
+#include <vector> 
+#include <thread>
+#include <unistd.h>
+
+extern "C" { 
+	#include <rgl/rgl.h>
+}
 
 struct ball_t {
 	rgl_color_t color;

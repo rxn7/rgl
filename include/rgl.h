@@ -18,6 +18,7 @@ typedef struct rgl_app_desc_t {
         const char *title;
         u16 height;
         u16 width;
+	rgl_color_t background_color;
         rgl_app_init_t init_f;
         rgl_app_update_t update_f;
         rgl_app_quit_t quit_f;
