@@ -6,9 +6,11 @@
 #define FRICTION 0.99f
 #define START_BALL_COUNT 100
 #define MIN_TIME_BETWEEN_BOUNCE_SOUNDS 0.1f
-#define BOUNCE_AUDIO_SOURCE_COUNT 300
+#define BOUNCE_AUDIO_SOURCE_COUNT 30
 #define CLICK_SOUND_PATH "res/click.ogg"
 #define BOUNCE_SOUND_PATH "res/bounce.ogg"
+
+/* TODO: More and clearer comments */
 
 #include <vector> 
 #include <thread>
@@ -72,6 +74,7 @@ int main(int argc, const char **argv) {
                 .title = "RGL | Balls",
                 .height = 640,
                 .width = 480,
+		.background_color = RGL_WHITE,
                 .init_f = app_init,
                 .update_f = app_update,
                 .quit_f = app_quit,
