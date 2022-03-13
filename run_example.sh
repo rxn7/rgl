@@ -1,16 +1,21 @@
-#!/usr/bin/sh
+#!/bin/sh
+
+list_examples() {
+	echo "List of examples:"
+	ls examples
+}
 
 if [ $# -eq 0 ]
 then
-	echo "You need to specify the example to run, e.g. ./run_example.sh balls"
+	echo "You need to specify the example to run i.e. ./run_example.sh <example's name>"
+	list_examples
 	exit
 fi
 
 if [ ! -d "examples/$1" ]
 then
 	echo "Example '$1' does not exist."
-	echo "List of examples: "
-	ls examples
+	list_examples
 	exit
 fi
 
