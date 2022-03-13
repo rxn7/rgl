@@ -130,6 +130,7 @@ void app_update(f32 dt) {
 		}
 	} else {
 		if(rgl_is_button_just_released(RGL_MOUSE_RIGHT) && selected_ball != NULL) {
+			play_click_sound();
 			selected_ball->vel.x = 5.0f * (selected_ball->pos.x - mouse_pos.x);
 			selected_ball->vel.y = 5.0f * (selected_ball->pos.y - mouse_pos.y);
 		}
