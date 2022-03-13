@@ -29,7 +29,7 @@ static void _rgl_immediate_draw_circle(u32 mode, rgl_color_t col, v2 pos, f32 ra
 		return;
 	}
 
-	u32 segments = 3.f * sqrtf(radius);
+	u32 segments = 3.1f * sqrtf(radius);
 	if(segments < CIRCLE_MIN_SEGMENTS) segments = CIRCLE_MIN_SEGMENTS;
 	else if(segments > CIRCLE_MAX_SEGMENTS) segments = CIRCLE_MAX_SEGMENTS;
 
