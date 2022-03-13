@@ -153,8 +153,16 @@ void app_update(f32 _dt) {
 		printf("Paused: %s\n", paused ? "ON" : "OFF");
 	}
 
-	if(!paused) {
-		for(ball_t &ball : vec_balls) {
+	f32 radius_multiplier = 1.0f;
+	if(rgl_is_key_just_pressed(RGL_KEY_I)) {
+		radius_multiplier = 1.1f;
+	} else if(rgl_is_key_just_pressed(RGL_KEY_O)) {
+		radius_multiplier = 0.9f;
+	}
+
+	for(ball_t &ball : vec_balls) {
+		/* Apply physics only if game's not paused */
+		if(!paused) {
 			/* Apply drag */
 			ball.vel.x *= FRICTION;
 			ball.vel.y *= FRICTION;
@@ -164,13 +172,17 @@ void app_update(f32 _dt) {
 				ball.vel.y += GRAVITY * dt;
 			}
 
+			/* Apply velocity */
 			ball.pos.x += ball.vel.x * dt;
 			ball.pos.y += ball.vel.y * dt;
 
+			/* Stop balls with very low velocity */
 			if(rgl_v2_len(&ball.vel) < 0.01f) {
 				rgl_v2_zero(&ball.vel);
 			}
 		}
+
+		ball.radius *= radius_multiplier;
 	}
 
 	draw_balls();
