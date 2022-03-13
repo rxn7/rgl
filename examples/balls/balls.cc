@@ -5,9 +5,10 @@
 #define GRAVITY 980
 #define FRICTION 0.99f
 #define START_BALL_COUNT 100
-#define BOUNCE_AUDIO_SOURCE_COUNT 30
-#define BOUNCE_SOUND_PATH "res/bounce.ogg"
+#define MIN_TIME_BETWEEN_BOUNCE_SOUNDS 0.1f
+#define BOUNCE_AUDIO_SOURCE_COUNT 300
 #define CLICK_SOUND_PATH "res/click.ogg"
+#define BOUNCE_SOUND_PATH "res/bounce.ogg"
 
 #include <vector> 
 #include <thread>
@@ -22,6 +23,7 @@ struct ball_t {
 	v2 pos;
 	v2 vel;
 	f32 radius;
+	f32 sound_played_time;
 };
 
 struct collision_t {
@@ -42,7 +44,7 @@ void app_quit();
 void app_update(f32 dt);
 void app_init();
 void play_click_sound();
-void play_bounce_sound(v2 pos, f32 gain);
+void play_bounce_sound(f32 gain);
 void init_balls();
 void update_balls();
 void draw_balls();
@@ -197,12 +199,14 @@ void app_update(f32 dt) {
 			ball.pos.y += ball.vel.y * dt;
 
 			/* Stop balls with very low velocity */
-			if(rgl_v2_len(&ball.vel) < 0.01f) {
+			if(rgl_v2_len(&ball.vel) < 0.1f) {
 				rgl_v2_zero(&ball.vel);
 			}
 		}
 
-		ball.radius *= radius_multiplier;
+		if(selected_ball == NULL || selected_ball == &ball) {
+			ball.radius *= radius_multiplier;
+		}
 	}
 
 	draw_balls();
@@ -274,14 +278,7 @@ void thr_physics_func() {
 
 		/* Dynamic collisions */
 		for(collision_t &collision : vec_collisions) {
-			/* Bounce sound */
-			f32 speed = rgl_v2_len(&collision.a->vel);
-			f32 gain = speed / 1000;
-			if(gain > 1.f) gain = 1.f;
-			if(speed > 3.f) {
-				play_bounce_sound(collision.a->pos, gain);
-			}
-
+			f32 time = rgl_get_time();
 			if(collision.type == collision_t::COLLISION_W_BALL) {
 				ball_t *a = collision.a;
 				ball_t *b = collision.b;
@@ -299,13 +296,23 @@ void thr_physics_func() {
 					.y = (b->pos.y - a->pos.y) / dist,
 				};
 
-				f32 p = 2.0f * (normal.x * delta_vel.x + normal.y * delta_vel.y) / (a->radius + b->radius);
+				f32 force = 2.0f * (normal.x * delta_vel.x + normal.y * delta_vel.y) / (a->radius + b->radius);
 
-				a->vel.x -= p * b->radius * normal.x;
-				a->vel.y -= p * b->radius * normal.y;
+				/* Bounce sound */
+				if(time - a->sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS && time - b->sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS) {
+					a->sound_played_time = time;
+					b->sound_played_time = time;
 
-				b->vel.x += p * a->radius * normal.x;
-				b->vel.y += p * a->radius * normal.y;
+					f32 gain = force / 100;
+					if(gain > 1.f) gain = 1.f;
+					play_bounce_sound(gain);
+				}
+
+				a->vel.x -= force * b->radius * normal.x;
+				a->vel.y -= force * b->radius * normal.y;
+
+				b->vel.x += force * a->radius * normal.x;
+				b->vel.y += force * a->radius * normal.y;
 			} else {
 				ball_t *ball = collision.a;
 
@@ -313,6 +320,18 @@ void thr_physics_func() {
 					.x = (collision.pos.x - ball->pos.x) / ball->radius,
 					.y = (collision.pos.y - ball->pos.y) / ball->radius,
 				};
+
+				/* Bounce sound */
+				if(time - collision.a->sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS) {
+					f32 speed = rgl_v2_len(&collision.a->vel);
+
+					if(speed > 15.f) {
+						collision.a->sound_played_time = time;
+						f32 gain = speed / 5000;
+						if(gain > 1.f) gain = 1.f;
+						play_bounce_sound(gain);
+					}
+				}
 
 				if(fabs(normal.x) > 0.1f) ball->vel.x *= -1;
 				if(fabs(normal.y) > 0.1f) ball->vel.y *= -1;
@@ -354,7 +373,7 @@ void play_click_sound() {
 	rgl_audio_source_play(&click_audio_source);
 }
 
-void play_bounce_sound(v2 pos, f32 gain) {
+void play_bounce_sound(f32 gain) {
 	if(muted) return;
 
 	rgl_audio_source_t *source = 0;
