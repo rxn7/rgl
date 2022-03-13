@@ -1,2 +1,2 @@
 all:
-	gcc coc.c -lm -o coc -lrgl -g
+	gcc coc.c -lm -o coc -lrgl
