@@ -349,7 +349,6 @@ void init_balls() {
 }
 
 void play_click_sound() {
-	puts("Playing click sound");
 	rgl_audio_source_set_gain(&click_audio_source, 1.0f);
 	rgl_audio_source_set_pitch(&click_audio_source, RAND_RANGE_F(0.8f, 1.2f));
 	rgl_audio_source_play(&click_audio_source);
