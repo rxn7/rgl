@@ -5,7 +5,9 @@
 #define GRAVITY 980
 #define FRICTION 0.99f
 #define START_BALL_COUNT 100
-#define MAX_AUDIO_SOURCES 10
+#define BOUNCE_AUDIO_SOURCE_COUNT 30
+#define BOUNCE_SOUND_PATH "res/bounce.ogg"
+#define CLICK_SOUND_PATH "res/click.ogg"
 
 #include <vector> 
 #include <thread>
@@ -39,6 +41,7 @@ struct collision_t {
 void app_quit();
 void app_update(f32 dt);
 void app_init();
+void play_click_sound();
 void play_bounce_sound(v2 pos, f32 gain);
 void init_balls();
 void update_balls();
@@ -50,13 +53,17 @@ b8 is_point_in_ball(ball_t *ball, v2 point);
 std::vector<ball_t> vec_balls;
 std::thread thr_physics;
 ball_t *selected_ball = NULL;
+
+rgl_audio_buffer_t click_audio_buffer;
+rgl_audio_source_t click_audio_source;
+
+rgl_audio_buffer_t bounce_audio_buffer;
+rgl_audio_source_t bounce_audio_sources[BOUNCE_AUDIO_SOURCE_COUNT];
+
 b8 gravity = false;
 b8 muted = false;
 b8 running = true;
 b8 paused = false;
-f32 dt;
-rgl_audio_buffer_t *bounce_audio_buffer;
-rgl_audio_source_t *audio_sources;
 
 int main(int argc, const char **argv) {
         rgl_app_desc_t desc = {
@@ -76,12 +83,12 @@ int main(int argc, const char **argv) {
 void app_init() {
         srand(time(0));
 
-	bounce_audio_buffer = (rgl_audio_buffer_t *)malloc(sizeof(rgl_audio_buffer_t));
-	rgl_audio_buffer_create_from_vorbis(bounce_audio_buffer, "bounce.ogg");
+	rgl_audio_buffer_create_from_vorbis(&click_audio_buffer, CLICK_SOUND_PATH);
+	rgl_audio_source_create(&click_audio_source, &click_audio_buffer);
+	rgl_audio_buffer_create_from_vorbis(&bounce_audio_buffer, BOUNCE_SOUND_PATH);
 
-	audio_sources = (rgl_audio_source_t *)calloc(MAX_AUDIO_SOURCES, sizeof(rgl_audio_source_t));
-	for(u32 i=0; i<MAX_AUDIO_SOURCES; ++i) {
-		rgl_audio_source_create(&audio_sources[i], bounce_audio_buffer);
+	for(u32 i=0; i<BOUNCE_AUDIO_SOURCE_COUNT; ++i) {
+		rgl_audio_source_create(&bounce_audio_sources[i], &bounce_audio_buffer);
 	}
 
 	init_balls();
@@ -90,14 +97,19 @@ void app_init() {
 
 void app_quit() {
 	running = false;
-	free(bounce_audio_buffer);
-	free(audio_sources);
+
+	rgl_audio_buffer_destroy(&bounce_audio_buffer);
+	rgl_audio_buffer_destroy(&click_audio_buffer);
+	rgl_audio_source_destroy(&click_audio_source);
+
+	for(u32 i=0; i<BOUNCE_AUDIO_SOURCE_COUNT; ++i) {
+		rgl_audio_source_destroy(&bounce_audio_sources[i]);
+	}
+
 	thr_physics.join();
 }
 
-void app_update(f32 _dt) {
-	dt = _dt;
-
+void app_update(f32 dt) {
 	b8 left_pressed = rgl_is_button_pressed(RGL_MOUSE_LEFT);
 	b8 right_pressed = rgl_is_button_pressed(RGL_MOUSE_RIGHT);
 
@@ -130,34 +142,41 @@ void app_update(f32 _dt) {
 		rgl_get_cursor_pos(&pos);
 		add_ball(pos);
 
+		play_click_sound();
 		printf("Adding a new ball at position: [%f, %f]\n", pos.x, pos.y);
 	}
 
 	if(rgl_is_key_just_pressed(RGL_KEY_C)) {
 		vec_balls.clear();
+		play_click_sound();
 		printf("Clearing all balls\n");
 	}
 
 	if(rgl_is_key_just_pressed(RGL_KEY_G)) {
 		gravity = !gravity;
+		play_click_sound();
 		printf("Gravity: %s\n", gravity ? "ON" : "OFF");
 	}
 
 	if(rgl_is_key_just_pressed(RGL_KEY_M)) {
 		muted = !muted;
+		play_click_sound();
 		printf("Mute: %s\n", muted ? "ON" : "OFF");
 	}
 
 	if(rgl_is_key_just_pressed(RGL_KEY_P)) {
 		paused = !paused;
+		play_click_sound();
 		printf("Paused: %s\n", paused ? "ON" : "OFF");
 	}
 
 	f32 radius_multiplier = 1.0f;
 	if(rgl_is_key_just_pressed(RGL_KEY_I)) {
 		radius_multiplier = 1.1f;
+		play_click_sound();
 	} else if(rgl_is_key_just_pressed(RGL_KEY_O)) {
 		radius_multiplier = 0.9f;
+		play_click_sound();
 	}
 
 	for(ball_t &ball : vec_balls) {
@@ -254,11 +273,10 @@ void thr_physics_func() {
 
 		/* Dynamic collisions */
 		for(collision_t &collision : vec_collisions) {
+			/* Bounce sound */
 			f32 speed = rgl_v2_len(&collision.a->vel);
-
 			f32 gain = speed / 1000;
 			if(gain > 1.f) gain = 1.f;
-
 			if(speed > 3.f) {
 				play_bounce_sound(collision.a->pos, gain);
 			}
@@ -329,26 +347,31 @@ void init_balls() {
 	}
 }
 
+void play_click_sound() {
+	puts("Playing click sound");
+	rgl_audio_source_set_gain(&click_audio_source, 1.0f);
+	rgl_audio_source_set_pitch(&click_audio_source, RAND_RANGE_F(0.8f, 1.2f));
+	rgl_audio_source_play(&click_audio_source);
+}
+
 void play_bounce_sound(v2 pos, f32 gain) {
 	if(muted) return;
 
 	rgl_audio_source_t *source = 0;
-	for(u32 i=0; i<MAX_AUDIO_SOURCES; ++i) {
-		if(!rgl_audio_source_is_playing(&audio_sources[i])) {
-			source = &audio_sources[i];
+	for(u32 i=0; i<BOUNCE_AUDIO_SOURCE_COUNT; ++i) {
+		if(!rgl_audio_source_is_playing(&bounce_audio_sources[i])) {
+			source = &bounce_audio_sources[i];
 			break;
 		}
 	}
 
 	/* If couldn't find any free audio source, use the first audio source */
 	if(!source) {
-		source = &audio_sources[0];
+		source = &bounce_audio_sources[0];
 	}
 
-	f32 pitch = RAND_RANGE_F(0.9f, 1.1f);
-
 	rgl_audio_source_set_gain(source, gain);
-	rgl_audio_source_set_pitch(source, pitch);
+	rgl_audio_source_set_pitch(source, RAND_RANGE_F(0.9f, 1.1f));
 	rgl_audio_source_play(source);
 }
 

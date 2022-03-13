@@ -57,15 +57,13 @@ void rgl_audio_buffer_create_from_vorbis(rgl_audio_buffer_t *audio_buffer, const
 	s32 channels, sample_rate;
 	s32 len = stb_vorbis_decode_filename(path, &channels, &sample_rate, &buffer);
 
-	s32 format = -1;
-	if(channels == 1) {
-		format = AL_FORMAT_MONO16;
-	} else if(channels == 2) {
+	s32 format = AL_FORMAT_MONO16;
+	if(channels == 2) {
 		format = AL_FORMAT_STEREO16;
 	}
 
 	alGenBuffers(1, &audio_buffer->id);
-	alBufferData(audio_buffer->id, format, buffer, len, sample_rate);
+	alBufferData(audio_buffer->id, format, buffer, len * sizeof(s16), sample_rate);
 
 	free(buffer);
 }
@@ -83,7 +81,7 @@ void rgl_audio_source_create(rgl_audio_source_t *source, rgl_audio_buffer_t *buf
 	alSourcei(source->id, AL_BUFFER, buffer->id);
 	alSourcei(source->id, AL_LOOPING, false);
 	alSourcei(source->id, AL_POSITION, 0);
-	alSourcef(source->id, AL_GAIN, 0.3f);
+	alSourcef(source->id, AL_GAIN, 1.0f);
 }
 
 void rgl_audio_source_destroy(rgl_audio_source_t *source) {
@@ -100,14 +98,9 @@ void rgl_audio_source_play(rgl_audio_source_t *source) {
 		alSourcei(source->id, AL_POSITION, 0);
 	}
 
-	if(!source->playing) {
-		alSourcePlay(source->id);
-		source->playing = true;
-	} else {
-		alSourcei(source->id, AL_POSITION, 0);
-		alSourcePlay(source->id);
-		source->playing = true;
-	}
+	alSourcei(source->id, AL_POSITION, 0);
+	alSourcePlay(source->id);
+	source->playing = true;
 }
 
 void rgl_audio_source_stop(rgl_audio_source_t *source) {
@@ -126,10 +119,6 @@ void rgl_audio_source_set_gain(rgl_audio_source_t *source, f32 gain) {
 	alSourcef(source->id, AL_GAIN, gain);
 }
 
-void rgl_audio_source_set_position(rgl_audio_source_t *source, v2 pos) {
-	alSource3f(source->id, AL_POSITION, pos.x, pos.y, 0.0f);
-}
-
 void rgl_audio_source_set_pitch(rgl_audio_source_t *source, f32 pitch) {
 	alSourcef(source->id, AL_PITCH, pitch);
 }
@@ -137,6 +126,7 @@ void rgl_audio_source_set_pitch(rgl_audio_source_t *source, f32 pitch) {
 b8 rgl_audio_source_is_playing(rgl_audio_source_t *source) {
 	s32 state;
 	alGetSourcei(source->id, AL_SOURCE_STATE, &state);
+
 	if(state == AL_STOPPED) {
 		source->playing = false;
 	}
