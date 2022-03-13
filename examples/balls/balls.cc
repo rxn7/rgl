@@ -72,8 +72,8 @@ b8 paused = false;
 int main(int argc, const char **argv) {
         rgl_app_desc_t desc = {
                 .title = "RGL | Balls",
-                .height = 640,
-                .width = 480,
+                .height = 480,
+                .width = 640,
 		.background_color = RGL_WHITE,
                 .init_f = app_init,
                 .update_f = app_update,
