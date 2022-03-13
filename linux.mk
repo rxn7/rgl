@@ -1,6 +1,6 @@
 include common.mk
 OUT = out/librgl.so
-LIBS := $(LIBS) $(shell pkg-config --static --libs x11) $(shell pkg-config --static --libs glx) -lGL
+LIBS := $(LIBS) $(shell pkg-config --static --libs x11) $(shell pkg-config --static --libs glx)
 
 SRC := $(SRC) -c src/x11/*.c
 OBJ := $(OBJ) rgl_x11_context.o rgl_x11_input.o

@@ -1,8 +1,10 @@
 /* Settings */
 #define PLAYER_MOVE_SPEED 200
 #define PLAYER_SPRITE_PATH "res/player.png"
-#include <rgl/rgl.h> void app_init();
 
+#include <rgl/rgl.h> 
+
+void app_init();
 void app_init();
 void app_quit();
 void app_update(f32 dt);
