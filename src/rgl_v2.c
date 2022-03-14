@@ -58,6 +58,15 @@ void rgl_v2_divf(v2 *a, f32 v, v2 *dest) {
 	}
 }
 
+void rgl_v2_normalize(v2 *a, v2 *dest) {
+	f32 len = rgl_v2_len(a);
+
+	if(len != 0) {
+		dest->x /= len;
+		dest->y /= len;
+	}
+}
+
 f32 rgl_v2_len(v2 *a) {
 	return sqrtf(a->x*a->x + a->y*a->y);
 }

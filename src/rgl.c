@@ -2,11 +2,15 @@
 #include "rgl_log.h"
 #include "rgl_shader.h"
 
+#include <sys/resource.h>
+#include <sched.h>
+
 rgl_app_data_t *g_rgl_data = 0;
 
 static void _setup_opengl();
 static void _start_main_loop();
 static void _def_update(f32 dt);
+static b8 _rtkit_initialize_realtime_thread();
 
 b8 rgl_init(rgl_app_desc_t *desc) {
 	/* Sanity checks */
@@ -88,9 +92,15 @@ b8 rgl_app_data_create(rgl_app_data_t *data, rgl_app_desc_t *desc) {
 		return false;
 	}
 
-	data->audio_cxt = malloc(sizeof(rgl_audio_context_t));
-	if(!rgl_audio_context_create(data->audio_cxt)) {
-		return false;
+	data->audio_cxt = NULL;
+	if(_rtkit_initialize_realtime_thread()) {
+		data->audio_cxt = malloc(sizeof(rgl_audio_context_t));
+		if(!rgl_audio_context_create(data->audio_cxt)) {
+			RGL_LOG_ERROR("Failed to create audio context");
+			rgl_audio_context_destroy(data->audio_cxt);
+			free(data->audio_cxt);
+			data->audio_cxt = NULL;
+		}
 	}
 
 	return true;
@@ -108,6 +118,39 @@ static void _setup_opengl() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor((f32)g_rgl_data->desc->background_color.r / 255.f, (f32)g_rgl_data->desc->background_color.g / 255.f, (f32)g_rgl_data->desc->background_color.b / 255.f, 1.f);
+}
+
+static b8 _rtkit_initialize_realtime_thread() {
+	s32 err;
+	s32 sched_policy = sched_getscheduler(0) | 0x40000000;
+	struct sched_param sched_param = {0};
+
+	struct rlimit rl;
+	err = getrlimit(RLIMIT_RTTIME, &rl);
+
+	if(err) {
+		return false;
+	}
+
+	rl.rlim_max = 200000;
+	rl.rlim_cur = 100000;
+
+	err = setrlimit(RLIMIT_RTTIME, &rl);
+	if(err) {
+		return false;
+	}
+
+	err = sched_getparam(0, &sched_param);
+	if(err) {
+		return false;
+	}
+
+	err = sched_setscheduler(0, sched_policy, &sched_param);
+	if(err) {
+		return false;
+	}
+
+	return true;
 }
 
 static void _start_main_loop() {

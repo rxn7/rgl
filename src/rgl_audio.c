@@ -1,6 +1,9 @@
 #include "rgl_audio.h"
+#include "rgl.h"
 #include "stb/stb_vorbis.c"
 #include <unistd.h>
+
+#define RGL_ASSERT_AUDIO_CONTEXT if(!g_rgl_data->audio_cxt) return
 
 b8 rgl_audio_context_create(rgl_audio_context_t *cxt) {
 #ifdef RGL_DEBUG
@@ -26,7 +29,8 @@ b8 rgl_audio_context_create(rgl_audio_context_t *cxt) {
 	}
 
 	if(!alcMakeContextCurrent(cxt->cxt)) {
-		RGL_LOG_ERROR("Failed to make OpenAL context current"); return false;
+		RGL_LOG_ERROR("Failed to make OpenAL context current"); 
+		return false;
 	}
 
 	return true;
@@ -39,6 +43,7 @@ b8 rgl_audio_context_destroy(rgl_audio_context_t *cxt) {
 		return false;
 	}
 #endif
+
 	alcMakeContextCurrent(0);
 
 	alcDestroyContext(cxt->cxt);
@@ -53,6 +58,8 @@ b8 rgl_audio_context_destroy(rgl_audio_context_t *cxt) {
 
 
 void rgl_audio_buffer_create_from_vorbis(rgl_audio_buffer_t *audio_buffer, const char *path) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	s16 *buffer;
 	s32 channels, sample_rate;
 	s32 len = stb_vorbis_decode_filename(path, &channels, &sample_rate, &buffer);
@@ -69,12 +76,16 @@ void rgl_audio_buffer_create_from_vorbis(rgl_audio_buffer_t *audio_buffer, const
 }
 
 void rgl_audio_buffer_destroy(rgl_audio_buffer_t *buffer) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	if(buffer && buffer->id) {
 		alDeleteBuffers(1, &buffer->id);
 	}
 }
 
 void rgl_audio_source_create(rgl_audio_source_t *source, rgl_audio_buffer_t *buffer) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	source->buffer = buffer;
 
 	alGenSources(1, &source->id);
@@ -85,12 +96,16 @@ void rgl_audio_source_create(rgl_audio_source_t *source, rgl_audio_buffer_t *buf
 }
 
 void rgl_audio_source_destroy(rgl_audio_source_t *source) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	if(source && source->id) {
 		alDeleteSources(1, &source->id);
 	}
 }
 
 void rgl_audio_source_play(rgl_audio_source_t *source) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	s32 state;
 	alGetSourcei(source->id, AL_SOURCE_STATE, &state);
 	if(state == AL_STOPPED) {
@@ -104,6 +119,8 @@ void rgl_audio_source_play(rgl_audio_source_t *source) {
 }
 
 void rgl_audio_source_stop(rgl_audio_source_t *source) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	if(source->playing) {
 		alSourceStop(source->id);
 		source->playing = false;
@@ -111,19 +128,27 @@ void rgl_audio_source_stop(rgl_audio_source_t *source) {
 }
 
 void rgl_audio_source_set_looping(rgl_audio_source_t *source, b8 looping) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	source->looping = looping;
 	alSourcei(source->id, AL_LOOPING, looping);
 }
 
 void rgl_audio_source_set_gain(rgl_audio_source_t *source, f32 gain) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	alSourcef(source->id, AL_GAIN, gain);
 }
 
 void rgl_audio_source_set_pitch(rgl_audio_source_t *source, f32 pitch) {
+	RGL_ASSERT_AUDIO_CONTEXT;
+
 	alSourcef(source->id, AL_PITCH, pitch);
 }
 
 b8 rgl_audio_source_is_playing(rgl_audio_source_t *source) {
+	RGL_ASSERT_AUDIO_CONTEXT false;
+
 	s32 state;
 	alGetSourcei(source->id, AL_SOURCE_STATE, &state);
 

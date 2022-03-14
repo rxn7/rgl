@@ -1,5 +1,5 @@
 #pragma once
-#include <rgl/rgl.h>
+#include "common.h"
 
 typedef struct player_t {
 	rgl_sprite_t sprite;

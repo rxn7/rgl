@@ -1,14 +1,15 @@
-/* Settings */
 #include "common.h"
 #include "player.h"
-#include <rgl/rgl.h> 
+#include "coin.h"
 
 void app_init();
 void app_init();
 void app_quit();
 void app_update(f32 dt);
+void player_coin_pickup_check();
 
 player_t player;
+coin_t coin;
 
 int main(int argc, const char **argv) {
 	rgl_app_desc_t desc = (rgl_app_desc_t) {
@@ -25,7 +26,10 @@ int main(int argc, const char **argv) {
 }
 
 void app_init() {
-	player_create(&player, PLAYER_SPRITE_PATH);
+	player_create(&player, PLAYER_TEXTURE_PATH);
+
+	coin_initialize();
+	coin_respawn(&coin);
 }
 
 void app_quit() {
@@ -34,4 +38,17 @@ void app_quit() {
 
 void app_update(f32 dt) {
 	player_update(&player, dt);
+	player_coin_pickup_check();
+	coin_render(&coin);
+}
+
+void player_coin_pickup_check() {
+	v2 delta_pos;
+	rgl_v2_sub(&coin.pos, &player.sprite.position, &delta_pos);
+
+	f32 dist = rgl_v2_len(&delta_pos);
+
+	if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
+		coin_respawn(&coin);
+	}
 }

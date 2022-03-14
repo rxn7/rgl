@@ -8,7 +8,7 @@
 
 typedef struct rgl_texture_t {
 	u32 id;
-        s32 width, height;
+	s32 width, height;
 } rgl_texture_t;
 
 b8 rgl_texture_create(rgl_texture_t *txt, s32 w, s32 h, u8 *pixels, u8 filter);
