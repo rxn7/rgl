@@ -9,3 +9,4 @@ void coin_initialize();
 void coin_destroy(coin_t *coin);
 void coin_render(coin_t *coin);
 void coin_respawn(coin_t *coin);
+void coin_play_pickup_sound();

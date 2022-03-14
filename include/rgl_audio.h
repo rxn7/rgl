@@ -24,7 +24,7 @@ typedef struct rgl_audio_source_t {
 b8 rgl_audio_context_create(rgl_audio_context_t *cxt);
 b8 rgl_audio_context_destroy(rgl_audio_context_t *cxt);
 
-void rgl_audio_buffer_create_from_vorbis(rgl_audio_buffer_t *buffer, const char *path);
+b8 rgl_audio_buffer_create_from_vorbis(rgl_audio_buffer_t *buffer, const char *path);
 void rgl_audio_buffer_destroy(rgl_audio_buffer_t *buffer);
 
 void rgl_audio_source_create(rgl_audio_source_t *source, rgl_audio_buffer_t *buffer);

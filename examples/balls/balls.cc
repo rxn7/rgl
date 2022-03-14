@@ -74,7 +74,6 @@ int main(int argc, const char **argv) {
                 .title = "RGL | Balls",
                 .height = 480,
                 .width = 640,
-		.background_color = RGL_WHITE,
                 .init_f = app_init,
                 .update_f = app_update,
                 .quit_f = app_quit,

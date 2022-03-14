@@ -57,12 +57,17 @@ b8 rgl_audio_context_destroy(rgl_audio_context_t *cxt) {
 }
 
 
-void rgl_audio_buffer_create_from_vorbis(rgl_audio_buffer_t *audio_buffer, const char *path) {
-	RGL_ASSERT_AUDIO_CONTEXT;
+b8 rgl_audio_buffer_create_from_vorbis(rgl_audio_buffer_t *audio_buffer, const char *path) {
+	RGL_ASSERT_AUDIO_CONTEXT false;
 
 	s16 *buffer;
 	s32 channels, sample_rate;
 	s32 len = stb_vorbis_decode_filename(path, &channels, &sample_rate, &buffer);
+	
+	if(len <= 0) {
+		RGL_LOG_ERROR("Failed to load vorbis file: %s", path);
+		return false;
+	}
 
 	s32 format = AL_FORMAT_MONO16;
 	if(channels == 2) {
@@ -73,6 +78,8 @@ void rgl_audio_buffer_create_from_vorbis(rgl_audio_buffer_t *audio_buffer, const
 	alBufferData(audio_buffer->id, format, buffer, len * sizeof(s16), sample_rate);
 
 	free(buffer);
+
+	return true;
 }
 
 void rgl_audio_buffer_destroy(rgl_audio_buffer_t *buffer) {

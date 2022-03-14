@@ -10,6 +10,7 @@ void player_coin_pickup_check();
 
 player_t player;
 coin_t coin;
+u32 score = 0;
 
 int main(int argc, const char **argv) {
 	rgl_app_desc_t desc = (rgl_app_desc_t) {
@@ -50,5 +51,8 @@ void player_coin_pickup_check() {
 
 	if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
 		coin_respawn(&coin);
+		coin_play_pickup_sound();
+		/* TODO: UI Text display */
+		printf("Score: %u\n", ++score);
 	}
 }
