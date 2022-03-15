@@ -19,7 +19,7 @@ b8 rgl_sprite_create(rgl_sprite_t *sprite) {
 	}
 #endif
 	if(!sprite->texture) {
-		RGL_LOG_ERROR("Can't sprite with null pointer texture");
+		RGL_LOG_ERROR("Can't create sprite with null pointer texture");
 		return false;
 	}
 
