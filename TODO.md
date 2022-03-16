@@ -1,7 +1,11 @@
 # TODO
 
+## New struct naming
+- Instead of naming structs by rgl_**name**_t, let's name them by rgl**Name**,  
+  For example: instead of rgl_texture_t let's name it RGL_Texture
+
 ## Sprite Animation System
-### rgl_sprite_animation_t 
+### rglSpriteAnimation
 - texture *texture
 - u16 *frames
 - u16 frame_count
@@ -9,8 +13,8 @@
 - f32 seconds_per_frame
 - b8 looping
 
-### rgl_sprite_animator_t
+### rglSpriteAnimator
 - sprite *target
-- animation *current_animation, *next_animation
+- animation *default_animation, *current_animation, *next_animation
 - u16 current_frame
 - f32 time_elapsed
