@@ -11,10 +11,13 @@ static Atom _wm_delete_msg;
 static void _process_event();
 
 b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 width, i32 height) { 
-	RGL_ASSERT_RET_B8(cxt, false);
+	RGL_ASSERT_RET_B8(cxt, true);
 
 	cxt->dpy = XOpenDisplay(0);
+	RGL_ASSERT_RET_B8(cxt->dpy, true);
+
 	cxt->root = DefaultRootWindow(cxt->dpy);
+	RGL_ASSERT_RET_B8(cxt->root, true);
 
 	i32 visual_attribs[] = {
 		GLX_RENDER_TYPE, GLX_RGBA_BIT,
@@ -27,10 +30,7 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 wid
 
 	i32 fbcount;
 	GLXFBConfig *fbc = glXChooseFBConfig(cxt->dpy, DefaultScreen(cxt->dpy), visual_attribs, &fbcount);
-	if(!fbc) {
-		RGL_LOG_ERROR("Failed to retrieve the GLX framebuffer config");
-		return false;
-	}
+	RGL_ASSERT_RET_B8(cxt->fbc, true);
 
 	XVisualInfo *vi = glXGetVisualFromFBConfig(cxt->dpy, fbc[0]);
 
@@ -40,10 +40,7 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 wid
 	swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | KeyReleaseMask | ButtonReleaseMask;
 
 	cxt->win = XCreateWindow(cxt->dpy, cxt->root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa);
-	if(!cxt->win) {
-		RGL_LOG_ERROR("Failed to create the Xorg window.");
-		return false;
-	}
+	RGL_ASSERT_RET_B8(cxt->win, true);
 
 	XMapRaised(cxt->dpy, cxt->win);
 	XStoreName(cxt->dpy, cxt->win, title);
@@ -56,10 +53,7 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 wid
 	};
 
 	cxt->glx = glXCreateContextAttribsARB(cxt->dpy, fbc[0], NULL, true, cxt_attribs);
-	if(!cxt->glx) {
-		RGL_LOG_ERROR("Failed to create GLX context.");
-		return false;
-	}
+	RGL_ASSERT_RET_B8(cxt->glx, true);
 
 	glXMakeCurrent(cxt->dpy, cxt->win, cxt->glx);
 

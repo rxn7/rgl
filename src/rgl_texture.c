@@ -63,6 +63,5 @@ b8 rgl_texture_load_from_file(rgl_texture_t *txt, const char *path, u8 filter) {
 
 void rgl_texture_destroy(rgl_texture_t *txt) {
 	RGL_ASSERT(txt, false);
-
 	glDeleteTextures(1, &txt->id);
 }
