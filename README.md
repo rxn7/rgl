@@ -1,5 +1,5 @@
 # RGL
-Game Framework written in c99.
+Game Framework written in c99. 
 RGL is currently a huge mess, don't try to use it, come back here later.
 
 # Features
