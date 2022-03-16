@@ -31,8 +31,8 @@ void coin_update(coin_t *coin) {
 }
 
 static void coin_render(coin_t *coin) {
-	rgl_v2_cpy(&coin->pos, &sprite.position);
-	rgl_sprite_render(&sprite);
+	rgl_v2_cpy(&coin->pos, &_sprite.position);
+	rgl_sprite_render(&_sprite);
 }
 
 void coin_respawn(coin_t *coin) {
