@@ -6,6 +6,8 @@ static rgl_texture_t texture = {0};
 static rgl_audio_buffer_t pickup_audio_buffer = {0};
 static rgl_audio_source_t pickup_audio_source = {0};
 
+static void coin_render(coin_t *coin);
+
 void coin_initialize() {
 	rgl_texture_load_from_file(&texture, COIN_TEXTURE_PATH, RGL_TEXTURE_FILTER_NONE);
 	sprite.texture = &texture;
@@ -16,7 +18,20 @@ void coin_initialize() {
 	rgl_audio_source_create(&pickup_audio_source, &pickup_audio_buffer);
 }
 
-void coin_render(coin_t *coin) {
+void coin_update(coin_t *coin) {
+	static const f32 hw = COIN_SPRITE_SIZE / 2.f;
+	static const f32 hh = COIN_SPRITE_SIZE / 2.f;
+
+	if(coin->pos.x < hw) coin->pos.x = hw;
+	else if(coin->pos.x > g_rgl_data->width - hw) coin->pos.x = g_rgl_data->width - hw;
+
+	if(coin->pos.y < hh) coin->pos.y = hh;
+	else if(coin->pos.y > g_rgl_data->height - hh) coin->pos.y = g_rgl_data->height - hh;
+
+	coin_render(coin);
+}
+
+static void coin_render(coin_t *coin) {
 	rgl_v2_cpy(&coin->pos, &sprite.position);
 	rgl_sprite_render(&sprite);
 }

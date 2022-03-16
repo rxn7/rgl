@@ -67,6 +67,14 @@ void rgl_v2_normalize(v2 *a, v2 *dest) {
 	}
 }
 
+void rgl_v2_print(v2 *a, b8 newline) {
+	printf("[%f, %f]", a->x, a->y);
+
+	if(newline) {
+		printf("\n");
+	}
+}
+
 f32 rgl_v2_len(v2 *a) {
 	return sqrtf(a->x*a->x + a->y*a->y);
 }

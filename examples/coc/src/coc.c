@@ -40,7 +40,7 @@ void app_quit() {
 void app_update(f32 dt) {
 	player_update(&player, dt);
 	player_coin_pickup_check();
-	coin_render(&coin);
+	coin_update(&coin);
 }
 
 void player_coin_pickup_check() {

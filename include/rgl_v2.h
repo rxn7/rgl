@@ -25,4 +25,6 @@ void rgl_v2_divf(v2 *a, f32 v, v2 *dest);
 
 void rgl_v2_normalize(v2 *a, v2 *dest);
 
+void rgl_v2_print(v2 *a, b8 newline);
+
 f32 rgl_v2_len(v2 *a);
