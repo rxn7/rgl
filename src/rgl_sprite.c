@@ -2,7 +2,7 @@
 #include "rgl_shader.h"
 #include "rgl.h"
 
-rgl_shader_t *_shader = 0;
+static rgl_shader_t *_shader = 0;
 
 const rgl_vertex_t _vertices[] = {
 	{ {-1, -1},	{0,0} },

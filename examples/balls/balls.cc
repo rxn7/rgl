@@ -231,9 +231,9 @@ void thr_physics_func() {
 				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {-1, ball.pos.y} } });
 			} 
 			/* Right wall */
-			else if(ball.pos.x + ball.radius > g_rgl_data->width) {
-				ball.pos.x = g_rgl_data->width - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {(f32)g_rgl_data->width+1, ball.pos.y} } });
+			else if(ball.pos.x + ball.radius > _rgl_data->width) {
+				ball.pos.x = _rgl_data->width - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {(f32)_rgl_data->width+1, ball.pos.y} } });
 			} 
 			/* Top wall */
 			if(ball.pos.y < ball.radius) {
@@ -241,9 +241,9 @@ void thr_physics_func() {
 				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, -1} } });
 			} 
 			/* Bottom wall */
-			else if(ball.pos.y + ball.radius > g_rgl_data->height) {
-				ball.pos.y = g_rgl_data->height - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, (f32)g_rgl_data->height+1} } });
+			else if(ball.pos.y + ball.radius > _rgl_data->height) {
+				ball.pos.y = _rgl_data->height - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, (f32)_rgl_data->height+1} } });
 			} 
 
 			/* Overlap collisions */
@@ -360,8 +360,8 @@ void draw_balls() {
 void init_balls() {
 	v2 pos;
 	for(u32 i=0; i<START_BALL_COUNT; ++i) {
-		pos.x = (f32)(rand() % g_rgl_data->width);
-		pos.y = (f32)(rand() % g_rgl_data->height);
+		pos.x = (f32)(rand() % _rgl_data->width);
+		pos.y = (f32)(rand() % _rgl_data->height);
 
 		add_ball(pos);
 	}
