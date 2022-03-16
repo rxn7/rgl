@@ -25,18 +25,9 @@ static void _apply_parameters(u8 filter) {
 	}
 }
 
-b8 rgl_texture_create(rgl_texture_t *txt, s32 w, s32 h, u8 *pixels, u8 filter) {
-#ifdef RGL_DEBUG
-	if(!txt) {
-		RGL_LOG_ERROR("Can't create texture with null pointer");
-		return false;
-	}
-
-	if(!pixels) {
-		RGL_LOG_ERROR("Can't create texture with null pointer pixels");
-		return false;
-	}
-#endif
+b8 rgl_texture_create(rgl_texture_t *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
+	RGL_ASSERT_RET_B8(txt, false);
+	RGL_ASSERT_RET_B8(pixels, false);
 
         txt->width = w;
         txt->height = h;
@@ -51,16 +42,13 @@ b8 rgl_texture_create(rgl_texture_t *txt, s32 w, s32 h, u8 *pixels, u8 filter) {
 }
 
 b8 rgl_texture_load_from_file(rgl_texture_t *txt, const char *path, u8 filter) {
-#ifdef RGL_DEBUG
-	if(!txt) {
-		RGL_LOG_ERROR("Can't create texture with null pointer");
-		return false;
-	}
-#endif
+	RGL_ASSERT_RET_B8(txt, false);
 
-	s32 channels;
+	i32 channels;
 	stbi_set_flip_vertically_on_load(false);
 	u8 *pixels = stbi_load(path, &txt->width, &txt->height, &channels, STBI_rgb_alpha);
+
+	RGL_ASSERT_RET_B8(pixels, false);
 
 	glGenTextures(1, &txt->id);
 	glBindTexture(GL_TEXTURE_2D, txt->id);
@@ -73,15 +61,8 @@ b8 rgl_texture_load_from_file(rgl_texture_t *txt, const char *path, u8 filter) {
 	return true;
 }
 
-b8 rgl_texture_destroy(rgl_texture_t *txt) {
-#ifdef RGL_DEBUG
-	if(!txt) {
-		RGL_LOG_ERROR("Can't destroy texture with null pointer");
-		return false;
-	}
-#endif
+void rgl_texture_destroy(rgl_texture_t *txt) {
+	RGL_ASSERT(txt, false);
 
 	glDeleteTextures(1, &txt->id);
-
-	return true;
 }

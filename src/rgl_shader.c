@@ -3,7 +3,9 @@
 #include "rgl_log.h"
 
 static b8 _init_shader(u32 *shader, u32 type, const char *src) {
-	s32 success;
+	RGL_ASSERT_RET_B8(shader, false);
+
+	i32 success;
 	char infolog[512];
 
 	u32 id = glCreateShader(type);
@@ -23,12 +25,7 @@ static b8 _init_shader(u32 *shader, u32 type, const char *src) {
 }
 
 b8 rgl_shader_create(rgl_shader_t *shader, const char *vert_src, const char *frag_src) {
-#ifdef RGL_DEBUG
-	if(!shader) {
-		RGL_LOG_ERROR("Can't create shader with null pointer");
-		return false;
-	}
-#endif
+	RGL_ASSERT_RET_B8(shader, false);
 
 	id_t vert, frag;
 	int success;
@@ -63,27 +60,20 @@ b8 rgl_shader_create(rgl_shader_t *shader, const char *vert_src, const char *fra
 	return true;
 }
 
-b8 rgl_shader_destroy(rgl_shader_t *shader) {
-#ifdef RGL_DEBUG
-	if(!shader) {
-		RGL_LOG_ERROR("Can't destroy shader with null pointer");
-		return false;
-	}
-#endif
+void rgl_shader_destroy(rgl_shader_t *shader) {
+	RGL_ASSERT(shader, false);
 
 	glDeleteProgram(shader->id);
 
 	if(shader->uniform_locations) {
 		free(shader->uniform_locations);
 	}
-
-	return true;
 }
 
-void rgl_shader_create_defaults() {
+void rgl_shader_create_defaults(void) {
 	rgl_sprite_shader_create();
 }
 
-void rgl_shader_destroy_defaults() {
+void rgl_shader_destroy_defaults(void) {
 	rgl_sprite_shader_destroy();
 }

@@ -16,7 +16,7 @@ typedef struct rgl_x11_context_t {
 	GLXContext glx;
 } rgl_x11_context_t;
 
-b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height);
+b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 width, i32 height);
 void rgl_x11_context_destroy(rgl_x11_context_t *cxt);
 
 f32 rgl_x11_get_time(void);

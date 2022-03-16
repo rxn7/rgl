@@ -1,5 +1,7 @@
 #include "rgl_mat4.h"
 
+/* TODO: Should I assert the parameters in these functions? */
+
 void rgl_mat4_cpy(mat4 src, mat4 dest) {
 	for(u8 i=0; i<16; ++i) {
 		dest[i] = src[i];

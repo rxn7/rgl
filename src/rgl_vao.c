@@ -1,12 +1,8 @@
 #include "rgl_vao.h"
 
 b8 rgl_vao_create(rgl_vao_t *vao, const rgl_vertex_t *vertices, u32 vertex_count) {
-#ifdef RGL_DEBUG
-	if(!vao) {
-		RGL_LOG_ERROR("Can't create VAO with null pointer");
-		return false;
-	}
-#endif
+	RGL_ASSERT_RET_B8(vao, false);
+	RGL_ASSERT_RET_B8(vertices, false);
 
 	vao->vertex_count = vertex_count;
 
@@ -28,27 +24,15 @@ b8 rgl_vao_create(rgl_vao_t *vao, const rgl_vertex_t *vertices, u32 vertex_count
 	return true;
 }
 
-b8 rgl_vao_destroy(rgl_vao_t *vao) {
-#ifdef RGL_DEBUG
-	if(!vao) {
-		RGL_LOG_ERROR("Can't destroy VAO with null pointer");
-		return false;
-	}
-#endif
+void rgl_vao_destroy(rgl_vao_t *vao) {
+	RGL_ASSERT(vao, false);
 
 	glDeleteBuffers(1, &vao->vbo);
 	glDeleteVertexArrays(1, &vao->id);
-
-	return true;
 }
 
-void rgl_vao_render(u32 mode, rgl_vao_t *vao) {
-#ifdef RGL_DEBUG
-	if(!vao) {
-		RGL_LOG_ERROR("Can't render VAO with null pointer");
-		return;
-	}
-#endif
+void rgl_vao_render(rgl_vao_t *vao, u32 mode) {
+	RGL_ASSERT(vao, false);
 
 	glBindVertexArray(vao->id);
 	glDrawArrays(mode, 0, vao->vertex_count);

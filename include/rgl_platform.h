@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RGL_PLATFORM_H
+#define __RGL_PLATFORM_H
 
 #if defined(__linux) || defined(__linux__) || defined(linux)
 	#define RGL_PLATFORM_LINUX
@@ -10,3 +11,5 @@
 #else
 	#error RGL currently supports only linux.
 #endif
+
+#endif /* __RGL_PLATFORM_H */

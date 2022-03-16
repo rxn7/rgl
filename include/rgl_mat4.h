@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RGL_MAT4_H
+#define __RGL_MAT4_H
 
 #include "rgl_common.h"
 #include "rgl_v2.h"
@@ -15,3 +16,5 @@ void rgl_mat4_mul(mat4 a, mat4 b);
 void rgl_mat4_translate(mat4 mat, v2 vec);
 void rgl_mat4_scale(mat4 mat, v2 vec);
 void rgl_mat4_rotate(mat4 mat, f32 rot);
+
+#endif /* __RGL_MAT4_H */

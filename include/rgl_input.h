@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RGL_INPUT_H
+#define __RGL_INPUT_H
 
 #include "rgl_common.h"
 
@@ -57,9 +58,11 @@ typedef enum rgl_btn_t {
 } rgl_btn_t;
 
 void rgl_get_cursor_pos(v2 *vec);
-bool rgl_is_key_pressed(rgl_key_t key);
-bool rgl_is_key_just_pressed(rgl_key_t key);
-bool rgl_is_key_just_released(rgl_key_t btn);
-bool rgl_is_button_pressed(rgl_btn_t btn);
-bool rgl_is_button_just_pressed(rgl_btn_t btn);
-bool rgl_is_button_just_released(rgl_btn_t btn);
+b8 rgl_is_key_pressed(rgl_key_t key);
+b8 rgl_is_key_just_pressed(rgl_key_t key);
+b8 rgl_is_key_just_released(rgl_key_t btn);
+b8 rgl_is_button_pressed(rgl_btn_t btn);
+b8 rgl_is_button_just_pressed(rgl_btn_t btn);
+b8 rgl_is_button_just_released(rgl_btn_t btn);
+
+#endif /* __RGL_INPUT_H */

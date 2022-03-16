@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RGL_H
+#define __RGL_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +12,7 @@
 #include "rgl_audio.h"
 
 #ifdef RGL_DEBUG
-	#warning Debug mode for RGL is enabled. Debug mode adds additional checks and logs. Undefine RGL_DEBUG to disable.
+	#warning Debug mode for RGL is enabled. Debug mode adds runtime asserts and more logs, it affects performance. Undefine RGL_DEBUG to disable.
 #endif
 
 typedef struct rgl_app_desc_t {
@@ -32,7 +33,7 @@ typedef struct rgl_app_data_t {
 	RGL_PLATFORM_CONTEXT_T *plat_cxt;
 
 	b8 running;
-	s32 width, height;
+	i32 width, height;
 	mat4 projection_matrix;
 } rgl_app_data_t;
 
@@ -42,8 +43,10 @@ void rgl_app_data_destroy(rgl_app_data_t *data);
 extern rgl_app_data_t *g_rgl_data; /* Defined in rgl.c */
 
 b8 rgl_init(rgl_app_desc_t *desc);
-void rgl_quit();
+void rgl_quit(void);
 void rgl_set_vsync(b8 value);
-void rgl_update_projection();
-void rgl_get_window_size(s32 *w, s32 *h);
-f32 rgl_get_time();
+void rgl_update_projection(void);
+void rgl_get_window_size(i32 *w, i32 *h);
+f32 rgl_get_time(void);
+
+#endif /* __RGL_H */
