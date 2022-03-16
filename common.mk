@@ -16,4 +16,4 @@ OBJ = rgl.o \
       rgl_mat4.o \
       rgl_assert.o
 
-all: compile link clean
+all: compile link
