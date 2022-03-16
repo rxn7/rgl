@@ -2,7 +2,7 @@
 
 ## New struct naming
 - Instead of naming structs by rgl_**name**_t, let's name them by rgl**Name**,  
-  For example: instead of rgl_texture_t let's name it RGL_Texture
+  For example: instead of rgl_texture_t let's name it rglTexture
 
 ## Sprite Animation System
 ### rglSpriteAnimation
