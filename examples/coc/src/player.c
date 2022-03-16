@@ -11,8 +11,8 @@ void player_create(player_t *player, const char *texture_path) {
 	rgl_sprite_create(&player->sprite, &_texture);
 
 	rgl_v2_setf(&player->sprite.size, 50);
-	player->sprite.position.x = (f32)g_rgl_data->width / 2.f;
-	player->sprite.position.y = (f32)g_rgl_data->height / 2.f;
+	player->sprite.position.x = (f32)_rgl_data->width / 2.f;
+	player->sprite.position.y = (f32)_rgl_data->height / 2.f;
 }
 
 void player_destroy(player_t *player) {
@@ -24,11 +24,14 @@ void player_destroy(player_t *player) {
 void player_update(player_t *player, f32 dt) {
 	player_movement(player, dt);
 
+	i32 ww, wh;
+	rgl_get_window_size(&ww, &wh);
+
 	if(player->sprite.position.x < 0) player->sprite.position.x = 0;
-	else if(player->sprite.position.x > g_rgl_data->width) player->sprite.position.x = g_rgl_data->width;
+	else if(player->sprite.position.x > ww) player->sprite.position.x = ww;
 
 	if(player->sprite.position.y < 0) player->sprite.position.y = 0;
-	else if(player->sprite.position.y > g_rgl_data->height) player->sprite.position.y = g_rgl_data->height;
+	else if(player->sprite.position.y > wh) player->sprite.position.y = wh;
 
 	player_render(player);
 }

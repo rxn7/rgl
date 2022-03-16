@@ -4,12 +4,13 @@
 #include "rgl_common.h"
 
 #ifndef RGL_NO_ASSERT
-	#define RGL_ASSERT(expr, quit) if(!expr) { _rgl_assert(expr, __FILE__, __LINE__, #expr, quit); return; }
-	#define RGL_ASSERT_RET_B8(expr, quit) if(!expr) { _rgl_assert(expr, __FILE__, __LINE__, #expr, quit); return false; }
+	#define RGL_ASSERT(expr, msg, ...) if(!(expr)) _rgl_assert(__FILE__, __LINE__, expr, #expr, msg, ##__VA_ARGS__)
+	#define RGL_ASSERT_VALID_PTR(ptr) if(!(ptr)) _rgl_assert(__FILE__, __LINE__, false, #ptr, #ptr " is not a valid pointer")
 #else
 	#define RGL_ASSERT(...)
+	#define RGL_ASSERT_VALID_PTR(...)
 #endif
 
-void _rgl_assert(b8 expr, const char *file, i32 line, const char *expr_str, b8 quit);
+void _rgl_assert(const char *file, i32 line, b8 expr, const char *expr_str, const char *fmsg, ...);
 
 #endif /* __RGL_ASSERT_H */

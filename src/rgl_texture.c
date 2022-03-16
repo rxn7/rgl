@@ -26,8 +26,8 @@ static void _apply_parameters(u8 filter) {
 }
 
 b8 rgl_texture_create(rgl_texture_t *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
-	RGL_ASSERT_RET_B8(txt, false);
-	RGL_ASSERT_RET_B8(pixels, false);
+	RGL_ASSERT_VALID_PTR(txt);
+	RGL_ASSERT_VALID_PTR(pixels);
 
         txt->width = w;
         txt->height = h;
@@ -42,13 +42,13 @@ b8 rgl_texture_create(rgl_texture_t *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
 }
 
 b8 rgl_texture_load_from_file(rgl_texture_t *txt, const char *path, u8 filter) {
-	RGL_ASSERT_RET_B8(txt, false);
+	RGL_ASSERT_VALID_PTR(txt);
 
 	i32 channels;
 	stbi_set_flip_vertically_on_load(false);
 	u8 *pixels = stbi_load(path, &txt->width, &txt->height, &channels, STBI_rgb_alpha);
 
-	RGL_ASSERT_RET_B8(pixels, false);
+	RGL_ASSERT_VALID_PTR(pixels);
 
 	glGenTextures(1, &txt->id);
 	glBindTexture(GL_TEXTURE_2D, txt->id);
@@ -62,6 +62,6 @@ b8 rgl_texture_load_from_file(rgl_texture_t *txt, const char *path, u8 filter) {
 }
 
 void rgl_texture_destroy(rgl_texture_t *txt) {
-	RGL_ASSERT(txt, false);
+	RGL_ASSERT_VALID_PTR(txt);
 	glDeleteTextures(1, &txt->id);
 }

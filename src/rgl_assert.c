@@ -1,10 +1,20 @@
 #include "rgl_assert.h"
 #include "rgl.h"
+#include <stdarg.h>
 
-void _rgl_assert(b8 expr, const char *file, i32 line, const char *expr_str, b8 quit) {
-	printf("[RGL ASSERT] %s\tFile: %s\tLine: %i\n", expr_str, file, line);
+/* TODO: Format the msg text */
+void _rgl_assert(const char *file, i32 line, b8 expr, const char *expr_str, const char *fmsg, ...) {
+	if(!expr) {
+		fprintf(stderr, "[RGL ASSERT FAILED] Expr: %s  |  Msg: ", expr_str);
 
-	if(quit) {
+		/* Print the formatted msg */
+		va_list vargs;
+		va_start(vargs, fmsg);
+		vfprintf(stderr, fmsg, vargs);
+		va_end(vargs);
+
+		fprintf(stderr, "  |  File: %s  |  Line: %i\n", file, line);
+
 		rgl_quit();
 	}
 }

@@ -11,13 +11,13 @@ static Atom _wm_delete_msg;
 static void _process_event();
 
 b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 width, i32 height) { 
-	RGL_ASSERT_RET_B8(cxt, true);
+	RGL_ASSERT_VALID_PTR(cxt);
 
 	cxt->dpy = XOpenDisplay(0);
-	RGL_ASSERT_RET_B8(cxt->dpy, true);
+	RGL_ASSERT_VALID_PTR(cxt->dpy);
 
 	cxt->root = DefaultRootWindow(cxt->dpy);
-	RGL_ASSERT_RET_B8(cxt->root, true);
+	RGL_ASSERT_VALID_PTR(cxt->root);
 
 	i32 visual_attribs[] = {
 		GLX_RENDER_TYPE, GLX_RGBA_BIT,
@@ -30,7 +30,7 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 wid
 
 	i32 fbcount;
 	GLXFBConfig *fbc = glXChooseFBConfig(cxt->dpy, DefaultScreen(cxt->dpy), visual_attribs, &fbcount);
-	RGL_ASSERT_RET_B8(cxt->fbc, true);
+	RGL_ASSERT_VALID_PTR(fbc);
 
 	XVisualInfo *vi = glXGetVisualFromFBConfig(cxt->dpy, fbc[0]);
 
@@ -40,7 +40,7 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 wid
 	swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | KeyReleaseMask | ButtonReleaseMask;
 
 	cxt->win = XCreateWindow(cxt->dpy, cxt->root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa);
-	RGL_ASSERT_RET_B8(cxt->win, true);
+	RGL_ASSERT_VALID_PTR(cxt->win);
 
 	XMapRaised(cxt->dpy, cxt->win);
 	XStoreName(cxt->dpy, cxt->win, title);
@@ -53,7 +53,7 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 wid
 	};
 
 	cxt->glx = glXCreateContextAttribsARB(cxt->dpy, fbc[0], NULL, true, cxt_attribs);
-	RGL_ASSERT_RET_B8(cxt->glx, true);
+	RGL_ASSERT_VALID_PTR(cxt->glx);
 
 	glXMakeCurrent(cxt->dpy, cxt->win, cxt->glx);
 
@@ -74,8 +74,8 @@ void rgl_x11_context_destroy(rgl_x11_context_t *cxt) {
 }
 
 void rgl_x11_start_frame(void) {
-	while(XPending(g_rgl_data->plat_cxt->dpy)) {
-		XNextEvent(g_rgl_data->plat_cxt->dpy, &g_rgl_data->plat_cxt->event);
+	while(XPending(_rgl_data->plat_cxt->dpy)) {
+		XNextEvent(_rgl_data->plat_cxt->dpy, &_rgl_data->plat_cxt->event);
 		_process_event();
 	}
 
@@ -84,7 +84,7 @@ void rgl_x11_start_frame(void) {
 
 void rgl_x11_end_frame(void) {
 	rgl_x11_input_post_update();
-	glXSwapBuffers(g_rgl_data->plat_cxt->dpy, g_rgl_data->plat_cxt->win);
+	glXSwapBuffers(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win);
 }
 
 f32 rgl_x11_get_time(void) {
@@ -94,23 +94,23 @@ f32 rgl_x11_get_time(void) {
 }
 
 void rgl_x11_set_vsync(b8 value) {
-	glXSwapIntervalEXT(g_rgl_data->plat_cxt->dpy, g_rgl_data->plat_cxt->win, value);
+	glXSwapIntervalEXT(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win, value);
 }
 
 static void _process_event() {
-	switch(g_rgl_data->plat_cxt->event.type) {
+	switch(_rgl_data->plat_cxt->event.type) {
 		case ClientMessage:
-			if(g_rgl_data->plat_cxt->event.xclient.data.l[0] == _wm_delete_msg) {
+			if(_rgl_data->plat_cxt->event.xclient.data.l[0] == _wm_delete_msg) {
 				rgl_quit();
 			}
 
 			break;
 
 		case Expose:
-			XGetWindowAttributes(g_rgl_data->plat_cxt->dpy, g_rgl_data->plat_cxt->win, &g_rgl_data->plat_cxt->win_attr);
-			g_rgl_data->width = g_rgl_data->plat_cxt->win_attr.width;
-			g_rgl_data->height = g_rgl_data->plat_cxt->win_attr.height;
-			rgl_update_projection();
+			XGetWindowAttributes(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win, &_rgl_data->plat_cxt->win_attr);
+			_rgl_data->width = _rgl_data->plat_cxt->win_attr.width;
+			_rgl_data->height = _rgl_data->plat_cxt->win_attr.height;
+			_rgl_update_projection();
 			break;
 	}
 }

@@ -11,10 +11,6 @@
 #include "rgl_immediate.h"
 #include "rgl_audio.h"
 
-#ifdef RGL_DEBUG
-	#warning Debug mode for RGL is enabled. Debug mode adds runtime asserts and more logs, it affects performance. Undefine RGL_DEBUG to disable.
-#endif
-
 typedef struct rgl_app_desc_t {
         const char *title;
         u16 height;
@@ -27,7 +23,15 @@ typedef struct rgl_app_desc_t {
 
 #include "rgl_platform.h"
 
-typedef struct rgl_app_data_t {
+b8 rgl_init(rgl_app_desc_t *desc);
+void rgl_quit(void);
+void rgl_set_vsync(b8 value);
+void rgl_get_window_size(i32 *w, i32 *h);
+f32 rgl_get_time(void);
+
+void _rgl_update_projection(void);
+
+typedef struct _rgl_app_data_t {
         rgl_app_desc_t *desc;
 	rgl_audio_context_t *audio_cxt;
 	RGL_PLATFORM_CONTEXT_T *plat_cxt;
@@ -35,18 +39,15 @@ typedef struct rgl_app_data_t {
 	b8 running;
 	i32 width, height;
 	mat4 projection_matrix;
-} rgl_app_data_t;
+} _rgl_app_data_t;
 
-b8 rgl_app_data_create(rgl_app_data_t *data, rgl_app_desc_t *desc);
-void rgl_app_data_destroy(rgl_app_data_t *data);
+extern _rgl_app_data_t *_rgl_data; /* Defined in rgl.c */
 
-extern rgl_app_data_t *g_rgl_data; /* Defined in rgl.c */
+void _rgl_app_data_create(_rgl_app_data_t *data, rgl_app_desc_t *desc);
+void _rgl_app_data_destroy(_rgl_app_data_t *data);
 
-b8 rgl_init(rgl_app_desc_t *desc);
-void rgl_quit(void);
-void rgl_set_vsync(b8 value);
-void rgl_update_projection(void);
-void rgl_get_window_size(i32 *w, i32 *h);
-f32 rgl_get_time(void);
+void _rgl_setup_opengl(void);
+void _rgl_main_loop(void);
+void _rgl_def_update(f32 dt);
 
 #endif /* __RGL_H */

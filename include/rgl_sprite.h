@@ -16,7 +16,7 @@ b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture);
 void rgl_sprite_destroy(rgl_sprite_t *sprite);
 void rgl_sprite_render(rgl_sprite_t *sprite);
 
-void rgl_sprite_shader_create(void);
-void rgl_sprite_shader_destroy(void);
+void _rgl_sprite_shader_create(void);
+void _rgl_sprite_shader_destroy(void);
 
 #endif /* __RGL_SPRITE_H */

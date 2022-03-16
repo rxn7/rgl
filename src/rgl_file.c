@@ -4,7 +4,7 @@
 #include "rgl_file.h"
 
 void rgl_read_file(char **buf, const char *path) {
-	RGL_ASSERT(buf, false);
+	RGL_ASSERT_VALID_PTR(buf);
 
         FILE *f = fopen(path, "rb");
 

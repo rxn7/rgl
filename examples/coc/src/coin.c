@@ -21,11 +21,14 @@ void coin_update(coin_t *coin) {
 	static const f32 hw = COIN_SPRITE_SIZE / 2.f;
 	static const f32 hh = COIN_SPRITE_SIZE / 2.f;
 
+	i32 ww, wh;
+	rgl_get_window_size(&ww, &wh);
+
 	if(coin->pos.x < hw) coin->pos.x = hw;
-	else if(coin->pos.x > g_rgl_data->width - hw) coin->pos.x = g_rgl_data->width - hw;
+	else if(coin->pos.x > ww - hw) coin->pos.x = ww - hw;
 
 	if(coin->pos.y < hh) coin->pos.y = hh;
-	else if(coin->pos.y > g_rgl_data->height - hh) coin->pos.y = g_rgl_data->height - hh;
+	else if(coin->pos.y > wh - hh) coin->pos.y = wh - hh;
 
 	coin_render(coin);
 }
@@ -36,8 +39,8 @@ static void coin_render(coin_t *coin) {
 }
 
 void coin_respawn(coin_t *coin) {
-	coin->pos.x = rand() % g_rgl_data->width;
-	coin->pos.y = rand() % g_rgl_data->width;
+	coin->pos.x = rand() % _rgl_data->width;
+	coin->pos.y = rand() % _rgl_data->width;
 }
 
 void coin_play_pickup_sound() {
