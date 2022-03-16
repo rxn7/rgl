@@ -1,19 +1,21 @@
 #include "rgl_v2.h"
 #include <math.h>
 
-void rgl_v2_cpy(v2 *a, v2 *dest) {
-	dest->x = a->x;
-	dest->y = a->y;
+/* TODO: Should I assert the parameters in these functions? */
+
+void rgl_v2_cpy(v2 *v, v2 *dest) {
+	dest->x = v->x;
+	dest->y = v->y;
 }
 
-void rgl_v2_setf(v2 *a, f32 v) {
-	a->x = v;
-	a->y = v;
+void rgl_v2_setf(v2 *v, f32 f) {
+	v->x = f;
+	v->y = f;
 }
 
-void rgl_v2_zero(v2 *a) {
-	a->x = 0;
-	a->y = 0;
+void rgl_v2_zero(v2 *v) {
+	v->x = 0;
+	v->y = 0;
 }
 
 void rgl_v2_add(v2 *a, v2 *b, v2 *dest) {
@@ -21,9 +23,9 @@ void rgl_v2_add(v2 *a, v2 *b, v2 *dest) {
 	dest->y = a->y + b->y;
 }
 
-void rgl_v2_addf(v2 *a, f32 v, v2 *dest) {
-	dest->x = a->x + v;
-	dest->y = a->y + v;
+void rgl_v2_addf(v2 *v, f32 f, v2 *dest) {
+	dest->x = v->x + f;
+	dest->y = v->y + f;
 }
 
 void rgl_v2_sub(v2 *a, v2 *b, v2 *dest) {
@@ -31,9 +33,9 @@ void rgl_v2_sub(v2 *a, v2 *b, v2 *dest) {
 	dest->y = a->y - b->y;
 }
 
-void rgl_v2_subf(v2 *a, f32 v, v2 *dest) {
-	dest->x = a->x - v;
-	dest->y = a->y - v;
+void rgl_v2_subf(v2 *v, f32 f, v2 *dest) {
+	dest->x = v->x - f;
+	dest->y = v->y - f;
 }
 
 void rgl_v2_mul(v2 *a, v2 *b, v2 *dest) {
@@ -41,9 +43,9 @@ void rgl_v2_mul(v2 *a, v2 *b, v2 *dest) {
 	dest->y = a->y * b->y;
 }
 
-void rgl_v2_mulf(v2 *a, f32 v, v2 *dest) {
-	dest->x = a->x * v;
-	dest->y = a->y * v;
+void rgl_v2_mulf(v2 *v, f32 f, v2 *dest) {
+	dest->x = v->x * f;
+	dest->y = v->y * f;
 }
 
 void rgl_v2_div(v2 *a, v2 *b, v2 *dest) {
@@ -51,20 +53,24 @@ void rgl_v2_div(v2 *a, v2 *b, v2 *dest) {
 	if(b->y != 0) dest->y = a->y / b->y;
 }
 
-void rgl_v2_divf(v2 *a, f32 v, v2 *dest) {
+void rgl_v2_divf(v2 *v, f32 f, v2 *dest) {
 	if(v != 0) {
-		dest->x = a->x / v;
-		dest->y = a->y / v;
+		dest->x = v->x / f;
+		dest->y = v->y / f;
 	}
 }
 
-void rgl_v2_normalize(v2 *a, v2 *dest) {
-	f32 len = rgl_v2_len(a);
+void rgl_v2_normalize(v2 *v, v2 *dest) {
+	f32 len = rgl_v2_len(v);
 
 	if(len != 0) {
 		dest->x /= len;
 		dest->y /= len;
 	}
+}
+
+f32 rgl_v2_len(v2 *a) {
+	return sqrtf(a->x*a->x + a->y*a->y);
 }
 
 void rgl_v2_print(v2 *a, b8 newline) {
@@ -73,8 +79,4 @@ void rgl_v2_print(v2 *a, b8 newline) {
 	if(newline) {
 		printf("\n");
 	}
-}
-
-f32 rgl_v2_len(v2 *a) {
-	return sqrtf(a->x*a->x + a->y*a->y);
 }

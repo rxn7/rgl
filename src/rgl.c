@@ -7,17 +7,21 @@
 
 rgl_app_data_t *g_rgl_data = 0;
 
-static void _setup_opengl();
-static void _start_main_loop();
+static void _setup_opengl(void);
+static void _start_main_loop(void);
 static void _def_update(f32 dt);
 static b8 _rtkit_initialize_realtime_thread();
 
 b8 rgl_init(rgl_app_desc_t *desc) {
+	RGL_ASSERT_RET_B8(desc, true);
+
 	/* Sanity checks */
         if(desc->width <= 0)            desc->width = 960; 
         if(desc->height <= 0)           desc->height = 640;
         if(!desc->title)                desc->title = "RGL";
         if(!desc->update_f)             desc->update_f = _def_update;
+
+	srand(time(0));
 
 	g_rgl_data = malloc(sizeof(rgl_app_data_t));
 	if(!rgl_app_data_create(g_rgl_data, desc)) {
@@ -41,7 +45,7 @@ b8 rgl_init(rgl_app_desc_t *desc) {
         return true;
 }
 
-void rgl_quit() {
+void rgl_quit(void) {
 	g_rgl_data->running = false;
 
 	/* Call user-defined quit func */
@@ -61,7 +65,7 @@ void rgl_set_vsync(b8 value) {
 	RGL_PLATFORM_FUN(set_vsync, value);
 }
 
-void rgl_update_projection() {
+void rgl_update_projection(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, g_rgl_data->width, g_rgl_data->height);
@@ -72,16 +76,19 @@ void rgl_update_projection() {
 	rgl_mat4_ortho(g_rgl_data->projection_matrix, 0, g_rgl_data->width, g_rgl_data->height, 0, -1, 1);
 }
 
-f32 rgl_get_time() {
+f32 rgl_get_time(void) {
 	return RGL_PLATFORM_FUN(get_time);
 }
 
-void rgl_get_window_size(s32 *w, s32 *h) {
+void rgl_get_window_size(i32 *w, i32 *h) {
 	*w = g_rgl_data->width;
 	*h = g_rgl_data->height;
 }
 
 b8 rgl_app_data_create(rgl_app_data_t *data, rgl_app_desc_t *desc) {
+	RGL_ASSERT_RET_B8(data, true);
+	RGL_ASSERT_RET_B8(desc, true);
+
         data->desc = desc;
 	data->width = desc->width;
 	data->height = desc->width;
@@ -114,15 +121,15 @@ void rgl_app_data_destroy(rgl_app_data_t *data) {
 	free(data->audio_cxt);
 }
 
-static void _setup_opengl() {
+static void _setup_opengl(void) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor((f32)g_rgl_data->desc->background_color.r / 255.f, (f32)g_rgl_data->desc->background_color.g / 255.f, (f32)g_rgl_data->desc->background_color.b / 255.f, 1.f);
 }
 
-static b8 _rtkit_initialize_realtime_thread() {
-	s32 err;
-	s32 sched_policy = sched_getscheduler(0) | 0x40000000;
+static b8 _rtkit_initialize_realtime_thread(void) {
+	i32 err;
+	i32 sched_policy = sched_getscheduler(0) | 0x40000000;
 	struct sched_param sched_param = {0};
 
 	struct rlimit rl;
@@ -153,7 +160,7 @@ static b8 _rtkit_initialize_realtime_thread() {
 	return true;
 }
 
-static void _start_main_loop() {
+static void _start_main_loop(void) {
 	g_rgl_data->running = true;
 
         f32 dt = 0, now = RGL_PLATFORM_FUN(get_time), last = now;

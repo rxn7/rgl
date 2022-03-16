@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RGL_COMMON_H
+#define __RGL_COMMON_H
 
 #include <string.h>
 #include <stdint.h>
@@ -15,10 +16,10 @@
 #define RAND_255 (rand() % 256) 
 #define RAND_RANGE_F(min, max) (RAND_F * (max-min) + min)
 
-typedef int8_t          s8;
-typedef int16_t         s16;
-typedef int32_t         s32;
-typedef int64_t         s64;
+typedef int8_t          i8;
+typedef int16_t         i16;
+typedef int32_t         i32;
+typedef int64_t         i64;
 typedef uint8_t         u8;
 typedef uint16_t        u16;
 typedef uint32_t        u32;
@@ -32,6 +33,12 @@ typedef bool            b8;
 #include "rgl_mat4.h"
 #include "rgl_log.h"
 
+#ifdef RGL_BUILD
+	#include "rgl_assert.h"
+#endif
+
 typedef void (*rgl_app_update_t)(f32 dt);
-typedef void (*rgl_app_quit_t)();
-typedef void (*rgl_app_init_t)();
+typedef void (*rgl_app_quit_t)(void);
+typedef void (*rgl_app_init_t)(void);
+
+#endif /* __RGL_COMMON_H */

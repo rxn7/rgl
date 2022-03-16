@@ -10,11 +10,13 @@ static Atom _wm_delete_msg;
 
 static void _process_event();
 
-b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 width, s32 height) { 
+b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 width, i32 height) { 
+	RGL_ASSERT_RET_B8(cxt, false);
+
 	cxt->dpy = XOpenDisplay(0);
 	cxt->root = DefaultRootWindow(cxt->dpy);
 
-	s32 visual_attribs[] = {
+	i32 visual_attribs[] = {
 		GLX_RENDER_TYPE, GLX_RGBA_BIT,
 		GLX_DOUBLEBUFFER, true,
 		GLX_RED_SIZE, 1,
@@ -23,7 +25,7 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 wid
 		None
 	};
 
-	s32 fbcount;
+	i32 fbcount;
 	GLXFBConfig *fbc = glXChooseFBConfig(cxt->dpy, DefaultScreen(cxt->dpy), visual_attribs, &fbcount);
 	if(!fbc) {
 		RGL_LOG_ERROR("Failed to retrieve the GLX framebuffer config");
@@ -46,7 +48,7 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 wid
 	XMapRaised(cxt->dpy, cxt->win);
 	XStoreName(cxt->dpy, cxt->win, title);
 
-	s32 cxt_attribs[] = {
+	i32 cxt_attribs[] = {
 		GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
 		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
 		GLX_CONTEXT_MINOR_VERSION_ARB, 3,
@@ -68,6 +70,8 @@ b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, s32 wid
 }
 
 void rgl_x11_context_destroy(rgl_x11_context_t *cxt) {
+	RGL_ASSERT(cxt, false);
+
 	glXMakeCurrent(cxt->dpy, None, 0);
 	glXDestroyContext(cxt->dpy, cxt->glx);
 

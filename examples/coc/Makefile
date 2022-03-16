@@ -1,4 +1,4 @@
-CFLAGS := -std=gnu99
+CFLAGS := -std=gnu99 -g
 SRC := ./src/*.c
 OBJ := coc.o player.o coin.o
 

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RGL_COLOR_H
+#define __RGL_COLOR_H
 
 #include "rgl_common.h"
 
@@ -20,3 +21,5 @@ typedef struct rgl_color_t {
 #define RGL_RED           RGL_RGB(255, 0, 0)
 #define RGL_GREEN         RGL_RGB(0, 255, 0)
 #define RGL_BLUE          RGL_RGB(0, 0, 255)
+
+#endif /* __RGL_COLOR_H */

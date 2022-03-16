@@ -1,13 +1,14 @@
 #include "player.h"
 #include "common.h"
 
+static rgl_texture_t _texture = {0};
+
 static void player_movement(player_t *player, f32 dt);
 static void player_render(player_t *player);
 
-b8 player_create(player_t *player, const char *texture_path) {
-	player->sprite.texture = malloc(sizeof(rgl_texture_t));
-	rgl_texture_load_from_file(player->sprite.texture, texture_path, RGL_TEXTURE_FILTER_NONE);
-	rgl_sprite_create(&player->sprite);
+void player_create(player_t *player, const char *texture_path) {
+	rgl_texture_load_from_file(&_texture, texture_path, RGL_TEXTURE_FILTER_NONE);
+	rgl_sprite_create(&player->sprite, &_texture);
 
 	rgl_v2_setf(&player->sprite.size, 50);
 	player->sprite.position.x = (f32)g_rgl_data->width / 2.f;
@@ -16,7 +17,6 @@ b8 player_create(player_t *player, const char *texture_path) {
 
 void player_destroy(player_t *player) {
 	rgl_texture_destroy(player->sprite.texture);
-	free(player->sprite.texture);
 
 	rgl_sprite_destroy(&player->sprite);
 }

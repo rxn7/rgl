@@ -1,6 +1,6 @@
 SRC = -c src/*.c
 INCS = -Iinclude -Isrc
-CFLAGS = -std=gnu17 -Wall -fPIC
+CFLAGS = -std=gnu17 -Wall -fPIC -DRGL_BUILD
 LIBS = -lepoxy -lm -lopenal
 
 OBJ = rgl.o \
@@ -14,5 +14,6 @@ OBJ = rgl.o \
       rgl_immediate.o \
       rgl_v2.o \
       rgl_mat4.o \
+      rgl_assert.o
 
-all: compile link clean
+all: compile link

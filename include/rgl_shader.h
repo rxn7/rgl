@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RGL_SHADER_H
+#define __RGL_SHADER_H
 
 #include "rgl_common.h"
 
@@ -11,4 +12,6 @@ void rgl_shader_create_defaults();
 void rgl_shader_destroy_defaults();
 
 b8 rgl_shader_create(rgl_shader_t *shader, const char *vert_src, const char *frag_src);
-b8 rgl_shader_destroy(rgl_shader_t *shader);
+void rgl_shader_destroy(rgl_shader_t *shader);
+
+#endif /* __RGL_SHADER_H */

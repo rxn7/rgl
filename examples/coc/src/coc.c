@@ -52,6 +52,7 @@ void player_coin_pickup_check() {
 	if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
 		coin_respawn(&coin);
 		coin_play_pickup_sound();
+
 		/* TODO: UI Text display */
 		printf("Score: %u\n", ++score);
 	}

@@ -10,8 +10,6 @@
 #define CLICK_SOUND_PATH "res/click.ogg"
 #define BOUNCE_SOUND_PATH "res/bounce.ogg"
 
-/* TODO: More and clearer comments */
-
 #include <vector> 
 #include <thread>
 #include <unistd.h>
@@ -87,9 +85,9 @@ int main(int argc, const char **argv) {
 void app_init() {
         srand(time(0));
 
-	rgl_audio_buffer_create_from_vorbis(&click_audio_buffer, CLICK_SOUND_PATH);
+	rgl_audio_buffer_load_from_vorbis(&click_audio_buffer, CLICK_SOUND_PATH);
 	rgl_audio_source_create(&click_audio_source, &click_audio_buffer);
-	rgl_audio_buffer_create_from_vorbis(&bounce_audio_buffer, BOUNCE_SOUND_PATH);
+	rgl_audio_buffer_load_from_vorbis(&bounce_audio_buffer, BOUNCE_SOUND_PATH);
 
 	for(u32 i=0; i<BOUNCE_AUDIO_SOURCE_COUNT; ++i) {
 		rgl_audio_source_create(&bounce_audio_sources[i], &bounce_audio_buffer);

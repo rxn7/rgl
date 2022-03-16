@@ -2,9 +2,10 @@
 #include <stdlib.h>
 
 #include "rgl_file.h"
-#include "rgl_log.h"
 
 void rgl_read_file(char **buf, const char *path) {
+	RGL_ASSERT(buf, false);
+
         FILE *f = fopen(path, "rb");
 
         if(!f) {

@@ -11,20 +11,13 @@ const rgl_vertex_t _vertices[] = {
 	{ {-1,  1},	{0,1} },
 };
 
-b8 rgl_sprite_create(rgl_sprite_t *sprite) {
-#ifdef RGL_DEBUG
-	if(!sprite) {
-		RGL_LOG_ERROR("Can't create null pointer sprite");
-		return false;
-	}
-#endif
-	if(!sprite->texture) {
-		RGL_LOG_ERROR("Can't create sprite with null pointer texture");
-		return false;
-	}
+b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture) {
+	RGL_ASSERT_RET_B8(sprite, false);
+	RGL_ASSERT_RET_B8(texture, false);
 
 	sprite->rotation = 0;
-	sprite->size = (v2){sprite->texture->width, sprite->texture->height};
+	sprite->texture = texture;
+	sprite->size = (v2){texture->width, texture->height};
 	sprite->position = (v2){0,0};
 
 	if(!rgl_vao_create(&sprite->vao, _vertices, sizeof(_vertices) / sizeof(_vertices[0]))) {
@@ -35,33 +28,15 @@ b8 rgl_sprite_create(rgl_sprite_t *sprite) {
 	return true;
 }
 
-b8 rgl_sprite_destroy(rgl_sprite_t *sprite) {
-#ifdef RGL_DEBUG
-	if(!sprite) {
-		RGL_LOG_ERROR("Can't destroy sprite with null pointer");
-		return false;
-	}
-#endif
+void rgl_sprite_destroy(rgl_sprite_t *sprite) {
+	RGL_ASSERT(sprite, false);
 
-	if(!rgl_vao_destroy(&sprite->vao)) {
-		RGL_LOG_ERROR("Failed to destroy sprite's VAO");
-		return false;
-	}
-
-	return true;
+	rgl_vao_destroy(&sprite->vao);
 }
 
 void rgl_sprite_render(rgl_sprite_t *sprite) {	
-#ifdef RGL_DEBUG
-	if(!sprite) {
-		RGL_LOG_ERROR("Can't render null pointer sprite");
-		return;
-	}
-
-	if(!sprite->texture) {
-		RGL_LOG_ERROR("Can't render sprite with null pointer texture");
-	}
-#endif
+	RGL_ASSERT(sprite, false);
+	RGL_ASSERT(sprite->texture, false);
 
 	glBindTexture(GL_TEXTURE_2D, sprite->texture->id);
 	glUseProgram(_shader->id);
@@ -87,13 +62,13 @@ void rgl_sprite_render(rgl_sprite_t *sprite) {
 	glUniformMatrix4fv(_shader->uniform_locations[0], 1, false, (float *)g_rgl_data->projection_matrix);
 	glUniformMatrix4fv(_shader->uniform_locations[1], 1, false, (float *)model_matrix);
 
-	rgl_vao_render(GL_QUADS, &sprite->vao);
+	rgl_vao_render(&sprite->vao, GL_QUADS);
 
 	glUseProgram(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void rgl_sprite_shader_create() {
+void rgl_sprite_shader_create(void) {
 	_shader = malloc(sizeof(rgl_shader_t));
 
 	/* Sprite shader */
@@ -125,7 +100,7 @@ void rgl_sprite_shader_create() {
 	_shader->uniform_locations[1] = glGetUniformLocation(_shader->id, "u_Model");
 }
 
-void rgl_sprite_shader_destroy() {
+void rgl_sprite_shader_destroy(void) {
 	rgl_shader_destroy(_shader);
 	free(_shader);
 }
