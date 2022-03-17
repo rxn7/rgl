@@ -3,13 +3,13 @@
 
 #include "rgl_common.h"
 
-typedef struct rgl_shader_t {
+typedef struct rglShader {
 	u32 id;
 	u32 *uniform_locations;
-} rgl_shader_t;
+} rglShader;
 
-b8 rgl_shader_create(rgl_shader_t *shader, const char *vert_src, const char *frag_src);
-void rgl_shader_destroy(rgl_shader_t *shader);
+b8 rgl_shader_create(rglShader *shader, const char *vert_src, const char *frag_src);
+void rgl_shader_destroy(rglShader *shader);
 
 void _rgl_shader_create_defaults();
 void _rgl_shader_destroy_defaults();

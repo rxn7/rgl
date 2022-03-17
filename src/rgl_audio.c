@@ -3,7 +3,7 @@
 #include "stb/stb_vorbis.c"
 #include <unistd.h>
 
-void rgl_audio_context_create(rgl_audio_context_t *cxt) {
+void rgl_audio_context_create(rglAudioContext *cxt) {
 	RGL_ASSERT_VALID_PTR(cxt);
 
 	const char *dev_name = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
@@ -18,7 +18,7 @@ void rgl_audio_context_create(rgl_audio_context_t *cxt) {
 	RGL_ASSERT(alcMakeContextCurrent(cxt->cxt), "failed to make OpenAL context current");
 }
 
-void rgl_audio_context_destroy(rgl_audio_context_t *cxt) {
+void rgl_audio_context_destroy(rglAudioContext *cxt) {
 	RGL_ASSERT_VALID_PTR(cxt);
 
 	alcMakeContextCurrent(0);
@@ -30,7 +30,7 @@ void rgl_audio_context_destroy(rgl_audio_context_t *cxt) {
 }
 
 
-void rgl_audio_buffer_load_from_vorbis(rgl_audio_buffer_t *audio_buffer, const char *path) {
+void rgl_audio_buffer_load_from_vorbis(rglAudioBuffer *audio_buffer, const char *path) {
 	RGL_ASSERT_VALID_PTR(audio_buffer);
 
 	i16 *buffer;
@@ -50,7 +50,7 @@ void rgl_audio_buffer_load_from_vorbis(rgl_audio_buffer_t *audio_buffer, const c
 	free(buffer);
 }
 
-void rgl_audio_buffer_destroy(rgl_audio_buffer_t *buffer) {
+void rgl_audio_buffer_destroy(rglAudioBuffer *buffer) {
 	RGL_ASSERT_VALID_PTR(buffer);
 
 	if(buffer && buffer->id) {
@@ -58,7 +58,7 @@ void rgl_audio_buffer_destroy(rgl_audio_buffer_t *buffer) {
 	}
 }
 
-void rgl_audio_source_create(rgl_audio_source_t *source, rgl_audio_buffer_t *buffer) {
+void rgl_audio_source_create(rglAudioSource *source, rglAudioBuffer *buffer) {
 	RGL_ASSERT_VALID_PTR(buffer);
 	RGL_ASSERT_VALID_PTR(source);
 
@@ -71,7 +71,7 @@ void rgl_audio_source_create(rgl_audio_source_t *source, rgl_audio_buffer_t *buf
 	alSourcef(source->id, AL_GAIN, 1.0f);
 }
 
-void rgl_audio_source_destroy(rgl_audio_source_t *source) {
+void rgl_audio_source_destroy(rglAudioSource *source) {
 	RGL_ASSERT_VALID_PTR(source);
 
 	if(source && source->id) {
@@ -79,7 +79,7 @@ void rgl_audio_source_destroy(rgl_audio_source_t *source) {
 	}
 }
 
-void rgl_audio_source_play(rgl_audio_source_t *source) {
+void rgl_audio_source_play(rglAudioSource *source) {
 	RGL_ASSERT_VALID_PTR(source);
 
 	i32 state;
@@ -94,7 +94,7 @@ void rgl_audio_source_play(rgl_audio_source_t *source) {
 	source->playing = true;
 }
 
-void rgl_audio_source_stop(rgl_audio_source_t *source) {
+void rgl_audio_source_stop(rglAudioSource *source) {
 	RGL_ASSERT_VALID_PTR(source);
 
 	if(source->playing) {
@@ -103,26 +103,26 @@ void rgl_audio_source_stop(rgl_audio_source_t *source) {
 	}
 }
 
-void rgl_audio_source_set_looping(rgl_audio_source_t *source, b8 looping) {
+void rgl_audio_source_set_looping(rglAudioSource *source, b8 looping) {
 	RGL_ASSERT_VALID_PTR(source);
 
 	source->looping = looping;
 	alSourcei(source->id, AL_LOOPING, looping);
 }
 
-void rgl_audio_source_set_gain(rgl_audio_source_t *source, f32 gain) {
+void rgl_audio_source_set_gain(rglAudioSource *source, f32 gain) {
 	RGL_ASSERT_VALID_PTR(source);
 
 	alSourcef(source->id, AL_GAIN, gain);
 }
 
-void rgl_audio_source_set_pitch(rgl_audio_source_t *source, f32 pitch) {
+void rgl_audio_source_set_pitch(rglAudioSource *source, f32 pitch) {
 	RGL_ASSERT_VALID_PTR(source);
 
 	alSourcef(source->id, AL_PITCH, pitch);
 }
 
-b8 rgl_audio_source_is_playing(rgl_audio_source_t *source) {
+b8 rgl_audio_source_is_playing(rglAudioSource *source) {
 	RGL_ASSERT_VALID_PTR(source);
 
 	i32 state;

@@ -2,7 +2,7 @@
 #include "common.h"
 
 typedef struct player_t {
-	rgl_sprite_t sprite;
+	rglSprite sprite;
 	v2 move_dir;
 } player_t;
 

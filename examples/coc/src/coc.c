@@ -13,7 +13,7 @@ coin_t coin;
 u32 score = 0;
 
 int main(int argc, const char **argv) {
-	rgl_app_desc_t desc = (rgl_app_desc_t) {
+	rglAppDesc desc = (rglAppDesc) {
 		.width = 640,
 		.height = 480,
 		.title = "RGL | Coc",

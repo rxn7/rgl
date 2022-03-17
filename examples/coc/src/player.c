@@ -1,7 +1,7 @@
 #include "player.h"
 #include "common.h"
 
-static rgl_texture_t _texture = {0};
+static rglTexture _texture = {0};
 
 static void player_movement(player_t *player, f32 dt);
 static void player_render(player_t *player);

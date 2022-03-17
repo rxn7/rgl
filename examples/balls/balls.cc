@@ -19,7 +19,7 @@ extern "C" {
 }
 
 struct ball_t {
-	rgl_color_t color;
+	rglColor color;
 	v2 pos;
 	v2 vel;
 	f32 radius;
@@ -56,11 +56,11 @@ std::vector<ball_t> vec_balls;
 std::thread thr_physics;
 ball_t *selected_ball = NULL;
 
-rgl_audio_buffer_t click_audio_buffer;
-rgl_audio_source_t click_audio_source;
+rglAudioBuffer click_audio_buffer;
+rglAudioSource click_audio_source;
 
-rgl_audio_buffer_t bounce_audio_buffer;
-rgl_audio_source_t bounce_audio_sources[BOUNCE_AUDIO_SOURCE_COUNT];
+rglAudioBuffer bounce_audio_buffer;
+rglAudioSource bounce_audio_sources[BOUNCE_AUDIO_SOURCE_COUNT];
 
 b8 gravity = false;
 b8 muted = false;
@@ -68,7 +68,7 @@ b8 running = true;
 b8 paused = false;
 
 int main(int argc, const char **argv) {
-        rgl_app_desc_t desc = {
+        rglAppDesc desc = {
                 .title = "RGL | Balls",
                 .height = 480,
                 .width = 640,
@@ -376,7 +376,7 @@ void play_click_sound() {
 void play_bounce_sound(f32 gain) {
 	if(muted) return;
 
-	rgl_audio_source_t *source = 0;
+	rglAudioSource *source = 0;
 	for(u32 i=0; i<BOUNCE_AUDIO_SOURCE_COUNT; ++i) {
 		if(!rgl_audio_source_is_playing(&bounce_audio_sources[i])) {
 			source = &bounce_audio_sources[i];

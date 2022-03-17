@@ -3,9 +3,9 @@
 
 #include "rgl_common.h"
 
-typedef struct rgl_vertex_t {
+typedef struct rglVertex {
 	v2 position;
 	v2 uv;
-} rgl_vertex_t;
+} rglVertex;
 
 #endif /* __RGL_VERTEX_H */

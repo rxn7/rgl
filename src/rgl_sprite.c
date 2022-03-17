@@ -2,16 +2,16 @@
 #include "rgl_shader.h"
 #include "rgl.h"
 
-static rgl_shader_t *_shader = 0;
+static rglShader *_shader = 0;
 
-const rgl_vertex_t _vertices[] = {
+const rglVertex _vertices[] = {
 	{ {-1, -1},	{0,0} },
 	{ { 1, -1},	{1,0} },
 	{ { 1,  1},	{1,1} },
 	{ {-1,  1},	{0,1} },
 };
 
-b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture) {
+b8 rgl_sprite_create(rglSprite *sprite, rglTexture *texture) {
 	RGL_ASSERT_VALID_PTR(sprite);
 	RGL_ASSERT_VALID_PTR(texture);
 
@@ -28,13 +28,13 @@ b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture) {
 	return true;
 }
 
-void rgl_sprite_destroy(rgl_sprite_t *sprite) {
+void rgl_sprite_destroy(rglSprite *sprite) {
 	RGL_ASSERT_VALID_PTR(sprite);
 
 	rgl_vao_destroy(&sprite->vao);
 }
 
-void rgl_sprite_render(rgl_sprite_t *sprite) {	
+void rgl_sprite_render(rglSprite *sprite) {	
 	RGL_ASSERT_VALID_PTR(sprite);
 	RGL_ASSERT_VALID_PTR(sprite->texture);
 
@@ -69,7 +69,7 @@ void rgl_sprite_render(rgl_sprite_t *sprite) {
 }
 
 void _rgl_sprite_shader_create(void) {
-	_shader = malloc(sizeof(rgl_shader_t));
+	_shader = malloc(sizeof(rglShader));
 
 	/* Sprite shader */
 	rgl_shader_create(_shader, 

@@ -24,7 +24,7 @@ b8 _rgl_shader_init(u32 *shader, u32 type, const char *src) {
 	return true;
 }
 
-b8 rgl_shader_create(rgl_shader_t *shader, const char *vert_src, const char *frag_src) {
+b8 rgl_shader_create(rglShader *shader, const char *vert_src, const char *frag_src) {
 	RGL_ASSERT_VALID_PTR(shader);
 
 	id_t vert, frag;
@@ -65,7 +65,7 @@ b8 rgl_shader_create(rgl_shader_t *shader, const char *vert_src, const char *fra
 	return true;
 }
 
-void rgl_shader_destroy(rgl_shader_t *shader) {
+void rgl_shader_destroy(rglShader *shader) {
 	RGL_ASSERT_VALID_PTR(shader);
 
 	glDeleteProgram(shader->id);

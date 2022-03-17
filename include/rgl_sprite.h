@@ -4,17 +4,17 @@
 #include "rgl_vao.h"
 #include "rgl_texture.h"
 
-typedef struct rgl_sprite_t {
+typedef struct rglSprite {
 	v2 position;
 	v2 size;
 	f32 rotation;	
-	rgl_vao_t vao;
-	rgl_texture_t *texture;
-} rgl_sprite_t;
+	rglVao vao;
+	rglTexture *texture;
+} rglSprite;
 
-b8 rgl_sprite_create(rgl_sprite_t *sprite, rgl_texture_t *texture);
-void rgl_sprite_destroy(rgl_sprite_t *sprite);
-void rgl_sprite_render(rgl_sprite_t *sprite);
+b8 rgl_sprite_create(rglSprite *sprite, rglTexture *texture);
+void rgl_sprite_destroy(rglSprite *sprite);
+void rgl_sprite_render(rglSprite *sprite);
 
 void _rgl_sprite_shader_create(void);
 void _rgl_sprite_shader_destroy(void);

@@ -7,7 +7,7 @@
 
 _rgl_app_data_t *_rgl_data = 0;
 
-b8 rgl_init(rgl_app_desc_t *desc) {
+b8 rgl_init(rglAppDesc *desc) {
 	RGL_ASSERT_VALID_PTR(desc);
 
 	/* Sanity checks */
@@ -77,7 +77,7 @@ void rgl_get_window_size(i32 *w, i32 *h) {
 	*h = _rgl_data->height;
 }
 
-void _rgl_app_data_create(_rgl_app_data_t *data, rgl_app_desc_t *desc) {
+void _rgl_app_data_create(_rgl_app_data_t *data, rglAppDesc *desc) {
 	RGL_ASSERT_VALID_PTR(data);
 	RGL_ASSERT_VALID_PTR(desc);
 
@@ -88,7 +88,7 @@ void _rgl_app_data_create(_rgl_app_data_t *data, rgl_app_desc_t *desc) {
 	data->plat_cxt = malloc(sizeof(RGL_PLATFORM_CONTEXT_T));
 	RGL_ASSERT(RGL_PLATFORM_FUN(context_initialize, data->plat_cxt, desc->title, desc->width, desc->height), "failed to initialize platform context");
 
-	data->audio_cxt = malloc(sizeof(rgl_audio_context_t));
+	data->audio_cxt = malloc(sizeof(rglAudioContext));
 	rgl_audio_context_create(data->audio_cxt);
 }
 

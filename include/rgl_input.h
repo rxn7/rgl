@@ -3,7 +3,7 @@
 
 #include "rgl_common.h"
 
-typedef enum rgl_key_t {
+typedef enum rglKey {
 	RGL_KEY_UNKNOWN = -1,
 	RGL_KEY_A = 0,
 	RGL_KEY_B,
@@ -47,22 +47,22 @@ typedef enum rgl_key_t {
         RGL_KEY_ARROW_LEFT,
         RGL_KEY_ARROW_RIGHT,
         RGL_KEY_COUNT,
-} rgl_key_t;
+} rglKey;
 
-typedef enum rgl_btn_t {
+typedef enum rglBtn {
 	RGL_MOUSE_UNKNOWN = -1,
         RGL_MOUSE_LEFT = 0,
         RGL_MOUSE_RIGHT,
         RGL_MOUSE_MIDDLE,
         RGL_BTN_COUNT,
-} rgl_btn_t;
+} rglBtn;
 
 void rgl_get_cursor_pos(v2 *vec);
-b8 rgl_is_key_pressed(rgl_key_t key);
-b8 rgl_is_key_just_pressed(rgl_key_t key);
-b8 rgl_is_key_just_released(rgl_key_t btn);
-b8 rgl_is_button_pressed(rgl_btn_t btn);
-b8 rgl_is_button_just_pressed(rgl_btn_t btn);
-b8 rgl_is_button_just_released(rgl_btn_t btn);
+b8 rgl_is_key_pressed(rglKey key);
+b8 rgl_is_key_just_pressed(rglKey key);
+b8 rgl_is_key_just_released(rglKey btn);
+b8 rgl_is_button_pressed(rglBtn btn);
+b8 rgl_is_button_just_pressed(rglBtn btn);
+b8 rgl_is_button_just_released(rglBtn btn);
 
 #endif /* __RGL_INPUT_H */

@@ -3,18 +3,18 @@
 
 #include "rgl_common.h"
 
-typedef struct rgl_color_t {
+typedef struct rglColor {
         union {
                 u8 rgb[3]; 
                 struct {
                         u8 r, g, b;
                 };
         };
-} rgl_color_t;
+} rglColor;
 
-#define RGL_RGB(r, g, b) (rgl_color_t) { .rgb = {r, g, b}  }
+#define RGL_RGB(r, g, b) (rglColor) { .rgb = {r, g, b}  }
 
-#define RGL_COLOR_RAND ((rgl_color_t){.rgb = {RAND_255,RAND_255,RAND_255}})
+#define RGL_COLOR_RAND ((rglColor){.rgb = {RAND_255,RAND_255,RAND_255}})
 
 #define RGL_BLACK         RGL_RGB(0, 0, 0)
 #define RGL_WHITE         RGL_RGB(255, 255, 255)

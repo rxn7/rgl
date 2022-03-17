@@ -1,6 +1,6 @@
 #include "rgl_sprite_animation.h"
 
-void rgl_sprite_animation_create(rgl_sprite_animation_t *anim, rgl_texture_t *texture, u16 *frames, u16 frame_count, f32 seconds_per_frame, v2 frame_size) {
+void rgl_sprite_animation_create(rglSpriteAnimation *anim, rglTexture *texture, u16 *frames, u16 frame_count, f32 seconds_per_frame, v2 frame_size) {
 	RGL_ASSERT_VALID_PTR(anim);
 	RGL_ASSERT_VALID_PTR(texture);
 	RGL_ASSERT_VALID_PTR(frames);
@@ -16,7 +16,7 @@ void rgl_sprite_animation_create(rgl_sprite_animation_t *anim, rgl_texture_t *te
 	memcpy(frames, anim->frames, frames_sz);
 }
 
-void rgl_sprite_animation_destroy(rgl_sprite_animation_t *anim) {
+void rgl_sprite_animation_destroy(rglSpriteAnimation *anim) {
 	RGL_ASSERT_VALID_PTR(anim);
 	RGL_ASSERT_VALID_PTR(anim->frames);
 

@@ -1,6 +1,6 @@
 #include "rgl_vao.h"
 
-b8 rgl_vao_create(rgl_vao_t *vao, const rgl_vertex_t *vertices, u32 vertex_count) {
+b8 rgl_vao_create(rglVao *vao, const rglVertex *vertices, u32 vertex_count) {
 	RGL_ASSERT_VALID_PTR(vao);
 	RGL_ASSERT_VALID_PTR(vertices);
 
@@ -14,24 +14,24 @@ b8 rgl_vao_create(rgl_vao_t *vao, const rgl_vertex_t *vertices, u32 vertex_count
 	glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 4 * vertex_count, vertices, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(rgl_vertex_t), (void *)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(rglVertex), (void *)0);
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(rgl_vertex_t), (void *)(sizeof(f32) * 2));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(rglVertex), (void *)(sizeof(f32) * 2));
 
 	glBindVertexArray(0);
 
 	return true;
 }
 
-void rgl_vao_destroy(rgl_vao_t *vao) {
+void rgl_vao_destroy(rglVao *vao) {
 	RGL_ASSERT_VALID_PTR(vao);
 
 	glDeleteBuffers(1, &vao->vbo);
 	glDeleteVertexArrays(1, &vao->id);
 }
 
-void rgl_vao_render(rgl_vao_t *vao, u32 mode) {
+void rgl_vao_render(rglVao *vao, u32 mode) {
 	RGL_ASSERT_VALID_PTR(vao);
 
 	glBindVertexArray(vao->id);

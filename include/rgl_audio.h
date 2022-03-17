@@ -5,36 +5,36 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
-typedef struct rgl_audio_context_t {
+typedef struct rglAudioContext {
 	ALCdevice *dev;
 	ALCcontext *cxt;
 	u32 *audio_effects;
-} rgl_audio_context_t;
+} rglAudioContext;
 
-typedef struct rgl_audio_buffer_t {
+typedef struct rglAudioBuffer {
 	u32 id;
-} rgl_audio_buffer_t;
+} rglAudioBuffer;
 
-typedef struct rgl_audio_source_t {
+typedef struct rglAudioSource {
 	u32 id;
 	b8 looping;
 	b8 playing;
-	rgl_audio_buffer_t *buffer;
-} rgl_audio_source_t;
+	rglAudioBuffer *buffer;
+} rglAudioSource;
 
-void rgl_audio_context_create(rgl_audio_context_t *cxt);
-void rgl_audio_context_destroy(rgl_audio_context_t *cxt);
+void rgl_audio_context_create(rglAudioContext *cxt);
+void rgl_audio_context_destroy(rglAudioContext *cxt);
 
-void rgl_audio_buffer_load_from_vorbis(rgl_audio_buffer_t *buffer, const char *path);
-void rgl_audio_buffer_destroy(rgl_audio_buffer_t *buffer);
+void rgl_audio_buffer_load_from_vorbis(rglAudioBuffer *buffer, const char *path);
+void rgl_audio_buffer_destroy(rglAudioBuffer *buffer);
 
-void rgl_audio_source_create(rgl_audio_source_t *source, rgl_audio_buffer_t *buffer);
-void rgl_audio_source_destroy(rgl_audio_source_t *source);
-void rgl_audio_source_play(rgl_audio_source_t *source);
-void rgl_audio_source_stop(rgl_audio_source_t *source);
-void rgl_audio_source_set_loop(rgl_audio_source_t *source, b8 looping);
-void rgl_audio_source_set_gain(rgl_audio_source_t *source, f32 gain);
-void rgl_audio_source_set_pitch(rgl_audio_source_t *source, f32 pitch);
-b8 rgl_audio_source_is_playing(rgl_audio_source_t *source);
+void rgl_audio_source_create(rglAudioSource *source, rglAudioBuffer *buffer);
+void rgl_audio_source_destroy(rglAudioSource *source);
+void rgl_audio_source_play(rglAudioSource *source);
+void rgl_audio_source_stop(rglAudioSource *source);
+void rgl_audio_source_set_loop(rglAudioSource *source, b8 looping);
+void rgl_audio_source_set_gain(rglAudioSource *source, f32 gain);
+void rgl_audio_source_set_pitch(rglAudioSource *source, f32 pitch);
+b8 rgl_audio_source_is_playing(rglAudioSource *source);
 
 #endif /* __RGL_AUDIO_H */

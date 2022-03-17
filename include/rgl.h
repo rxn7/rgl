@@ -11,19 +11,19 @@
 #include "rgl_immediate.h"
 #include "rgl_audio.h"
 
-typedef struct rgl_app_desc_t {
+typedef struct rglAppDesc {
         const char *title;
         u16 height;
         u16 width;
-	rgl_color_t background_color;
+	rglColor background_color;
         rgl_app_init_t init_f;
         rgl_app_update_t update_f;
         rgl_app_quit_t quit_f;
-} rgl_app_desc_t;
+} rglAppDesc;
 
 #include "rgl_platform.h"
 
-b8 rgl_init(rgl_app_desc_t *desc);
+b8 rgl_init(rglAppDesc *desc);
 void rgl_quit(void);
 void rgl_set_vsync(b8 value);
 void rgl_get_window_size(i32 *w, i32 *h);
@@ -32,8 +32,8 @@ f32 rgl_get_time(void);
 void _rgl_update_projection(void);
 
 typedef struct _rgl_app_data_t {
-        rgl_app_desc_t *desc;
-	rgl_audio_context_t *audio_cxt;
+        rglAppDesc *desc;
+	rglAudioContext *audio_cxt;
 	RGL_PLATFORM_CONTEXT_T *plat_cxt;
 
 	b8 running;
@@ -43,7 +43,7 @@ typedef struct _rgl_app_data_t {
 
 extern _rgl_app_data_t *_rgl_data; /* Defined in rgl.c */
 
-void _rgl_app_data_create(_rgl_app_data_t *data, rgl_app_desc_t *desc);
+void _rgl_app_data_create(_rgl_app_data_t *data, rglAppDesc *desc);
 void _rgl_app_data_destroy(_rgl_app_data_t *data);
 
 void _rgl_setup_opengl(void);

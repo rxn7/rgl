@@ -1,10 +1,10 @@
 #include "common.h"
 #include "coin.h"
 
-static rgl_sprite_t _sprite = {0};
-static rgl_texture_t _texture = {0};
-static rgl_audio_buffer_t _pickup_audio_buffer = {0};
-static rgl_audio_source_t _pickup_audio_source = {0};
+static rglSprite _sprite = {0};
+static rglTexture _texture = {0};
+static rglAudioBuffer _pickup_audio_buffer = {0};
+static rglAudioSource _pickup_audio_source = {0};
 
 static void coin_render(coin_t *coin);
 
