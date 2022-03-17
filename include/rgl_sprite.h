@@ -12,11 +12,11 @@ typedef struct rglSprite {
 	rglTexture *texture;
 } rglSprite;
 
-b8 rgl_sprite_create(rglSprite *sprite, rglTexture *texture);
-void rgl_sprite_destroy(rglSprite *sprite);
-void rgl_sprite_render(rglSprite *sprite);
+b8 rglSpriteCreate(rglSprite *sprite, rglTexture *texture);
+void rglSpriteDestroy(rglSprite *sprite);
+void rglSpriteRender(rglSprite *sprite);
 
-void _rgl_sprite_shader_create(void);
-void _rgl_sprite_shader_destroy(void);
+void _rglSpriteShaderCreate(void);
+void _rglSpriteShaderDestroy(void);
 
 #endif /* __RGL_SPRITE_H */

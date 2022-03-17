@@ -8,18 +8,18 @@
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
 
-typedef struct rgl_x11_context_t {
+typedef struct rglX11Context {
 	Display *dpy;
 	Window win, root;
 	XWindowAttributes win_attr;
 	XEvent event;
 	GLXContext glx;
-} rgl_x11_context_t;
+} rglX11Context;
 
-b8 rgl_x11_context_initialize(rgl_x11_context_t *cxt, const char *title, i32 width, i32 height);
-void rgl_x11_context_destroy(rgl_x11_context_t *cxt);
+b8 rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 height);
+void rglX11ContextDestroy(rglX11Context *cxt);
 
-f32 rgl_x11_get_time(void);
-void rgl_x11_start_frame(void);
-void rgl_x11_end_frame(void);
-void rgl_x11_set_vsync(b8 value);
+f32 rglX11GetTime(void);
+void rglX11StartFrame(void);
+void rglX11EndFrame(void);
+void rglX11SetVsync(b8 value);

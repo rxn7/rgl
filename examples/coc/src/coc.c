@@ -23,7 +23,7 @@ int main(int argc, const char **argv) {
 		.quit_f = app_quit,
 	};
 
-	rgl_init(&desc);
+	rglStart(&desc);
 }
 
 void app_init() {
@@ -45,9 +45,9 @@ void app_update(f32 dt) {
 
 void player_coin_pickup_check() {
 	v2 delta_pos;
-	rgl_v2_sub(&coin.pos, &player.sprite.position, &delta_pos);
+	rglV2Sub(&coin.pos, &player.sprite.position, &delta_pos);
 
-	f32 dist = rgl_v2_len(&delta_pos);
+	f32 dist = rglV2Length(&delta_pos);
 
 	if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
 		coin_respawn(&coin);

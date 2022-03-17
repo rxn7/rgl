@@ -4,7 +4,6 @@ void rgl_sprite_animation_create(rglSpriteAnimation *anim, rglTexture *texture, 
 	RGL_ASSERT_VALID_PTR(anim);
 	RGL_ASSERT_VALID_PTR(texture);
 	RGL_ASSERT_VALID_PTR(frames);
-	RGL_ASSERT(frame_count > 0, "frame_count has to be greater than 0");
 
 	anim->texture = texture;
 	anim->frame_count = frame_count;

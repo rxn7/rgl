@@ -9,7 +9,7 @@ static char _prev_keys[32] = {0};
 static u32 _buttons; 
 static u32 _prev_buttons; 
 
-static KeySym _rglKeyo_keysym(rglKey key) {
+static KeySym _rglKeyToKeysym(rglKey key) {
 	switch(key) {
 		case RGL_KEY_A:          return XK_A;
 		case RGL_KEY_B:          return XK_B;
@@ -59,7 +59,7 @@ static KeySym _rglKeyo_keysym(rglKey key) {
 	return 0;
 }
 
-void rgl_x11_input_update(void) {
+void rglX11InputUpdate(void) {
 	i32 rx, ry;
 	i32 mx, my;
 	Window win;
@@ -71,7 +71,7 @@ void rgl_x11_input_update(void) {
 	XQueryKeymap(_rgl_data->plat_cxt->dpy, _keys);
 }
 
-void rgl_x11_input_post_update(void) {
+void rglX11InputPostUpdate(void) {
 	for(u8 i=0; i<32; ++i) {
 		_prev_keys[i] = _keys[i];
 	}
@@ -79,26 +79,26 @@ void rgl_x11_input_post_update(void) {
 	_prev_buttons = _buttons;
 }
 
-void rgl_x11_get_cursor_pos(v2 *vec) {
-	rgl_v2_cpy(&_cursor_pos, vec);
+void rglX11GetCursorPos(v2 *vec) {
+	rglV2Copy(&_cursor_pos, vec);
 }
 
-b8 rgl_x11_is_key_pressed(rglKey key) {
-	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyo_keysym(key));
+b8 rglX11IsKeyPressed(rglKey key) {
+	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyToKeysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 
-b8 rgl_x11_is_key_just_pressed(rglKey key) {
-	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyo_keysym(key));
+b8 rglX11IsKeyJustPressed(rglKey key) {
+	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyToKeysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) != 0 && (_prev_keys[keycode / 8] & (1 << (keycode % 8))) == 0;
 }
 
-b8 rgl_x11_is_key_just_released(rglKey key) {
-	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyo_keysym(key));
+b8 rglX11IsKeyJustReleased(rglKey key) {
+	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyToKeysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) == 0 && (_prev_keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 
-b8 rgl_x11_is_btn_pressed(rglBtn btn) {
+b8 rglX11IsBtnPressed(rglBtn btn) {
 	switch(btn) {
 		case RGL_MOUSE_LEFT: return _buttons & Button1Mask;
 		case RGL_MOUSE_RIGHT: return _buttons & Button3Mask;
@@ -109,7 +109,7 @@ b8 rgl_x11_is_btn_pressed(rglBtn btn) {
 	return false;
 }
 
-b8 rgl_x11_is_btn_just_pressed(rglBtn btn) {
+b8 rglX11IsBtnJustPressed(rglBtn btn) {
 	switch(btn) {
 		case RGL_MOUSE_LEFT: return _buttons & Button1Mask && !(_prev_buttons & Button1Mask);
 		case RGL_MOUSE_RIGHT: return _buttons & Button3Mask && !(_prev_buttons & Button3Mask);
@@ -120,7 +120,7 @@ b8 rgl_x11_is_btn_just_pressed(rglBtn btn) {
 	return false;
 }
 
-b8 rgl_x11_is_btn_just_released(rglBtn btn) {
+b8 rglX11IsBtnJustReleased(rglBtn btn) {
 	switch(btn) {
 		case RGL_MOUSE_LEFT: return !(_buttons & Button1Mask) && _prev_buttons & Button1Mask;
 		case RGL_MOUSE_RIGHT: return !(_buttons & Button3Mask) && _prev_buttons & Button3Mask;

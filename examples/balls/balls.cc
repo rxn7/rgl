@@ -77,20 +77,18 @@ int main(int argc, const char **argv) {
                 .quit_f = app_quit,
         };
 
-        if(!rgl_init(&desc)) {
-		return -1;
-	}
+        rglStart(&desc);
 }
 
 void app_init() {
         srand(time(0));
 
-	rgl_audio_buffer_load_from_vorbis(&click_audio_buffer, CLICK_SOUND_PATH);
-	rgl_audio_source_create(&click_audio_source, &click_audio_buffer);
-	rgl_audio_buffer_load_from_vorbis(&bounce_audio_buffer, BOUNCE_SOUND_PATH);
+	rglAudioBufferLoadFromVorbis(&click_audio_buffer, CLICK_SOUND_PATH);
+	rglAudioSourceCreate(&click_audio_source, &click_audio_buffer);
+	rglAudioBufferLoadFromVorbis(&bounce_audio_buffer, BOUNCE_SOUND_PATH);
 
 	for(u32 i=0; i<BOUNCE_AUDIO_SOURCE_COUNT; ++i) {
-		rgl_audio_source_create(&bounce_audio_sources[i], &bounce_audio_buffer);
+		rglAudioSourceCreate(&bounce_audio_sources[i], &bounce_audio_buffer);
 	}
 
 	init_balls();
@@ -100,23 +98,23 @@ void app_init() {
 void app_quit() {
 	running = false;
 
-	rgl_audio_buffer_destroy(&bounce_audio_buffer);
-	rgl_audio_buffer_destroy(&click_audio_buffer);
-	rgl_audio_source_destroy(&click_audio_source);
+	rglAudioBufferDestroy(&bounce_audio_buffer);
+	rglAudioBufferDestroy(&click_audio_buffer);
+	rglAudioSourceDestroy(&click_audio_source);
 
 	for(u32 i=0; i<BOUNCE_AUDIO_SOURCE_COUNT; ++i) {
-		rgl_audio_source_destroy(&bounce_audio_sources[i]);
+		rglAudioSourceDestroy(&bounce_audio_sources[i]);
 	}
 
 	thr_physics.join();
 }
 
 void app_update(f32 dt) {
-	b8 left_pressed = rgl_is_button_pressed(RGL_MOUSE_LEFT);
-	b8 right_pressed = rgl_is_button_pressed(RGL_MOUSE_RIGHT);
+	b8 left_pressed = rglIsButtonPressed(RGL_MOUSE_LEFT);
+	b8 right_pressed = rglIsButtonPressed(RGL_MOUSE_RIGHT);
 
 	v2 mouse_pos;
-	rgl_get_cursor_pos(&mouse_pos);
+	rglGetCursorPos(&mouse_pos);
 
 	if(left_pressed || right_pressed) {
 		if(selected_ball == NULL) {
@@ -131,7 +129,7 @@ void app_update(f32 dt) {
 			selected_ball->vel.y = -5.0f * (selected_ball->pos.y - mouse_pos.y);
 		}
 	} else {
-		if(rgl_is_button_just_released(RGL_MOUSE_RIGHT) && selected_ball != NULL) {
+		if(rglIsButtonJustReleased(RGL_MOUSE_RIGHT) && selected_ball != NULL) {
 			play_click_sound();
 			selected_ball->vel.x = 5.0f * (selected_ball->pos.x - mouse_pos.x);
 			selected_ball->vel.y = 5.0f * (selected_ball->pos.y - mouse_pos.y);
@@ -140,44 +138,44 @@ void app_update(f32 dt) {
 		selected_ball = NULL;
 	}
 
-	if(rgl_is_key_just_pressed(RGL_KEY_N)) {
+	if(rglIsKeyJustPressed(RGL_KEY_N)) {
 		v2 pos;
-		rgl_get_cursor_pos(&pos);
+		rglGetCursorPos(&pos);
 		add_ball(pos);
 
 		play_click_sound();
 		printf("Adding a new ball at position: [%f, %f]\n", pos.x, pos.y);
 	}
 
-	if(rgl_is_key_just_pressed(RGL_KEY_C)) {
+	if(rglIsKeyJustPressed(RGL_KEY_C)) {
 		vec_balls.clear();
 		play_click_sound();
 		printf("Clearing all balls\n");
 	}
 
-	if(rgl_is_key_just_pressed(RGL_KEY_G)) {
+	if(rglIsKeyJustPressed(RGL_KEY_G)) {
 		gravity = !gravity;
 		play_click_sound();
 		printf("Gravity: %s\n", gravity ? "ON" : "OFF");
 	}
 
-	if(rgl_is_key_just_pressed(RGL_KEY_M)) {
+	if(rglIsKeyJustPressed(RGL_KEY_M)) {
 		muted = !muted;
 		play_click_sound();
 		printf("Mute: %s\n", muted ? "ON" : "OFF");
 	}
 
-	if(rgl_is_key_just_pressed(RGL_KEY_P)) {
+	if(rglIsKeyJustPressed(RGL_KEY_P)) {
 		paused = !paused;
 		play_click_sound();
 		printf("Paused: %s\n", paused ? "ON" : "OFF");
 	}
 
 	f32 radius_multiplier = 1.0f;
-	if(rgl_is_key_just_pressed(RGL_KEY_I)) {
+	if(rglIsKeyJustPressed(RGL_KEY_I)) {
 		radius_multiplier = 1.1f;
 		play_click_sound();
-	} else if(rgl_is_key_just_pressed(RGL_KEY_O)) {
+	} else if(rglIsKeyJustPressed(RGL_KEY_O)) {
 		radius_multiplier = 0.9f;
 		play_click_sound();
 	}
@@ -199,8 +197,8 @@ void app_update(f32 dt) {
 			ball.pos.y += ball.vel.y * dt;
 
 			/* Stop balls with very low velocity */
-			if(rgl_v2_len(&ball.vel) < 0.1f) {
-				rgl_v2_zero(&ball.vel);
+			if(rglV2Length(&ball.vel) < 0.1f) {
+				rglV2Zero(&ball.vel);
 			}
 		}
 
@@ -260,7 +258,7 @@ void thr_physics_func() {
 				if(delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y <= (ball.radius + target.radius) * (ball.radius + target.radius)) { 
 					vec_collisions.push_back({ collision_t::COLLISION_W_BALL, &ball, { .b = &target } });
 
-					f32 dist = rgl_v2_len(&delta_pos);
+					f32 dist = rglV2Length(&delta_pos);
 					f32 overlap = (dist - ball.radius - target.radius) * 0.5f / dist;
 
 					v2 overlap_move = {
@@ -268,8 +266,8 @@ void thr_physics_func() {
 						.y = overlap * delta_pos.y,
 					};
 
-					rgl_v2_sub(&ball.pos, &overlap_move, &ball.pos);
-					rgl_v2_add(&target.pos, &overlap_move, &target.pos);
+					rglV2Sub(&ball.pos, &overlap_move, &ball.pos);
+					rglV2Add(&target.pos, &overlap_move, &target.pos);
 				}
 			}
 
@@ -278,18 +276,18 @@ void thr_physics_func() {
 
 		/* Dynamic collisions */
 		for(collision_t &collision : vec_collisions) {
-			f32 time = rgl_get_time();
+			f32 time = rglGetTime();
 			if(collision.type == collision_t::COLLISION_W_BALL) {
 				ball_t *a = collision.a;
 				ball_t *b = collision.b;
 
 				v2 delta_pos;
-				rgl_v2_sub(&a->pos, &b->pos, &delta_pos);
+				rglV2Sub(&a->pos, &b->pos, &delta_pos);
 
 				v2 delta_vel;
-				rgl_v2_sub(&a->vel, &b->vel, &delta_vel);
+				rglV2Sub(&a->vel, &b->vel, &delta_vel);
 
-				f32 dist = rgl_v2_len(&delta_pos);
+				f32 dist = rglV2Length(&delta_pos);
 
 				v2 normal = {
 					.x = (b->pos.x - a->pos.x) / dist,
@@ -323,7 +321,7 @@ void thr_physics_func() {
 
 				/* Bounce sound */
 				if(time - collision.a->sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS) {
-					f32 speed = rgl_v2_len(&collision.a->vel);
+					f32 speed = rglV2Length(&collision.a->vel);
 
 					if(speed > 15.f) {
 						collision.a->sound_played_time = time;
@@ -344,16 +342,16 @@ void thr_physics_func() {
 
 void draw_balls() {
 	for(ball_t &ball : vec_balls) {
-		rgl_immediate_draw_circle(ball.color, ball.pos, ball.radius);
+		rglDrawCircle(ball.color, ball.pos, ball.radius);
 	}
 
 	if(selected_ball != NULL) {
-		rgl_immediate_draw_circle_outline(RGL_RED, selected_ball->pos, selected_ball->radius, 3.f);
+		rglDrawCircleOutline(RGL_RED, selected_ball->pos, selected_ball->radius, 3.f);
 
 		v2 mouse_pos;
-		rgl_get_cursor_pos(&mouse_pos);
+		rglGetCursorPos(&mouse_pos);
 
-		rgl_immediate_draw_line(RGL_BLUE, selected_ball->pos, mouse_pos, 5);
+		rglDrawLine(RGL_BLUE, selected_ball->pos, mouse_pos, 5);
 	}
 }
 
@@ -368,9 +366,9 @@ void init_balls() {
 }
 
 void play_click_sound() {
-	rgl_audio_source_set_gain(&click_audio_source, 1.0f);
-	rgl_audio_source_set_pitch(&click_audio_source, RAND_RANGE_F(0.8f, 1.2f));
-	rgl_audio_source_play(&click_audio_source);
+	rglAudioSourceSetGain(&click_audio_source, 1.0f);
+	rglAudioSourceSetPitch(&click_audio_source, RAND_RANGE_F(0.8f, 1.2f));
+	rglAudioSourcePlay(&click_audio_source);
 }
 
 void play_bounce_sound(f32 gain) {
@@ -378,7 +376,7 @@ void play_bounce_sound(f32 gain) {
 
 	rglAudioSource *source = 0;
 	for(u32 i=0; i<BOUNCE_AUDIO_SOURCE_COUNT; ++i) {
-		if(!rgl_audio_source_is_playing(&bounce_audio_sources[i])) {
+		if(!rglAudioSourceIsPlaying(&bounce_audio_sources[i])) {
 			source = &bounce_audio_sources[i];
 			break;
 		}
@@ -389,9 +387,9 @@ void play_bounce_sound(f32 gain) {
 		source = &bounce_audio_sources[0];
 	}
 
-	rgl_audio_source_set_gain(source, gain);
-	rgl_audio_source_set_pitch(source, RAND_RANGE_F(0.9f, 1.1f));
-	rgl_audio_source_play(source);
+	rglAudioSourceSetGain(source, gain);
+	rglAudioSourceSetPitch(source, RAND_RANGE_F(0.9f, 1.1f));
+	rglAudioSourcePlay(source);
 }
 
 void add_ball(v2 pos) {
@@ -405,7 +403,7 @@ void add_ball(v2 pos) {
 	ball.vel.x = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
 	ball.vel.y = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
 
-	rgl_v2_cpy(&pos, &ball.pos);
+	rglV2Copy(&pos, &ball.pos);
 
 	vec_balls.push_back(ball);
 }

@@ -3,7 +3,7 @@
 #include <stdarg.h>
 
 /* TODO: Format the msg text */
-void _rgl_assert(const char *file, i32 line, b8 expr, const char *expr_str, const char *fmsg, ...) {
+void _rglAssert(const char *file, i32 line, b8 expr, const char *expr_str, const char *fmsg, ...) {
 	if(!expr) {
 		fprintf(stderr, "[RGL ASSERT FAILED] Expr: %s  |  Msg: ", expr_str);
 
@@ -15,6 +15,6 @@ void _rgl_assert(const char *file, i32 line, b8 expr, const char *expr_str, cons
 
 		fprintf(stderr, "  |  File: %s  |  Line: %i\n", file, line);
 
-		rgl_quit();
+		rglQuit();
 	}
 }

@@ -1,6 +1,6 @@
 #include "rgl_immediate.h"
 
-static void _rgl_immediate_draw_rect(u32 mode, rglColor *col, v2 *pos, v2 *size) {
+static void _rglDrawRect(u32 mode, rglColor *col, v2 *pos, v2 *size) {
 	glColor3ub(col->r, col->g, col->b);
 
 	f32 hsx = size->x * 0.5f;
@@ -14,16 +14,16 @@ static void _rgl_immediate_draw_rect(u32 mode, rglColor *col, v2 *pos, v2 *size)
 	glEnd();
 }
 
-void rgl_immediate_draw_rect(rglColor col, v2 pos, v2 size) {
-	_rgl_immediate_draw_rect(GL_QUADS, &col, &pos, &size);
+void rglDrawRect(rglColor col, v2 pos, v2 size) {
+	_rglDrawRect(GL_QUADS, &col, &pos, &size);
 }
 
-void rgl_immediate_draw_rect_outline(rglColor col, v2 pos, v2 size, f32 line_width) {
+void rglDrawRectOutline(rglColor col, v2 pos, v2 size, f32 line_width) {
 	glLineWidth(line_width);
-	_rgl_immediate_draw_rect(GL_LINE_LOOP, &col, &pos, &size);
+	_rglDrawRect(GL_LINE_LOOP, &col, &pos, &size);
 }
 
-static void _rgl_immediate_draw_circle(u32 mode, rglColor *col, v2 *pos, f32 radius) {
+static void _rglDrawCircle(u32 mode, rglColor *col, v2 *pos, f32 radius) {
 	if(radius <= 0) {
 		printf("Tried to draw circle with radius <= 0!\n");
 		return;
@@ -59,16 +59,16 @@ static void _rgl_immediate_draw_circle(u32 mode, rglColor *col, v2 *pos, f32 rad
 	glEnd();
 }
 
-void rgl_immediate_draw_circle(rglColor col, v2 pos, f32 radius) {
-	_rgl_immediate_draw_circle(GL_TRIANGLE_FAN, &col, &pos, radius);
+void rglDrawCircle(rglColor col, v2 pos, f32 radius) {
+	_rglDrawCircle(GL_TRIANGLE_FAN, &col, &pos, radius);
 }
 
-void rgl_immediate_draw_circle_outline(rglColor col, v2 pos, f32 radius, f32 line_width) {
+void rglDrawCircleOutline(rglColor col, v2 pos, f32 radius, f32 line_width) {
 	glLineWidth(line_width);
-	_rgl_immediate_draw_circle(GL_LINE_LOOP, &col, &pos, radius);
+	_rglDrawCircle(GL_LINE_LOOP, &col, &pos, radius);
 }
 
-void rgl_immediate_draw_line(rglColor col, v2 a, v2 b, f32 width) {
+void rglDrawLine(rglColor col, v2 a, v2 b, f32 width) {
 	glColor3ub(col.r, col.g, col.b);
 	glLineWidth(width);
 

@@ -37,8 +37,8 @@ typedef bool            b8;
 	#include "rgl_assert.h"
 #endif
 
-typedef void (*rgl_app_update_t)(f32 dt);
-typedef void (*rgl_app_quit_t)(void);
-typedef void (*rgl_app_init_t)(void);
+typedef void (*rglAppUpdateFunc)(f32 dt);
+typedef void (*rglAppQuitFunc)(void);
+typedef void (*rglAppInitFunc)(void);
 
 #endif /* __RGL_COMMON_H */

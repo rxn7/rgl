@@ -12,8 +12,8 @@ typedef struct rglTexture {
 	i32 width, height;
 } rglTexture;
 
-b8 rgl_texture_create(rglTexture *txt, i32 w, i32 h, u8 *pixels, u8 filter);
-b8 rgl_texture_load_from_file(rglTexture *txt, const char *path, u8 filter);
-void rgl_texture_destroy(rglTexture *txt);
+b8 rglTextureCreate(rglTexture *txt, i32 w, i32 h, u8 *pixels, u8 filter);
+b8 rglTextureLoadFromFile(rglTexture *txt, const char *path, u8 filter);
+void rglTextureDestroy(rglTexture *txt);
 
 #endif /* __RGL_TEXTURE_H */

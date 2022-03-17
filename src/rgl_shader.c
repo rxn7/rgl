@@ -2,7 +2,7 @@
 #include "rgl_sprite.h"
 #include "rgl_log.h"
 
-b8 _rgl_shader_init(u32 *shader, u32 type, const char *src) {
+b8 _rglShaderInit(u32 *shader, u32 type, const char *src) {
 	RGL_ASSERT_VALID_PTR(shader);
 
 	i32 success;
@@ -24,18 +24,18 @@ b8 _rgl_shader_init(u32 *shader, u32 type, const char *src) {
 	return true;
 }
 
-b8 rgl_shader_create(rglShader *shader, const char *vert_src, const char *frag_src) {
+b8 rglShaderCreate(rglShader *shader, const char *vert_src, const char *frag_src) {
 	RGL_ASSERT_VALID_PTR(shader);
 
 	id_t vert, frag;
 	int success;
 	char infolog[512];
 
-	if(!_rgl_shader_init(&vert, GL_VERTEX_SHADER, vert_src)) {
+	if(!_rglShaderInit(&vert, GL_VERTEX_SHADER, vert_src)) {
 		return false;
 	}
 
-	if(!_rgl_shader_init(&frag, GL_FRAGMENT_SHADER, frag_src)) {
+	if(!_rglShaderInit(&frag, GL_FRAGMENT_SHADER, frag_src)) {
 		return false;
 	}
 
@@ -65,7 +65,7 @@ b8 rgl_shader_create(rglShader *shader, const char *vert_src, const char *frag_s
 	return true;
 }
 
-void rgl_shader_destroy(rglShader *shader) {
+void rglShaderDestroy(rglShader *shader) {
 	RGL_ASSERT_VALID_PTR(shader);
 
 	glDeleteProgram(shader->id);
@@ -75,10 +75,10 @@ void rgl_shader_destroy(rglShader *shader) {
 	}
 }
 
-void _rgl_shader_create_defaults(void) {
-	_rgl_sprite_shader_create();
+void _rglShaderCreateDefaults(void) {
+	_rglSpriteShaderCreate();
 }
 
-void _rgl_shader_destroy_defaults(void) {
-	_rgl_sprite_shader_destroy();
+void _rglShaderDestroyDefaults(void) {
+	_rglSpriteShaderDestroy();
 }

@@ -1,6 +1,6 @@
 #include "rgl_vao.h"
 
-b8 rgl_vao_create(rglVao *vao, const rglVertex *vertices, u32 vertex_count) {
+b8 rglVaoCreate(rglVao *vao, const rglVertex *vertices, u32 vertex_count) {
 	RGL_ASSERT_VALID_PTR(vao);
 	RGL_ASSERT_VALID_PTR(vertices);
 
@@ -24,14 +24,14 @@ b8 rgl_vao_create(rglVao *vao, const rglVertex *vertices, u32 vertex_count) {
 	return true;
 }
 
-void rgl_vao_destroy(rglVao *vao) {
+void rglVaoDestroy(rglVao *vao) {
 	RGL_ASSERT_VALID_PTR(vao);
 
 	glDeleteBuffers(1, &vao->vbo);
 	glDeleteVertexArrays(1, &vao->id);
 }
 
-void rgl_vao_render(rglVao *vao, u32 mode) {
+void rglVaoRender(rglVao *vao, u32 mode) {
 	RGL_ASSERT_VALID_PTR(vao);
 
 	glBindVertexArray(vao->id);

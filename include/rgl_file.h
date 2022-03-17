@@ -3,6 +3,6 @@
 
 #include "rgl_common.h"
 
-void rgl_read_file(char **buf, const char *path);
+char *rglReadFile(const char *path);
 
 #endif /* __RGL_FILE_H */

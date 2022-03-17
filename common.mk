@@ -15,6 +15,7 @@ OBJ = rgl.o \
       rgl_v2.o \
       rgl_mat4.o \
       rgl_assert.o \
-      rgl_sprite_animation.o
+      rgl_sprite_animation.o \
+      rgl_sprite_animator.o 
 
 all: compile link

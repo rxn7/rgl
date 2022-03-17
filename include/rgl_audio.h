@@ -22,19 +22,19 @@ typedef struct rglAudioSource {
 	rglAudioBuffer *buffer;
 } rglAudioSource;
 
-void rgl_audio_context_create(rglAudioContext *cxt);
-void rgl_audio_context_destroy(rglAudioContext *cxt);
+void rglAudioContextCreate(rglAudioContext *cxt);
+void rglAudioContextDestroy(rglAudioContext *cxt);
 
-void rgl_audio_buffer_load_from_vorbis(rglAudioBuffer *buffer, const char *path);
-void rgl_audio_buffer_destroy(rglAudioBuffer *buffer);
+void rglAudioBufferLoadFromVorbis(rglAudioBuffer *buffer, const char *path);
+void rglAudioBufferDestroy(rglAudioBuffer *buffer);
 
-void rgl_audio_source_create(rglAudioSource *source, rglAudioBuffer *buffer);
-void rgl_audio_source_destroy(rglAudioSource *source);
-void rgl_audio_source_play(rglAudioSource *source);
-void rgl_audio_source_stop(rglAudioSource *source);
-void rgl_audio_source_set_loop(rglAudioSource *source, b8 looping);
-void rgl_audio_source_set_gain(rglAudioSource *source, f32 gain);
-void rgl_audio_source_set_pitch(rglAudioSource *source, f32 pitch);
-b8 rgl_audio_source_is_playing(rglAudioSource *source);
+void rglAudioSourceCreate(rglAudioSource *source, rglAudioBuffer *buffer);
+void rglAudioSourceDestroy(rglAudioSource *source);
+void rglAudioSourcePlay(rglAudioSource *source);
+void rglAudioSourceStop(rglAudioSource *source);
+void rglAudioSourceSetLooping(rglAudioSource *source, b8 looping);
+void rglAudioSourceSetGain(rglAudioSource *source, f32 gain);
+void rglAudioSourceSetPitch(rglAudioSource *source, f32 pitch);
+b8 rglAudioSourceIsPlaying(rglAudioSource *source);
 
 #endif /* __RGL_AUDIO_H */

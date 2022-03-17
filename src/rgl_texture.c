@@ -25,7 +25,7 @@ static void _apply_parameters(u8 filter) {
 	}
 }
 
-b8 rgl_texture_create(rglTexture *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
+b8 rglTextureCreate(rglTexture *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
 	RGL_ASSERT_VALID_PTR(txt);
 	RGL_ASSERT_VALID_PTR(pixels);
 
@@ -41,7 +41,7 @@ b8 rgl_texture_create(rglTexture *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
 	return true;
 }
 
-b8 rgl_texture_load_from_file(rglTexture *txt, const char *path, u8 filter) {
+b8 rglTextureLoadFromFile(rglTexture *txt, const char *path, u8 filter) {
 	RGL_ASSERT_VALID_PTR(txt);
 
 	i32 channels;
@@ -61,7 +61,7 @@ b8 rgl_texture_load_from_file(rglTexture *txt, const char *path, u8 filter) {
 	return true;
 }
 
-void rgl_texture_destroy(rglTexture *txt) {
+void rglTextureDestroy(rglTexture *txt) {
 	RGL_ASSERT_VALID_PTR(txt);
 	glDeleteTextures(1, &txt->id);
 }

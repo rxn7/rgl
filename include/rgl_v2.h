@@ -5,28 +5,28 @@
 
 typedef struct v2 {
 	f32 x, y;
-} v2;
+} rglV2;
 
-void rgl_v2_cpy(v2 *v, v2 *dest);
-void rgl_v2_setf(v2 *v, f32 f);
+void rglV2Copy(rglV2 *v, rglV2 *dest);
+void rglV2Setf(rglV2 *v, f32 f);
 
-void rgl_v2_zero(v2 *v);
+void rglV2Zero(rglV2 *v);
 
-void rgl_v2_add(v2 *a, v2 *b, v2 *dest);
-void rgl_v2_addf(v2 *a, f32 f, v2 *dest);
+void rglV2Add(rglV2 *a, rglV2 *b, rglV2 *dest);
+void rglV2Addf(rglV2 *a, f32 f, rglV2 *dest);
 
-void rgl_v2_sub(v2 *a, v2 *b, v2 *dest);
-void rgl_v2_subf(v2 *v, f32 f, v2 *dest);
+void rglV2Sub(rglV2 *a, rglV2 *b, rglV2 *dest);
+void rglV2Subf(rglV2 *v, f32 f, rglV2 *dest);
 
-void rgl_v2_mul(v2 *a, v2 *b, v2 *dest);
-void rgl_v2_mulf(v2 *v, f32 f, v2 *dest);
+void rglV2Mul(rglV2 *a, rglV2 *b, rglV2 *dest);
+void rglV2Mulf(rglV2 *v, f32 f, rglV2 *dest);
 
-void rgl_v2_div(v2 *a, v2 *b, v2 *dest);
-void rgl_v2_divf(v2 *v, f32 f, v2 *dest);
+void rglV2Div(rglV2 *a, rglV2 *b, rglV2 *dest);
+void rglV2Divf(rglV2 *v, f32 f, rglV2 *dest);
 
-void rgl_v2_normalize(v2 *v, v2 *dest);
-f32 rgl_v2_len(v2 *a);
+void rglV2Normalize(rglV2 *v, rglV2 *dest);
+f32 rglV2Length(rglV2 *a);
 
-void rgl_v2_print(v2 *a, b8 newline);
+void rglV2Print(rglV2 *a, b8 newline);
 
 #endif /* __RGL_V2_H */
