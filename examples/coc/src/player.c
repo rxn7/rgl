@@ -42,7 +42,6 @@ static void player_movement(player_t *player, f32 dt) {
 	if(rglIsKeyPressed(RGL_KEY_A)) player->move_dir.x--;
 	if(rglIsKeyPressed(RGL_KEY_D)) player->move_dir.x++;
 
-
 	if(player->move_dir.x != 0 || player->move_dir.y != 0) {
 		rglV2Normalize(&player->move_dir, &player->move_dir);
 		rglV2Mulf(&player->move_dir, dt * PLAYER_MOVE_SPEED, &player->move_dir);

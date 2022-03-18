@@ -55,7 +55,7 @@ void app_update(f32 dt) {
 		food_render(&foods[i]);
 	}
 
-	player_update(&player);
+	player_update(&player, dt);
 	player_render(&player);
 }
 
