@@ -2,10 +2,11 @@
 
 list_examples() {
 	echo "List of examples:"
+	echo "=-=-=-=-=-=-=-=-="
 	ls examples
 }
 
-if [ $# -eq 0 ]
+if [ $# -ne 1 ]
 then
 	echo "You need to specify the example to run i.e. ./run_example.sh <example's name>"
 	list_examples

@@ -102,7 +102,9 @@ void _rglAppDataDestroy(_rglAppData *data) {
 void _rglSetupOpenGL(void) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor((f32)_rgl_data->desc->background_color.r / 255.f, (f32)_rgl_data->desc->background_color.g / 255.f, (f32)_rgl_data->desc->background_color.b / 255.f, 1.f);
+
+	rglColor *col = &_rgl_data->desc->background_color;
+	glClearColor((f32)col->r / 255.f, (f32)col->g / 255.f, (f32)col->b / 255.f, 1.f);
 }
 
 void _rglMainLoop(void) {
