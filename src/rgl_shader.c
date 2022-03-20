@@ -2,7 +2,8 @@
 #include "rgl_sprite.h"
 #include "rgl_log.h"
 
-b8 _rglShaderInit(u32 *shader, u32 type, const char *src) {
+b8
+_rglShaderInit(u32 *shader, u32 type, const char *src) {
 	RGL_ASSERT_VALID_PTR(shader);
 
 	i32 success;
@@ -24,7 +25,8 @@ b8 _rglShaderInit(u32 *shader, u32 type, const char *src) {
 	return true;
 }
 
-b8 rglShaderCreate(rglShader *shader, const char *vert_src, const char *frag_src) {
+b8
+rglShaderCreate(rglShader *shader, const char *vert_src, const char *frag_src) {
 	RGL_ASSERT_VALID_PTR(shader);
 
 	id_t vert, frag;
@@ -65,7 +67,8 @@ b8 rglShaderCreate(rglShader *shader, const char *vert_src, const char *frag_src
 	return true;
 }
 
-void rglShaderDestroy(rglShader *shader) {
+void
+rglShaderDestroy(rglShader *shader) {
 	RGL_ASSERT_VALID_PTR(shader);
 
 	glDeleteProgram(shader->id);
@@ -75,10 +78,12 @@ void rglShaderDestroy(rglShader *shader) {
 	}
 }
 
-void _rglShaderCreateDefaults(void) {
+void
+_rglShaderCreateDefaults(void) {
 	_rglSpriteShaderCreate();
 }
 
-void _rglShaderDestroyDefaults(void) {
+void
+_rglShaderDestroyDefaults(void) {
 	_rglSpriteShaderDestroy();
 }

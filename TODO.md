@@ -1,8 +1,6 @@
 # TODO
 
-## New struct naming
-- Instead of naming structs by rgl_**name**_t, let's name them by rgl**Name**,  
-  For example: instead of rgl_texture_t let's name it rglTexture
+## Camera System
 
 ## Sprite Animation System
 ### rglSpriteAnimation

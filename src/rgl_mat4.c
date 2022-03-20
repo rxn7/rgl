@@ -2,18 +2,21 @@
 
 /* TODO: Should I assert the parameters in these functions? */
 
-void rglMat4Cpy(rglMat4 src, rglMat4 dest) {
+void
+rglMat4Cpy(rglMat4 src, rglMat4 dest) {
 	for(u8 i=0; i<16; ++i) {
 		dest[i] = src[i];
 	}
 }
 
-void rglMat4Identity(rglMat4 mat) {
+void
+rglMat4Identity(rglMat4 mat) {
 	memset(mat, 0, sizeof(f32) * 16);
 	mat[0] = mat[5] = mat[10] = mat[15] = 1.0f;
 }
 
-void rglMat4Ortho(rglMat4 mat, f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far) {
+void
+rglMat4Ortho(rglMat4 mat, f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far) {
 	rglMat4Identity(mat);
 	mat[0] = 2.f / (right - left);
 	mat[5] = 2.f / (top - bottom);
@@ -24,7 +27,8 @@ void rglMat4Ortho(rglMat4 mat, f32 left, f32 right, f32 bottom, f32 top, f32 z_n
 	mat[15] = 1;
 }
 
-void rglMat4Mul(rglMat4 a, rglMat4 b) {
+void
+rglMat4Mul(rglMat4 a, rglMat4 b) {
 	rglMat4 ac;
 	rglMat4Cpy(a, ac);
 
@@ -49,7 +53,8 @@ void rglMat4Mul(rglMat4 a, rglMat4 b) {
 	a[15] = ac[3] * b[12] + ac[7] * b[13] + ac[11] * b[14] + ac[15] * b[15];
 }
 
-void rglMat4Translate(rglMat4 mat, v2 vec) {
+void
+rglMat4Translate(rglMat4 mat, v2 vec) {
 	memset(mat, 0, sizeof(f32) * 16);
 
 	mat[0] = mat[5] = mat[10] = 1.0f; 
@@ -60,7 +65,8 @@ void rglMat4Translate(rglMat4 mat, v2 vec) {
 	mat[15] = 1.0f;
 }
 
-void rglMat4Rotate(rglMat4 mat, f32 degrees) {
+void
+rglMat4Rotate(rglMat4 mat, f32 degrees) {
 	f32 rad = degrees * (PI_F / 180.f);
 	f32 radcos = cosf(rad);
 	f32 radsin = sinf(rad);
@@ -86,7 +92,8 @@ void rglMat4Rotate(rglMat4 mat, f32 degrees) {
 	mat[15] = 1.0f;
 }
 
-void rglMat4Scale(rglMat4 mat, v2 vec) {
+void
+rglMat4Scale(rglMat4 mat, v2 vec) {
 	memset(mat, 0, sizeof(f32) * 16);
 
 	mat[0] = vec.x;

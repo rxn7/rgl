@@ -12,7 +12,8 @@ player_t player;
 coin_t coin;
 u32 score = 0;
 
-int main(int argc, const char **argv) {
+int
+main(int argc, const char **argv) {
 	rglAppDesc desc = (rglAppDesc) {
 		.width = 640,
 		.height = 480,
@@ -26,24 +27,28 @@ int main(int argc, const char **argv) {
 	rglStart(&desc);
 }
 
-void app_init() {
+void
+app_init() {
 	player_create(&player, PLAYER_TEXTURE_PATH);
 
 	coin_initialize();
 	coin_respawn(&coin);
 }
 
-void app_quit() {
+void
+app_quit() {
 	player_destroy(&player);
 }
 
-void app_update(f32 dt) {
+void
+app_update(f32 dt) {
 	player_update(&player, dt);
 	player_coin_pickup_check();
 	coin_update(&coin);
 }
 
-void player_coin_pickup_check() {
+void
+player_coin_pickup_check() {
 	v2 delta_pos;
 	rglV2Sub(&coin.pos, &player.sprite.position, &delta_pos);
 

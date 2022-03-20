@@ -7,7 +7,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-static void _apply_parameters(u8 filter) {
+static void
+_apply_parameters(u8 filter) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
@@ -25,7 +26,8 @@ static void _apply_parameters(u8 filter) {
 	}
 }
 
-b8 rglTextureCreate(rglTexture *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
+b8
+rglTextureCreate(rglTexture *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
 	RGL_ASSERT_VALID_PTR(txt);
 	RGL_ASSERT_VALID_PTR(pixels);
 
@@ -41,7 +43,8 @@ b8 rglTextureCreate(rglTexture *txt, i32 w, i32 h, u8 *pixels, u8 filter) {
 	return true;
 }
 
-b8 rglTextureLoadFromFile(rglTexture *txt, const char *path, u8 filter) {
+b8
+rglTextureLoadFromFile(rglTexture *txt, const char *path, u8 filter) {
 	RGL_ASSERT_VALID_PTR(txt);
 
 	i32 channels;
@@ -61,7 +64,8 @@ b8 rglTextureLoadFromFile(rglTexture *txt, const char *path, u8 filter) {
 	return true;
 }
 
-void rglTextureDestroy(rglTexture *txt) {
+void
+rglTextureDestroy(rglTexture *txt) {
 	RGL_ASSERT_VALID_PTR(txt);
 	glDeleteTextures(1, &txt->id);
 }

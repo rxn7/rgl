@@ -11,7 +11,8 @@ const rglVertex _vertices[] = {
 	{ {-1,  1},	{0,1} },
 };
 
-b8 rglSpriteCreate(rglSprite *sprite, rglTexture *texture) {
+b8
+rglSpriteCreate(rglSprite *sprite, rglTexture *texture) {
 	RGL_ASSERT_VALID_PTR(sprite);
 	RGL_ASSERT_VALID_PTR(texture);
 
@@ -28,13 +29,15 @@ b8 rglSpriteCreate(rglSprite *sprite, rglTexture *texture) {
 	return true;
 }
 
-void rglSpriteDestroy(rglSprite *sprite) {
+void
+rglSpriteDestroy(rglSprite *sprite) {
 	RGL_ASSERT_VALID_PTR(sprite);
 
 	rglVaoDestroy(&sprite->vao);
 }
 
-void rglSpriteRender(rglSprite *sprite) {	
+void
+rglSpriteRender(rglSprite *sprite) {	
 	RGL_ASSERT_VALID_PTR(sprite);
 	RGL_ASSERT_VALID_PTR(sprite->texture);
 
@@ -68,7 +71,8 @@ void rglSpriteRender(rglSprite *sprite) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void _rglSpriteShaderCreate(void) {
+void
+_rglSpriteShaderCreate(void) {
 	_shader = malloc(sizeof(rglShader));
 
 	/* Sprite shader */
@@ -100,7 +104,8 @@ void _rglSpriteShaderCreate(void) {
 	_shader->uniform_locations[1] = glGetUniformLocation(_shader->id, "u_Model");
 }
 
-void _rglSpriteShaderDestroy(void) {
+void
+_rglSpriteShaderDestroy(void) {
 	rglShaderDestroy(_shader);
 	free(_shader);
 }

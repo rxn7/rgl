@@ -7,7 +7,8 @@
 
 _rglAppData *_rgl_data = 0;
 
-b8 rglStart(rglAppDesc *desc) {
+b8
+rglStart(rglAppDesc *desc) {
 	RGL_ASSERT_VALID_PTR(desc);
 
 	/* Sanity checks */
@@ -37,7 +38,8 @@ b8 rglStart(rglAppDesc *desc) {
         return true;
 }
 
-void rglQuit(void) {
+void 
+rglQuit(void) {
 	_rgl_data->running = false;
 
 	/* Call user-defined quit func */
@@ -47,36 +49,41 @@ void rglQuit(void) {
 
 	_rglShaderDestroyDefaults();
 	_rglAppDataDestroy(_rgl_data);
+
 	free(_rgl_data);
 
 	exit(0);
 }
 
-void rglSetVsync(b8 value) {
+void 
+rglSetVsync(b8 value) {
 	RGL_PLATFORM_FUN(SetVsync, value);
 }
 
-void _rglUpdateProjection(void) {
+void 
+_rglUpdateProjection(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, _rgl_data->width, _rgl_data->height);
 	glOrtho(0, _rgl_data->width, _rgl_data->height, 0, -1, 1);
+	rglMat4Ortho(_rgl_data->projection_matrix, 0, _rgl_data->width, _rgl_data->height, 0, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	rglMat4Ortho(_rgl_data->projection_matrix, 0, _rgl_data->width, _rgl_data->height, 0, -1, 1);
 }
 
-f32 rglGetTime(void) {
+f32 
+rglGetTime(void) {
 	return RGL_PLATFORM_FUN(GetTime);
 }
 
-void rglGetWindowSize(i32 *w, i32 *h) {
+void
+rglGetWindowSize(i32 *w, i32 *h) {
 	*w = _rgl_data->width;
 	*h = _rgl_data->height;
 }
 
-void _rglAppDataCreate(_rglAppData *data, rglAppDesc *desc) {
+void
+_rglAppDataCreate(_rglAppData *data, rglAppDesc *desc) {
 	RGL_ASSERT_VALID_PTR(data);
 	RGL_ASSERT_VALID_PTR(desc);
 
@@ -91,7 +98,8 @@ void _rglAppDataCreate(_rglAppData *data, rglAppDesc *desc) {
 	rglAudioContextCreate(data->audio_cxt);
 }
 
-void _rglAppDataDestroy(_rglAppData *data) {
+void
+_rglAppDataDestroy(_rglAppData *data) {
 	RGL_PLATFORM_FUN(ContextDestroy, data->plat_cxt);
 	free(data->plat_cxt);
 
@@ -99,7 +107,8 @@ void _rglAppDataDestroy(_rglAppData *data) {
 	free(data->audio_cxt);
 }
 
-void _rglSetupOpenGL(void) {
+void
+_rglSetupOpenGL(void) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -107,7 +116,8 @@ void _rglSetupOpenGL(void) {
 	glClearColor((f32)col->r / 255.f, (f32)col->g / 255.f, (f32)col->b / 255.f, 1.f);
 }
 
-void _rglMainLoop(void) {
+void
+_rglMainLoop(void) {
 	_rgl_data->running = true;
 
         f32 dt = 0, now = RGL_PLATFORM_FUN(GetTime), last = now;
@@ -127,6 +137,7 @@ void _rglMainLoop(void) {
         }
 }
 
-void _rglDefaultUpdateFunc(f32 dt) { 
+void
+_rglDefaultUpdateFunc(f32 dt) { 
         return;
 }

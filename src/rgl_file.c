@@ -3,7 +3,8 @@
 
 #include "rgl_file.h"
 
-char *rglReadFile(const char *path) {
+char
+*rglReadFile(const char *path) {
         FILE *f = fopen(path, "rb");
 
         if(!f) {

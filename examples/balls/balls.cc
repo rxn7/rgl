@@ -67,7 +67,8 @@ b8 muted = false;
 b8 running = true;
 b8 paused = false;
 
-int main(int argc, const char **argv) {
+int
+main(int argc, const char **argv) {
         rglAppDesc desc = {
                 .title = "RGL | Balls",
                 .height = 480,
@@ -80,7 +81,8 @@ int main(int argc, const char **argv) {
         rglStart(&desc);
 }
 
-void app_init() {
+void
+app_init() {
         srand(time(0));
 
 	rglAudioBufferLoadFromVorbis(&click_audio_buffer, CLICK_SOUND_PATH);
@@ -95,7 +97,8 @@ void app_init() {
 	thr_physics = std::thread(thr_physics_func);
 }
 
-void app_quit() {
+void
+app_quit() {
 	running = false;
 
 	rglAudioBufferDestroy(&bounce_audio_buffer);
@@ -109,7 +112,8 @@ void app_quit() {
 	thr_physics.join();
 }
 
-void app_update(f32 dt) {
+void
+app_update(f32 dt) {
 	b8 left_pressed = rglIsButtonPressed(RGL_MOUSE_LEFT);
 	b8 right_pressed = rglIsButtonPressed(RGL_MOUSE_RIGHT);
 
@@ -210,7 +214,8 @@ void app_update(f32 dt) {
 	draw_balls();
 }
 
-void thr_physics_func() {
+void
+thr_physics_func() {
 	std::vector<collision_t> vec_collisions;
 
 	while(running) {
@@ -340,7 +345,8 @@ void thr_physics_func() {
 	}
 }
 
-void draw_balls() {
+void
+draw_balls() {
 	for(ball_t &ball : vec_balls) {
 		rglDrawCircle(ball.color, ball.pos, ball.radius);
 	}
@@ -355,7 +361,8 @@ void draw_balls() {
 	}
 }
 
-void init_balls() {
+void
+init_balls() {
 	v2 pos;
 	for(u32 i=0; i<START_BALL_COUNT; ++i) {
 		pos.x = (f32)(rand() % _rgl_data->width);
@@ -365,13 +372,15 @@ void init_balls() {
 	}
 }
 
-void play_click_sound() {
+void
+play_click_sound() {
 	rglAudioSourceSetGain(&click_audio_source, 1.0f);
 	rglAudioSourceSetPitch(&click_audio_source, RAND_RANGE_F(0.8f, 1.2f));
 	rglAudioSourcePlay(&click_audio_source);
 }
 
-void play_bounce_sound(f32 gain) {
+void
+play_bounce_sound(f32 gain) {
 	if(muted) return;
 
 	rglAudioSource *source = 0;
@@ -392,7 +401,8 @@ void play_bounce_sound(f32 gain) {
 	rglAudioSourcePlay(source);
 }
 
-void add_ball(v2 pos) {
+void
+add_ball(v2 pos) {
 	static const f32 HALF_RANDOM_INITIAL_VELOCITY = RANDOM_INITIAL_VELOCITY * 0.5f;
 
 	ball_t ball = {
@@ -408,7 +418,8 @@ void add_ball(v2 pos) {
 	vec_balls.push_back(ball);
 }
 
-b8 is_point_in_ball(ball_t *ball, v2 point) {
+b8
+is_point_in_ball(ball_t *ball, v2 point) {
 	v2 delta_pos = {
 		.x = ball->pos.x - point.x,
 		.y = ball->pos.y - point.y,

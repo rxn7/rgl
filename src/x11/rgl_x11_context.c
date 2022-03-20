@@ -10,7 +10,8 @@ static Atom _wm_delete_msg;
 
 static void _rglX11ProcessEvent();
 
-b8 rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 height) { 
+b8
+rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 height) { 
 	RGL_ASSERT_VALID_PTR(cxt);
 
 	cxt->dpy = XOpenDisplay(0);
@@ -63,7 +64,8 @@ b8 rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 hei
 	return true;
 }
 
-void rglX11ContextDestroy(rglX11Context *cxt) {
+void
+rglX11ContextDestroy(rglX11Context *cxt) {
 	RGL_ASSERT(cxt, false);
 
 	glXMakeCurrent(cxt->dpy, None, 0);
@@ -73,7 +75,8 @@ void rglX11ContextDestroy(rglX11Context *cxt) {
 	XCloseDisplay(cxt->dpy);
 }
 
-void rglX11StartFrame(void) {
+void
+rglX11StartFrame(void) {
 	while(XPending(_rgl_data->plat_cxt->dpy)) {
 		XNextEvent(_rgl_data->plat_cxt->dpy, &_rgl_data->plat_cxt->event);
 		_rglX11ProcessEvent();
@@ -82,22 +85,26 @@ void rglX11StartFrame(void) {
 	rglX11InputUpdate();
 }
 
-void rglX11EndFrame(void) {
+void
+rglX11EndFrame(void) {
 	rglX11InputPostUpdate();
 	glXSwapBuffers(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win);
 }
 
-f32 rglX11GetTime(void) {
+f32
+rglX11GetTime(void) {
 	struct timespec time;
 	clock_gettime(CLOCK_MONOTONIC, &time);
 	return time.tv_sec + ((f64)time.tv_nsec * 0.000000001);
 }
 
-void rglX11SetVsync(b8 value) {
+void
+rglX11SetVsync(b8 value) {
 	glXSwapIntervalEXT(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win, value);
 }
 
-static void _rglX11ProcessEvent() {
+static void
+_rglX11ProcessEvent() {
 	switch(_rgl_data->plat_cxt->event.type) {
 		case ClientMessage:
 			if(_rgl_data->plat_cxt->event.xclient.data.l[0] == _wm_delete_msg) {

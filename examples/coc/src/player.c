@@ -6,7 +6,8 @@ static rglTexture _texture = {0};
 static void player_movement(player_t *player, f32 dt);
 static void player_render(player_t *player);
 
-void player_create(player_t *player, const char *texture_path) {
+void
+player_create(player_t *player, const char *texture_path) {
 	rglTextureLoadFromFile(&_texture, texture_path, RGL_TEXTURE_FILTER_NONE);
 	rglSpriteCreate(&player->sprite, &_texture);
 
@@ -15,12 +16,14 @@ void player_create(player_t *player, const char *texture_path) {
 	player->sprite.position.y = (f32)_rgl_data->height / 2.f;
 }
 
-void player_destroy(player_t *player) {
+void
+player_destroy(player_t *player) {
 	rglTextureDestroy(player->sprite.texture);
 	rglSpriteDestroy(&player->sprite);
 }
 
-void player_update(player_t *player, f32 dt) {
+void
+player_update(player_t *player, f32 dt) {
 	player_movement(player, dt);
 
 	i32 ww, wh;
@@ -35,7 +38,8 @@ void player_update(player_t *player, f32 dt) {
 	player_render(player);
 }
 
-static void player_movement(player_t *player, f32 dt) {
+static void
+player_movement(player_t *player, f32 dt) {
 	rglV2Zero(&player->move_dir);
 	if(rglIsKeyPressed(RGL_KEY_W)) player->move_dir.y--;
 	if(rglIsKeyPressed(RGL_KEY_S)) player->move_dir.y++;
@@ -54,6 +58,7 @@ static void player_movement(player_t *player, f32 dt) {
 	}
 }
 
-static void player_render(player_t *player) {
+static void
+player_render(player_t *player) {
 	rglSpriteRender(&player->sprite);
 }

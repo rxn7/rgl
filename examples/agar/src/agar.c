@@ -14,7 +14,8 @@ void spawn_foods(void);
 food_t foods[FOOD_COUNT];
 player_t player;
 
-int main(int argc, const char **argv) {
+int
+main(int argc, const char **argv) {
 	rglAppDesc desc = (rglAppDesc){
 		.title = "RGL | Agar",
 		.width = 640,
@@ -28,12 +29,14 @@ int main(int argc, const char **argv) {
 	rglStart(&desc);
 }
 
-void app_init(void) {
+void
+app_init(void) {
 	player_spawn(&player);
 	spawn_foods();
 }
 
-void app_update(f32 dt) {
+void
+app_update(f32 dt) {
 	if(rglIsKeyJustPressed(RGL_KEY_R)) {
 		player_spawn(&player);
 		spawn_foods();
@@ -59,10 +62,12 @@ void app_update(f32 dt) {
 	player_render(&player);
 }
 
-void app_quit(void) {
+void
+app_quit(void) {
 }
 
-void spawn_foods(void) {
+void
+spawn_foods(void) {
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
 		food_spawn(&foods[i], &player);
 	}
