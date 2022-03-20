@@ -3,7 +3,7 @@
 
 #include "rgl_common.h"
 
-typedef struct v2 {
+typedef struct rglV2 {
 	f32 x, y;
 } rglV2;
 
