@@ -84,6 +84,12 @@ rglV2Length(rglV2 *a) {
 	return sqrtf(a->x*a->x + a->y*a->y);
 }
 
+void 
+rglV2Lerp(rglV2 *a, rglV2 *b, f32 v, rglV2 *dest) {
+	dest->x = (a->x * (1.0f - v)) + (b->x * v);
+	dest->y = (a->y * (1.0f - v)) + (b->y * v);
+}
+
 void
 rglV2Print(rglV2 *a, b8 newline) {
 	printf("[%f, %f]", a->x, a->y);

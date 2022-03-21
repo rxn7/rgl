@@ -13,7 +13,7 @@ player_t player;
 coin_t coins[COIN_COUNT];
 u32 score = 0;
 
-int
+int 
 main(int argc, const char **argv) {
 	rglAppDesc desc = (rglAppDesc) {
 		.width = 640,
@@ -50,16 +50,17 @@ app_update(f32 dt) {
 	player_update(&player, dt);
 	player_coin_pickup_check();
 
-	rglV2Copy(&player.sprite.position, &_rgl_data->camera->position);
+	rglV2Lerp(&_rgl_data->camera->position, &player.sprite.position, dt * 10, &_rgl_data->camera->position);
 }
 
-void app_draw() {
+void 
+app_draw() {
 	if(rglIsKeyPressed(RGL_KEY_SPACE)) {
 		rglDrawCircle(RGL_RED, player.sprite.position, PLAYER_COIN_PICKUP_DISTANCE);
 	}
 
 	for(u32 i=0; i<COIN_COUNT; ++i) {
-		rglDrawLine(RGL_GREEN, player.sprite.position, coins[i].pos, 10);
+		rglDrawLine(RGL_GREEN, player.sprite.position, coins[i].pos, 3);
 		coin_draw(&coins[i]);
 	}
 

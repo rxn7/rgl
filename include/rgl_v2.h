@@ -29,4 +29,6 @@ f32 rglV2Length(rglV2 *a);
 
 void rglV2Print(rglV2 *a, b8 newline);
 
+void rglV2Lerp(rglV2 *a, rglV2 *b, f32 v, rglV2 *dest);
+
 #endif /* __RGL_V2_H */
