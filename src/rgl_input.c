@@ -8,6 +8,14 @@ rglGetCursorPos(rglV2 *vec) {
 	RGL_PLATFORM_FUN(GetCursorPos, vec);
 }
 
+void
+rglGetCursorPosInWorld(rglV2 *vec) {
+	RGL_PLATFORM_FUN(GetCursorPos, vec);
+
+	vec->x = ((vec->x / _rgl_data->width * 2) - 1) * _rgl_data->camera->right;
+	vec->y = ((vec->y / _rgl_data->height * 2) - 1) * _rgl_data->camera->top;
+}
+
 b8
 rglIsKeyPressed(rglKey key) {
 	return RGL_PLATFORM_FUN(IsKeyPressed, key);

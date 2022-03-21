@@ -14,6 +14,6 @@ typedef struct player_t {
 
 void player_spawn(player_t *player);
 void player_update(player_t *player, f32 dt);
-void player_render(player_t *player);
+void player_draw(player_t *player);
 
 #endif /* __AGAR_PLAYER_H */

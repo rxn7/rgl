@@ -19,6 +19,7 @@ typedef struct rglAppDesc {
 	rglColor background_color;
         rglAppInitFunc init_f;
         rglAppUpdateFunc update_f;
+	rglAppDrawFunc draw_f;
         rglAppQuitFunc quit_f;
 } rglAppDesc;
 
@@ -50,5 +51,6 @@ void _rglAppDataDestroy(_rglAppData *data);
 void _rglSetupOpenGL(void);
 void _rglMainLoop(void);
 void _rglDefaultUpdateFunc(f32 dt);
+void _rglDefaultDrawFunc(void);
 
 #endif /* __RGL_H */

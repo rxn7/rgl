@@ -58,6 +58,7 @@ typedef enum rglBtn {
 } rglBtn;
 
 void rglGetCursorPos(rglV2 *vec);
+void rglGetCursorPosInWorld(rglV2 *vec);
 b8 rglIsKeyPressed(rglKey key);
 b8 rglIsKeyJustPressed(rglKey key);
 b8 rglIsKeyJustReleased(rglKey btn);

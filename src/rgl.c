@@ -16,6 +16,7 @@ rglStart(rglAppDesc *desc) {
         if(desc->height <= 0)           desc->height = 640;
         if(!desc->title)                desc->title = "RGL";
         if(!desc->update_f)             desc->update_f = _rglDefaultUpdateFunc;
+	if(!desc->draw_f)		desc->draw_f = _rglDefaultDrawFunc;
 
 	srand(time(0));
 
@@ -97,7 +98,8 @@ _rglAppDataCreate(_rglAppData *data, rglAppDesc *desc) {
 	rglAudioContextCreate(data->audio_cxt);
 
 	data->camera = malloc(sizeof(rglCamera));
-	rglCameraCreate(data->camera, (rglV2){0,0}, 0, 1);
+	rglCameraCreate(data->camera, (rglV2){0,0}, 1);
+	rglCameraUpdate(_rgl_data->camera);
 }
 
 void
@@ -125,6 +127,7 @@ void
 _rglMainLoop(void) {
 	_rgl_data->running = true;
 
+	b8 first_frame = true;
         f32 dt = 0, now = RGL_PLATFORM_FUN(GetTime), last = now;
         while(_rgl_data->running) {
                 /* Calculate delta time between frames */
@@ -135,16 +138,27 @@ _rglMainLoop(void) {
 		RGL_PLATFORM_FUN(StartFrame);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		if(!first_frame) {
+			_rgl_data->desc->update_f(dt);
+		}
+
 		rglCameraUpdate(_rgl_data->camera);
 
-		/* Call user-defined update func */
-                _rgl_data->desc->update_f(dt);
+		_rgl_data->desc->draw_f();
+
 
 		RGL_PLATFORM_FUN(EndFrame);
+
+		first_frame = false;
         }
 }
 
 void
 _rglDefaultUpdateFunc(f32 dt) { 
         return;
+}
+
+void 
+_rglDefaultDrawFunc(void) {
+	return;
 }

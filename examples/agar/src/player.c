@@ -15,7 +15,7 @@ player_spawn(player_t *player) {
 void
 player_update(player_t *player, f32 dt) {
 	rglV2 mouse_pos;
-	rglGetCursorPos(&mouse_pos);
+	rglGetCursorPosInWorld(&mouse_pos);
 
 	rglV2 delta_pos;
 	rglV2Sub(&mouse_pos, &player->pos, &delta_pos);
@@ -26,6 +26,6 @@ player_update(player_t *player, f32 dt) {
 }
 
 void
-player_render(player_t *player) {
+player_draw(player_t *player) {
 	rglDrawCircle(player->color, player->pos, player->radius);
 }

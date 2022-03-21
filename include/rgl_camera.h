@@ -6,11 +6,11 @@
 typedef struct rglCamera {
 	rglMat4 projection;
 	rglV2 position;
-	f32 rotation;
 	f32 zoom;
+	f32 left, right, top, bottom;
 } rglCamera;
 
-void rglCameraCreate(rglCamera *camera, rglV2 position, f32 rotation, f32 zoom);
+void rglCameraCreate(rglCamera *camera, rglV2 position, f32 zoom);
 void rglCameraDestroy(rglCamera *camera);
 void rglCameraUpdate(rglCamera *camera);
 

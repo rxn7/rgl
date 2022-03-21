@@ -2,9 +2,8 @@
 #include "rgl.h"
 
 void
-rglCameraCreate(rglCamera *camera, rglV2 position, f32 rotation, f32 zoom) {
+rglCameraCreate(rglCamera *camera, rglV2 position, f32 zoom) {
 	rglV2Copy(&camera->position, &position);
-	camera->rotation = rotation;
 	camera->zoom = zoom;
 }
 
@@ -14,19 +13,18 @@ rglCameraDestroy(rglCamera *camera) {
 
 void
 rglCameraUpdate(rglCamera *camera) {
-	f32 hw = _rgl_data->width * 0.5f;
-	f32 hh = _rgl_data->height * 0.5f;
+	f32 width_multiplier = (f32)_rgl_data->width / _rgl_data->height;
 
-	f32 left	= camera->position.x; //- hw;
-	f32 bottom	= camera->position.y; //- hh;
-	f32 right	= _rgl_data->width;// + hw;
-	f32 top		= _rgl_data->height; //+ hh;
+	camera->left	= -500 * camera->zoom * width_multiplier + camera->position.x;
+	camera->bottom	= -500 * camera->zoom + camera->position.y;
+	camera->right	= 500 * camera->zoom * width_multiplier + camera->position.x;
+	camera->top	= 500 * camera->zoom + camera->position.y;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(left, right, top, bottom, -1, 1);
-	rglMat4Ortho(camera->projection, left, right, top, bottom, -1, 1);
+	glOrtho(camera->left, camera->right, camera->top, camera->bottom, -1, 1);
+	rglMat4Ortho(camera->projection, camera->left, camera->right, camera->top, camera->bottom, -1, 1);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
