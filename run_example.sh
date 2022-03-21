@@ -21,7 +21,20 @@ then
 fi
 
 make -f linux.mk install
+if [ $? -ne 0 ]
+then
+	echo "Failed to compile RGL, please submit a bug report to https://github.com/rxtthin/rgl/issues"
+	exit
+fi
+
 cd examples/$1
 make
+if [ $? -ne 0 ]
+then
+	echo "Failed to compile example '$1', please submit a bug report to https://github.com/rxtthin/rgl/issues"
+	cd ../..
+	exit
+fi
+
 ./$1
 cd ../..
