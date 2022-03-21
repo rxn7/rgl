@@ -7,7 +7,7 @@
 void rglX11InputUpdate(void);
 void rglX11InputPostUpdate(void);
 
-void rglX11GetCursorPos(v2 *vec);
+void rglX11GetCursorPos(rglV2 *vec);
 
 b8 rglX11IsKeyPressed(rglKey key);
 b8 rglX11IsKeyJustPressed(rglKey key);

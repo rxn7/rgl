@@ -18,8 +18,8 @@ rglSpriteCreate(rglSprite *sprite, rglTexture *texture) {
 
 	sprite->rotation = 0;
 	sprite->texture = texture;
-	sprite->size = (v2){texture->width, texture->height};
-	sprite->position = (v2){0,0};
+	sprite->size = (rglV2){texture->width, texture->height};
+	sprite->position = (rglV2){0,0};
 
 	if(!rglVaoCreate(&sprite->vao, _vertices, sizeof(_vertices) / sizeof(_vertices[0]))) {
 		RGL_LOG_ERROR("Failed to create VAO for a sprite");
@@ -46,7 +46,7 @@ rglSpriteRender(rglSprite *sprite) {
 
 	rglMat4 translation_matrix;
 	rglMat4Identity(translation_matrix);
-	rglMat4Translate(translation_matrix, sprite->position);
+	rglMat4Translate(translation_matrix, &sprite->position);
 
 	rglMat4 rotation_matrix;
 	rglMat4Identity(rotation_matrix);
@@ -54,7 +54,7 @@ rglSpriteRender(rglSprite *sprite) {
 
 	rglMat4 scale_matrix;
 	rglMat4Identity(scale_matrix);
-	rglMat4Scale(scale_matrix, sprite->size);
+	rglMat4Scale(scale_matrix, &sprite->size);
 
 	rglMat4 model_matrix;
 	rglMat4Identity(model_matrix);
@@ -62,7 +62,7 @@ rglSpriteRender(rglSprite *sprite) {
 	rglMat4Mul(model_matrix, rotation_matrix);
 	rglMat4Mul(model_matrix, scale_matrix);
 
-	glUniformMatrix4fv(_shader->uniform_locations[0], 1, false, (float *)_rgl_data->projection_matrix);
+	glUniformMatrix4fv(_shader->uniform_locations[0], 1, false, (float *)_rgl_data->camera->projection);
 	glUniformMatrix4fv(_shader->uniform_locations[1], 1, false, (float *)model_matrix);
 
 	rglVaoRender(&sprite->vao, GL_QUADS);

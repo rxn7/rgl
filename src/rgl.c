@@ -65,8 +65,7 @@ _rglUpdateProjection(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, _rgl_data->width, _rgl_data->height);
-	glOrtho(0, _rgl_data->width, _rgl_data->height, 0, -1, 1);
-	rglMat4Ortho(_rgl_data->projection_matrix, 0, _rgl_data->width, _rgl_data->height, 0, -1, 1);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -96,6 +95,9 @@ _rglAppDataCreate(_rglAppData *data, rglAppDesc *desc) {
 
 	data->audio_cxt = malloc(sizeof(rglAudioContext));
 	rglAudioContextCreate(data->audio_cxt);
+
+	data->camera = malloc(sizeof(rglCamera));
+	rglCameraCreate(data->camera, (rglV2){0,0}, 0, 1);
 }
 
 void
@@ -105,6 +107,9 @@ _rglAppDataDestroy(_rglAppData *data) {
 
 	rglAudioContextDestroy(data->audio_cxt);
 	free(data->audio_cxt);
+
+	rglCameraDestroy(data->camera);
+	free(data->camera);
 }
 
 void
@@ -129,6 +134,8 @@ _rglMainLoop(void) {
 
 		RGL_PLATFORM_FUN(StartFrame);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		rglCameraUpdate(_rgl_data->camera);
 
 		/* Call user-defined update func */
                 _rgl_data->desc->update_f(dt);

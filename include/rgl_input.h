@@ -57,7 +57,7 @@ typedef enum rglBtn {
         RGL_BTN_COUNT,
 } rglBtn;
 
-void rglGetCursorPos(v2 *vec);
+void rglGetCursorPos(rglV2 *vec);
 b8 rglIsKeyPressed(rglKey key);
 b8 rglIsKeyJustPressed(rglKey key);
 b8 rglIsKeyJustReleased(rglKey btn);

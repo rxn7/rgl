@@ -4,7 +4,7 @@
 #include "rgl.h"
 
 void
-rglGetCursorPos(v2 *vec) {
+rglGetCursorPos(rglV2 *vec) {
 	RGL_PLATFORM_FUN(GetCursorPos, vec);
 }
 

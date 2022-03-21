@@ -1,7 +1,7 @@
 #include "rgl_sprite_animation.h"
 
 void
-rgl_sprite_animation_create(rglSpriteAnimation *anim, rglTexture *texture, u16 *frames, u16 frame_count, f32 seconds_per_frame, v2 frame_size) {
+rgl_sprite_animation_create(rglSpriteAnimation *anim, rglTexture *texture, u16 *frames, u16 frame_count, f32 seconds_per_frame, rglV2 frame_size) {
 	RGL_ASSERT_VALID_PTR(anim);
 	RGL_ASSERT_VALID_PTR(texture);
 	RGL_ASSERT_VALID_PTR(frames);

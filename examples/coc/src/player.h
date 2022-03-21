@@ -3,7 +3,7 @@
 
 typedef struct player_t {
 	rglSprite sprite;
-	v2 move_dir;
+	rglV2 move_dir;
 } player_t;
 
 void player_create(player_t *player, const char *texture_path);

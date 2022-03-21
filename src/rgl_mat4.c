@@ -1,9 +1,7 @@
 #include "rgl_mat4.h"
 
-/* TODO: Should I assert the parameters in these functions? */
-
 void
-rglMat4Cpy(rglMat4 src, rglMat4 dest) {
+rglMat4Copy(rglMat4 src, rglMat4 dest) {
 	for(u8 i=0; i<16; ++i) {
 		dest[i] = src[i];
 	}
@@ -30,7 +28,7 @@ rglMat4Ortho(rglMat4 mat, f32 left, f32 right, f32 bottom, f32 top, f32 z_near, 
 void
 rglMat4Mul(rglMat4 a, rglMat4 b) {
 	rglMat4 ac;
-	rglMat4Cpy(a, ac);
+	rglMat4Copy(a, ac);
 
 	a[0] = ac[0] * b[0] + ac[4] * b[1] + ac[8] * b[2] + ac[12] * b[3];
 	a[1] = ac[1] * b[0] + ac[5] * b[1] + ac[9] * b[2] + ac[13] * b[3];
@@ -54,13 +52,13 @@ rglMat4Mul(rglMat4 a, rglMat4 b) {
 }
 
 void
-rglMat4Translate(rglMat4 mat, v2 vec) {
+rglMat4Translate(rglMat4 mat, rglV2 *vec) {
 	memset(mat, 0, sizeof(f32) * 16);
 
 	mat[0] = mat[5] = mat[10] = 1.0f; 
 
-	mat[12] = vec.x;
-	mat[13] = vec.y;
+	mat[12] = vec->x;
+	mat[13] = vec->y;
 	mat[14] = 1.0f;
 	mat[15] = 1.0f;
 }
@@ -93,11 +91,11 @@ rglMat4Rotate(rglMat4 mat, f32 degrees) {
 }
 
 void
-rglMat4Scale(rglMat4 mat, v2 vec) {
+rglMat4Scale(rglMat4 mat, rglV2 *vec) {
 	memset(mat, 0, sizeof(f32) * 16);
 
-	mat[0] = vec.x;
-	mat[5] = vec.y;
+	mat[0] = vec->x;
+	mat[5] = vec->y;
 	mat[10] = 1.0f;
 	mat[15] = 1.0f;
 }

@@ -1,7 +1,7 @@
 #include "x11/rgl_x11_input.h"
 #include "rgl.h"
 
-static v2 _cursor_pos;
+static rglV2 _cursor_pos;
 
 static char _keys[32] = {0};
 static char _prev_keys[32] = {0};
@@ -83,7 +83,7 @@ rglX11InputPostUpdate(void) {
 }
 
 void
-rglX11GetCursorPos(v2 *vec) {
+rglX11GetCursorPos(rglV2 *vec) {
 	rglV2Copy(&_cursor_pos, vec);
 }
 
