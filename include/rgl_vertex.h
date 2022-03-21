@@ -5,8 +5,8 @@
 #include "rgl_common.h"
 
 typedef struct rglVertex {
-	v2 position;
-	v2 uv;
+	rglV2 position;
+	rglV2 uv;
 } rglVertex;
 
 #endif /* __RGL_VERTEX_H */

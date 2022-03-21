@@ -5,8 +5,8 @@
 #include "rgl_texture.h"
 
 typedef struct rglSprite {
-	v2 position;
-	v2 size;
+	rglV2 position;
+	rglV2 size;
 	f32 rotation;	
 	rglVao vao;
 	rglTexture *texture;

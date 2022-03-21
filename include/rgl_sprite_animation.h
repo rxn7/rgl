@@ -9,10 +9,10 @@ typedef struct rglSpriteAnimation {
 	u16 *frames;
 	u16 frame_count;
 	f32 seconds_per_frame;
-	v2 frame_size; /* in pixels */
+	rglV2 frame_size; /* in pixels */
 } rglSpriteAnimation;
 
-void rgl_sprite_animation_create(rglSpriteAnimation *anim, rglTexture *texture, u16 *frames, u16 frame_count, f32 seconds_per_frame, v2 frame_size);
+void rgl_sprite_animation_create(rglSpriteAnimation *anim, rglTexture *texture, u16 *frames, u16 frame_count, f32 seconds_per_frame, rglV2 frame_size);
 void rgl_sprite_animation_destroy(rglSpriteAnimation *anim);
 
 #endif /* __RGL_SPRITE_ANIMATION_H */

@@ -5,6 +5,7 @@
 void app_init(void);
 void app_update(f32 dt);
 void app_quit(void);
+void app_draw(void);
 void spawn_foods(void);
 
 #define FOOD_COUNT 300
@@ -23,6 +24,7 @@ main(int argc, const char **argv) {
 		.background_color = RGL_RGB(255,255,255),
 		.init_f = app_init,
 		.update_f = app_update,
+		.draw_f = app_draw,
 		.quit_f = app_quit,
 	};
 
@@ -42,6 +44,11 @@ app_update(f32 dt) {
 		spawn_foods();
 	}
 
+	if(rglIsKeyPressed(RGL_KEY_A)) _rgl_data->camera->position.x -= dt * 10;
+	if(rglIsKeyPressed(RGL_KEY_D)) _rgl_data->camera->position.x += dt * 10;
+	if(rglIsKeyPressed(RGL_KEY_W)) _rgl_data->camera->position.y -= dt * 10;
+	if(rglIsKeyPressed(RGL_KEY_S)) _rgl_data->camera->position.y += dt * 10;
+
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
 		rglV2 delta_pos;
 		rglV2Sub(&foods[i].pos, &player.pos, &delta_pos);
@@ -54,12 +61,17 @@ app_update(f32 dt) {
 			}
 			food_spawn(&foods[i], &player);
 		}
-
-		food_render(&foods[i]);
 	}
 
 	player_update(&player, dt);
-	player_render(&player);
+}
+
+void app_draw(void) {
+	player_draw(&player);
+
+	for(u32 i=0; i<FOOD_COUNT; ++i) {
+		food_draw(&foods[i]);
+	}
 }
 
 void

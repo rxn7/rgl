@@ -1,7 +1,7 @@
 #include "rgl_immediate.h"
 
 static void
-_rglDrawRect(u32 mode, rglColor *col, v2 *pos, v2 *size) {
+_rglDrawRect(u32 mode, rglColor *col, rglV2 *pos, rglV2 *size) {
 	glColor3ub(col->r, col->g, col->b);
 
 	f32 hsx = size->x * 0.5f;
@@ -16,18 +16,18 @@ _rglDrawRect(u32 mode, rglColor *col, v2 *pos, v2 *size) {
 }
 
 void
-rglDrawRect(rglColor col, v2 pos, v2 size) {
+rglDrawRect(rglColor col, rglV2 pos, rglV2 size) {
 	_rglDrawRect(GL_QUADS, &col, &pos, &size);
 }
 
 void
-rglDrawRectOutline(rglColor col, v2 pos, v2 size, f32 line_width) {
+rglDrawRectOutline(rglColor col, rglV2 pos, rglV2 size, f32 line_width) {
 	glLineWidth(line_width);
 	_rglDrawRect(GL_LINE_LOOP, &col, &pos, &size);
 }
 
 static void
-_rglDrawCircle(u32 mode, rglColor *col, v2 *pos, f32 radius) {
+_rglDrawCircle(u32 mode, rglColor *col, rglV2 *pos, f32 radius) {
 	if(radius <= 0) {
 		printf("Tried to draw circle with radius <= 0!\n");
 		return;
@@ -64,18 +64,18 @@ _rglDrawCircle(u32 mode, rglColor *col, v2 *pos, f32 radius) {
 }
 
 void
-rglDrawCircle(rglColor col, v2 pos, f32 radius) {
+rglDrawCircle(rglColor col, rglV2 pos, f32 radius) {
 	_rglDrawCircle(GL_TRIANGLE_FAN, &col, &pos, radius);
 }
 
 void
-rglDrawCircleOutline(rglColor col, v2 pos, f32 radius, f32 line_width) {
+rglDrawCircleOutline(rglColor col, rglV2 pos, f32 radius, f32 line_width) {
 	glLineWidth(line_width);
 	_rglDrawCircle(GL_LINE_LOOP, &col, &pos, radius);
 }
 
 void
-rglDrawLine(rglColor col, v2 a, v2 b, f32 width) {
+rglDrawLine(rglColor col, rglV2 a, rglV2 b, f32 width) {
 	glColor3ub(col.r, col.g, col.b);
 	glLineWidth(width);
 

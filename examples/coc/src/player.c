@@ -4,7 +4,6 @@
 static rglTexture _texture = {0};
 
 static void player_movement(player_t *player, f32 dt);
-static void player_render(player_t *player);
 
 void
 player_create(player_t *player, const char *texture_path) {
@@ -25,17 +24,6 @@ player_destroy(player_t *player) {
 void
 player_update(player_t *player, f32 dt) {
 	player_movement(player, dt);
-
-	i32 ww, wh;
-	rglGetWindowSize(&ww, &wh);
-
-	if(player->sprite.position.x < 0) player->sprite.position.x = 0;
-	else if(player->sprite.position.x > ww) player->sprite.position.x = ww;
-
-	if(player->sprite.position.y < 0) player->sprite.position.y = 0;
-	else if(player->sprite.position.y > wh) player->sprite.position.y = wh;
-
-	player_render(player);
 }
 
 static void
@@ -58,7 +46,6 @@ player_movement(player_t *player, f32 dt) {
 	}
 }
 
-static void
-player_render(player_t *player) {
+void player_draw(player_t *player) {
 	rglSpriteRender(&player->sprite);
 }

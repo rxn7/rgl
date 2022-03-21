@@ -6,10 +6,11 @@ void app_init();
 void app_init();
 void app_quit();
 void app_update(f32 dt);
+void app_draw();
 void player_coin_pickup_check();
 
 player_t player;
-coin_t coin;
+coin_t coins[COIN_COUNT];
 u32 score = 0;
 
 int
@@ -18,8 +19,9 @@ main(int argc, const char **argv) {
 		.width = 640,
 		.height = 480,
 		.title = "RGL | Coc",
-		.background_color = RGL_RGB(10, 70, 10),
+		.background_color = RGL_WHITE,
 		.update_f = app_update,
+		.draw_f = app_draw,
 		.init_f = app_init,
 		.quit_f = app_quit,
 	};
@@ -32,7 +34,10 @@ app_init() {
 	player_create(&player, PLAYER_TEXTURE_PATH);
 
 	coin_initialize();
-	coin_respawn(&coin);
+
+	for(u32 i=0; i<COIN_COUNT; ++i) {
+		coin_respawn(&coins[i]);
+	}
 }
 
 void
@@ -44,21 +49,37 @@ void
 app_update(f32 dt) {
 	player_update(&player, dt);
 	player_coin_pickup_check();
-	coin_update(&coin);
+
+	rglV2Copy(&player.sprite.position, &_rgl_data->camera->position);
+}
+
+void app_draw() {
+	if(rglIsKeyPressed(RGL_KEY_SPACE)) {
+		rglDrawCircle(RGL_RED, player.sprite.position, PLAYER_COIN_PICKUP_DISTANCE);
+	}
+
+	for(u32 i=0; i<COIN_COUNT; ++i) {
+		rglDrawLine(RGL_GREEN, player.sprite.position, coins[i].pos, 10);
+		coin_draw(&coins[i]);
+	}
+
+	player_draw(&player);
 }
 
 void
 player_coin_pickup_check() {
-	v2 delta_pos;
-	rglV2Sub(&coin.pos, &player.sprite.position, &delta_pos);
+	rglV2 delta_pos;
 
-	f32 dist = rglV2Length(&delta_pos);
+	for(u32 i=0; i<COIN_COUNT; ++i) {
+		rglV2Sub(&coins[i].pos, &player.sprite.position, &delta_pos);
+		f32 dist = rglV2Length(&delta_pos);
 
-	if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
-		coin_respawn(&coin);
-		coin_play_pickup_sound();
+		if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
+			coin_respawn(&coins[i]);
+			coin_play_pickup_sound();
 
-		/* TODO: UI Text display */
-		printf("Score: %u\n", ++score);
+			/* TODO: UI Text display */
+			printf("Score: %u\n", ++score);
+		}
 	}
 }

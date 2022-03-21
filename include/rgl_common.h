@@ -40,5 +40,6 @@ typedef bool            b8;
 typedef void (*rglAppUpdateFunc)(f32 dt);
 typedef void (*rglAppQuitFunc)(void);
 typedef void (*rglAppInitFunc)(void);
+typedef void (*rglAppDrawFunc)(void);
 
 #endif /* __RGL_COMMON_H */

@@ -20,8 +20,8 @@ extern "C" {
 
 struct ball_t {
 	rglColor color;
-	v2 pos;
-	v2 vel;
+	rglV2 pos;
+	rglV2 vel;
 	f32 radius;
 	f32 sound_played_time;
 };
@@ -35,22 +35,24 @@ struct collision_t {
 	ball_t *a;
 
 	union {
-		v2 pos;
+		rglV2 pos;
 		ball_t *b;
 	};
 };
 
-void app_quit();
+void app_quit(void);
 void app_update(f32 dt);
-void app_init();
-void play_click_sound();
+void app_init(void);
+void app_draw(void);
+
+void play_click_sound(void);
 void play_bounce_sound(f32 gain);
-void init_balls();
-void update_balls();
-void draw_balls();
-void add_ball(v2 pos);
-void thr_physics_func();
-b8 is_point_in_ball(ball_t *ball, v2 point);
+void init_balls(void);
+void update_balls(void);
+void draw_balls(void);
+void add_ball(rglV2 pos);
+void thr_physics_func(void);
+b8 is_point_in_ball(ball_t *ball, rglV2 point);
 
 std::vector<ball_t> vec_balls;
 std::thread thr_physics;
@@ -75,6 +77,7 @@ main(int argc, const char **argv) {
                 .width = 640,
                 .init_f = app_init,
                 .update_f = app_update,
+		.draw_f = app_draw,
                 .quit_f = app_quit,
         };
 
@@ -82,7 +85,7 @@ main(int argc, const char **argv) {
 }
 
 void
-app_init() {
+app_init(void) {
         srand(time(0));
 
 	rglAudioBufferLoadFromVorbis(&click_audio_buffer, CLICK_SOUND_PATH);
@@ -98,7 +101,7 @@ app_init() {
 }
 
 void
-app_quit() {
+app_quit(void) {
 	running = false;
 
 	rglAudioBufferDestroy(&bounce_audio_buffer);
@@ -117,8 +120,8 @@ app_update(f32 dt) {
 	b8 left_pressed = rglIsButtonPressed(RGL_MOUSE_LEFT);
 	b8 right_pressed = rglIsButtonPressed(RGL_MOUSE_RIGHT);
 
-	v2 mouse_pos;
-	rglGetCursorPos(&mouse_pos);
+	rglV2 mouse_pos;
+	rglGetCursorPosInWorld(&mouse_pos);
 
 	if(left_pressed || right_pressed) {
 		if(selected_ball == NULL) {
@@ -143,8 +146,8 @@ app_update(f32 dt) {
 	}
 
 	if(rglIsKeyJustPressed(RGL_KEY_N)) {
-		v2 pos;
-		rglGetCursorPos(&pos);
+		rglV2 pos;
+		rglGetCursorPosInWorld(&pos);
 		add_ball(pos);
 
 		play_click_sound();
@@ -210,12 +213,14 @@ app_update(f32 dt) {
 			ball.radius *= radius_multiplier;
 		}
 	}
+}
 
+void app_draw(void) {
 	draw_balls();
 }
 
 void
-thr_physics_func() {
+thr_physics_func(void) {
 	std::vector<collision_t> vec_collisions;
 
 	while(running) {
@@ -229,24 +234,24 @@ thr_physics_func() {
 			u32 j=0;
 
 			/* Left wall */
-			if(ball.pos.x < ball.radius) {
-				ball.pos.x = ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {-1, ball.pos.y} } });
+			if(ball.pos.x - ball.radius < _rgl_data->camera->left) {
+				ball.pos.x = _rgl_data->camera->left + ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_data->camera->left, ball.pos.y} } });
 			} 
 			/* Right wall */
-			else if(ball.pos.x + ball.radius > _rgl_data->width) {
-				ball.pos.x = _rgl_data->width - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {(f32)_rgl_data->width+1, ball.pos.y} } });
+			else if(ball.pos.x + ball.radius > _rgl_data->camera->right) {
+				ball.pos.x = _rgl_data->camera->right - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_data->camera->right, ball.pos.y} } });
 			} 
 			/* Top wall */
-			if(ball.pos.y < ball.radius) {
-				ball.pos.y = ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, -1} } });
+			if(ball.pos.y - ball.radius < _rgl_data->camera->bottom) {
+				ball.pos.y = _rgl_data->camera->bottom + ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_data->camera->bottom } } });
 			} 
 			/* Bottom wall */
-			else if(ball.pos.y + ball.radius > _rgl_data->height) {
-				ball.pos.y = _rgl_data->height - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, (f32)_rgl_data->height+1} } });
+			else if(ball.pos.y + ball.radius > _rgl_data->camera->top) {
+				ball.pos.y = _rgl_data->camera->top - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_data->camera->top} } });
 			} 
 
 			/* Overlap collisions */
@@ -254,7 +259,7 @@ thr_physics_func() {
 				/* Ignore checking ball against itself */
 				if(i == j++) continue; 
 
-				v2 delta_pos = {
+				rglV2 delta_pos = {
 					.x = ball.pos.x - target.pos.x,
 					.y = ball.pos.y - target.pos.y,
 				};
@@ -266,7 +271,7 @@ thr_physics_func() {
 					f32 dist = rglV2Length(&delta_pos);
 					f32 overlap = (dist - ball.radius - target.radius) * 0.5f / dist;
 
-					v2 overlap_move = {
+					rglV2 overlap_move = {
 						.x = overlap * delta_pos.x,
 						.y = overlap * delta_pos.y,
 					};
@@ -286,15 +291,15 @@ thr_physics_func() {
 				ball_t *a = collision.a;
 				ball_t *b = collision.b;
 
-				v2 delta_pos;
+				rglV2 delta_pos;
 				rglV2Sub(&a->pos, &b->pos, &delta_pos);
 
-				v2 delta_vel;
+				rglV2 delta_vel;
 				rglV2Sub(&a->vel, &b->vel, &delta_vel);
 
 				f32 dist = rglV2Length(&delta_pos);
 
-				v2 normal = {
+				rglV2 normal = {
 					.x = (b->pos.x - a->pos.x) / dist,
 					.y = (b->pos.y - a->pos.y) / dist,
 				};
@@ -319,7 +324,7 @@ thr_physics_func() {
 			} else {
 				ball_t *ball = collision.a;
 
-				v2 normal = {
+				rglV2 normal = {
 					.x = (collision.pos.x - ball->pos.x) / ball->radius,
 					.y = (collision.pos.y - ball->pos.y) / ball->radius,
 				};
@@ -346,7 +351,7 @@ thr_physics_func() {
 }
 
 void
-draw_balls() {
+draw_balls(void) {
 	for(ball_t &ball : vec_balls) {
 		rglDrawCircle(ball.color, ball.pos, ball.radius);
 	}
@@ -354,16 +359,16 @@ draw_balls() {
 	if(selected_ball != NULL) {
 		rglDrawCircleOutline(RGL_RED, selected_ball->pos, selected_ball->radius, 3.f);
 
-		v2 mouse_pos;
-		rglGetCursorPos(&mouse_pos);
+		rglV2 mouse_pos;
+		rglGetCursorPosInWorld(&mouse_pos);
 
 		rglDrawLine(RGL_BLUE, selected_ball->pos, mouse_pos, 5);
 	}
 }
 
 void
-init_balls() {
-	v2 pos;
+init_balls(void) {
+	rglV2 pos;
 	for(u32 i=0; i<START_BALL_COUNT; ++i) {
 		pos.x = (f32)(rand() % _rgl_data->width);
 		pos.y = (f32)(rand() % _rgl_data->height);
@@ -373,7 +378,7 @@ init_balls() {
 }
 
 void
-play_click_sound() {
+play_click_sound(void) {
 	rglAudioSourceSetGain(&click_audio_source, 1.0f);
 	rglAudioSourceSetPitch(&click_audio_source, RAND_RANGE_F(0.8f, 1.2f));
 	rglAudioSourcePlay(&click_audio_source);
@@ -402,7 +407,7 @@ play_bounce_sound(f32 gain) {
 }
 
 void
-add_ball(v2 pos) {
+add_ball(rglV2 pos) {
 	static const f32 HALF_RANDOM_INITIAL_VELOCITY = RANDOM_INITIAL_VELOCITY * 0.5f;
 
 	ball_t ball = {
@@ -419,8 +424,8 @@ add_ball(v2 pos) {
 }
 
 b8
-is_point_in_ball(ball_t *ball, v2 point) {
-	v2 delta_pos = {
+is_point_in_ball(ball_t *ball, rglV2 point) {
+	rglV2 delta_pos = {
 		.x = ball->pos.x - point.x,
 		.y = ball->pos.y - point.y,
 	};

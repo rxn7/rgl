@@ -4,8 +4,8 @@
 void
 food_spawn(food_t *food, player_t *player) {
 	/* TODO: Don't allow food spawning inside of player */
-	f32 x = RAND_RANGE_F(0, _rgl_data->width);
-	f32 y = RAND_RANGE_F(0, _rgl_data->height);
+	f32 x = RAND_RANGE_F(_rgl_data->camera->left, _rgl_data->camera->right);
+	f32 y = RAND_RANGE_F(_rgl_data->camera->bottom, _rgl_data->camera->top);
 
 	food->pos.x = x;
 	food->pos.y = y;
@@ -14,6 +14,6 @@ food_spawn(food_t *food, player_t *player) {
 }
 
 void
-food_render(food_t *food) {
+food_draw(food_t *food) {
 	rglDrawCircle(food->color, food->pos, FOOD_RADIUS);
 }
