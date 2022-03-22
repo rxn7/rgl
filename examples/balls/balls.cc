@@ -244,13 +244,13 @@ thr_physics_func(void) {
 				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_data->camera->right, ball.pos.y} } });
 			} 
 			/* Top wall */
-			if(ball.pos.y - ball.radius < _rgl_data->camera->bottom) {
-				ball.pos.y = _rgl_data->camera->bottom + ball.radius; 
+			if(ball.pos.y + ball.radius > _rgl_data->camera->bottom) {
+				ball.pos.y = _rgl_data->camera->bottom - ball.radius; 
 				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_data->camera->bottom } } });
 			} 
 			/* Bottom wall */
-			else if(ball.pos.y + ball.radius > _rgl_data->camera->top) {
-				ball.pos.y = _rgl_data->camera->top - ball.radius; 
+			else if(ball.pos.y - ball.radius < _rgl_data->camera->top) {
+				ball.pos.y = _rgl_data->camera->top + ball.radius; 
 				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_data->camera->top} } });
 			} 
 
