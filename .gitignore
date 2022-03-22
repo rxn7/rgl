@@ -2,3 +2,5 @@
 ./examples/balls/balls
 ./examples/coc/coc
 ./out
+*.o
+**/.o
