@@ -12,7 +12,7 @@ rglVaoCreate(rglVao *vao, const rglVertex *vertices, u32 vertex_count) {
 	
 	glGenBuffers(1, &vao->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vao->vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 4 * vertex_count, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rglVertex) * vertex_count, vertices, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(rglVertex), (void *)0);

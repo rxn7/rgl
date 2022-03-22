@@ -72,6 +72,26 @@ rglSpriteRender(rglSprite *sprite) {
 }
 
 void
+rglSpriteSetUVs(rglSprite *sprite, rglV2 *uvs) {
+	RGL_ASSERT_VALID_PTR(sprite);
+	RGL_ASSERT_VALID_PTR(uvs);
+
+	glBindVertexArray(sprite->vao.id);
+	glBindBuffer(GL_ARRAY_BUFFER, sprite->vao.vbo);
+
+	rglVertex vertices[] = {
+		{ {-1, -1},	uvs[0] },
+		{ { 1, -1},	uvs[1] },
+		{ { 1,  1},	uvs[2] },
+		{ {-1,  1},	uvs[3] },
+	};
+
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(rglVertex) * 4, &vertices);
+
+	glBindVertexArray(0);
+}
+
+void
 _rglSpriteShaderCreate(void) {
 	_shader = malloc(sizeof(rglShader));
 
