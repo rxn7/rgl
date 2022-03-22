@@ -15,4 +15,5 @@ rglAnimationTextureCreate(rglAnimationTexture *anim_texture, rglTexture *texture
 
 void
 rglAnimationTextureDestroy(rglAnimationTexture *anim_texture) {
+	RGL_ASSERT_VALID_PTR(anim_texture);
 }

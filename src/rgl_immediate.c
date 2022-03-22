@@ -33,7 +33,7 @@ _rglDrawCircle(u32 mode, rglColor *col, rglV2 *pos, f32 radius) {
 		return;
 	}
 
-	u32 segments = 3.1f * sqrtf(radius);
+	u32 segments = 4.f * sqrtf(radius);
 	if(segments < CIRCLE_MIN_SEGMENTS) segments = CIRCLE_MIN_SEGMENTS;
 	else if(segments > CIRCLE_MAX_SEGMENTS) segments = CIRCLE_MAX_SEGMENTS;
 

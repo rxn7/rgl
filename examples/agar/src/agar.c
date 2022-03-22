@@ -44,11 +44,6 @@ app_update(f32 dt) {
 		spawn_foods();
 	}
 
-	if(rglIsKeyPressed(RGL_KEY_A)) _rgl_data->camera->position.x -= dt * 10;
-	if(rglIsKeyPressed(RGL_KEY_D)) _rgl_data->camera->position.x += dt * 10;
-	if(rglIsKeyPressed(RGL_KEY_W)) _rgl_data->camera->position.y -= dt * 10;
-	if(rglIsKeyPressed(RGL_KEY_S)) _rgl_data->camera->position.y += dt * 10;
-
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
 		rglV2 delta_pos;
 		rglV2Sub(&foods[i].pos, &player.pos, &delta_pos);
@@ -61,17 +56,21 @@ app_update(f32 dt) {
 			}
 			food_spawn(&foods[i], &player);
 		}
+
+		if(foods[i].pos.x < _rgl_data->camera->left || foods[i].pos.x > _rgl_data->camera->right || foods[i].pos.y > _rgl_data->camera->bottom || foods[i].pos.y < _rgl_data->camera->top) {
+			food_spawn(&foods[i], &player);
+		}
 	}
 
 	player_update(&player, dt);
 }
 
 void app_draw(void) {
-	player_draw(&player);
-
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
 		food_draw(&foods[i]);
 	}
+
+	player_draw(&player);
 }
 
 void

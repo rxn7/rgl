@@ -9,12 +9,16 @@ rglGetCursorPos(rglV2 *vec) {
 	vec->y = _rgl_data->height - vec->y;
 }
 
+/* TODO: Get correct world cursor position. */
 void
 rglGetCursorPosInWorld(rglV2 *vec) {
 	RGL_PLATFORM_FUN(GetCursorPos, vec);
 
-	vec->x = ((vec->x / _rgl_data->width * 2) - 1) * _rgl_data->camera->right;
-	vec->y = ((vec->y / _rgl_data->height * 2) - 1) * _rgl_data->camera->bottom;
+	f32 cam_w = _rgl_data->camera->right - _rgl_data->camera->left;
+	f32 cam_h = _rgl_data->camera->bottom - _rgl_data->camera->top;
+
+	vec->x = _rgl_data->camera->left + (vec->x / _rgl_data->width * cam_w);
+	vec->y = _rgl_data->camera->top + (vec->y / _rgl_data->height * cam_h);
 }
 
 b8

@@ -23,6 +23,8 @@ player_update(player_t *player, f32 dt) {
 	rglV2Mulf(&delta_pos, dt * PLAYER_MOVE_SPEED, &delta_pos);
 
 	rglV2Add(&player->pos, &delta_pos, &player->pos);
+
+	rglV2Lerp(&_rgl_data->camera->position, &player->pos, dt * 10, &_rgl_data->camera->position);
 }
 
 void
