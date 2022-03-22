@@ -2,14 +2,15 @@
 #include "common.h"
 
 static void player_movement(player_t *player, f32 dt);
+static void player_handle_animations(player_t *player);
 
 void
 player_create(player_t *player, const char *texture_path) {
 	rglTextureLoadFromFile(&player->texture, texture_path, RGL_TEXTURE_FILTER_NONE);
 	rglSpriteCreate(&player->sprite, &player->texture);
 
-	player->sprite.size.x = 44;
-	player->sprite.size.y = 88;
+	player->sprite.size.x *= 0.3f;
+	player->sprite.size.y *= 0.3f;
 
 	player->sprite.position.x = (f32)_rgl_data->width / 2.f;
 	player->sprite.position.y = (f32)_rgl_data->height / 2.f;
@@ -45,6 +46,16 @@ player_update(player_t *player, f32 dt) {
 	rglSpriteAnimatorUpdate(&player->animator, &player->sprite, dt);
 }
 
+void
+player_draw(player_t *player) {
+	rglSpriteRender(&player->sprite);
+}
+
+void 
+player_play_animation(player_t *player, player_animation_t anim) {
+	rglSpriteAnimatorPlayNow(&player->animator, &player->animations[anim], false);
+}
+
 static void
 player_movement(player_t *player, f32 dt) {
 	rglV2Zero(&player->move_dir);
@@ -54,10 +65,7 @@ player_movement(player_t *player, f32 dt) {
 	if(rglIsKeyPressed(RGL_KEY_D)) player->move_dir.x++;
 
 	if(player->move_dir.x != 0 || player->move_dir.y != 0) {
-		if(player->move_dir.y > 0.0f) player_play_animation(player, MOVE_DOWN);
-		else if(player->move_dir.y < 0.0f) player_play_animation(player, MOVE_UP);
-		else if(player->move_dir.x > 0.0f) player_play_animation(player, MOVE_RIGHT);
-		else if(player->move_dir.x < 0.0f) player_play_animation(player, MOVE_LEFT);
+		player_handle_animations(player);
 
 		rglV2Normalize(&player->move_dir, &player->move_dir);
 		rglV2Mulf(&player->move_dir, dt * PLAYER_MOVE_SPEED, &player->move_dir);
@@ -67,12 +75,9 @@ player_movement(player_t *player, f32 dt) {
 	}
 }
 
-void
-player_draw(player_t *player) {
-	rglSpriteRender(&player->sprite);
-}
-
-void 
-player_play_animation(player_t *player, player_animation_t anim) {
-	rglSpriteAnimatorPlayNow(&player->animator, &player->animations[anim], false);
+static void player_handle_animations(player_t *player) {
+	if(player->move_dir.y > 0.0f) player_play_animation(player, MOVE_DOWN);
+	else if(player->move_dir.y < 0.0f) player_play_animation(player, MOVE_UP);
+	else if(player->move_dir.x > 0.0f) player_play_animation(player, MOVE_RIGHT);
+	else if(player->move_dir.x < 0.0f) player_play_animation(player, MOVE_LEFT);
 }

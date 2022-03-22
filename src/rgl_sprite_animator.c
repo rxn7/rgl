@@ -11,7 +11,7 @@ rglSpriteAnimatorCreate(rglSpriteAnimator *animator, rglSpriteAnimation *default
 
 void
 rglSpriteAnimatorDestroy(rglSpriteAnimator *animator) {
-RGL_ASSERT_VALID_PTR(animator);
+	RGL_ASSERT_VALID_PTR(animator);
 }
 
 void
