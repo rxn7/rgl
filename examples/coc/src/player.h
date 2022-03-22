@@ -12,11 +12,13 @@ typedef enum player_animation_t {
 } player_animation_t;
 
 typedef struct player_t {
+	rglV2 move_dir;
 	rglSprite sprite;
+	rglTexture texture;
+	rglAnimationTexture anim_texture;
 	rglSpriteAnimator animator;
 	rglSpriteAnimation *animations;
 	player_animation_t animation;
-	rglV2 move_dir;
 } player_t;
 
 void player_create(player_t *player, const char *texture_path);

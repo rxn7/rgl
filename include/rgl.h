@@ -11,6 +11,7 @@
 #include "rgl_immediate.h"
 #include "rgl_audio.h"
 #include "rgl_camera.h"
+#include "rgl_sprite_animator.h"
 
 typedef struct rglAppDesc {
         const char *title;

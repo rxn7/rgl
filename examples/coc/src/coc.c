@@ -32,8 +32,7 @@ main(int argc, const char **argv) {
 void
 app_init() {
 	player_create(&player, PLAYER_TEXTURE_PATH);
-
-	coin_initialize();
+	coins_initialize();
 
 	for(u32 i=0; i<COIN_COUNT; ++i) {
 		coin_respawn(&coins[i]);
@@ -47,6 +46,7 @@ app_quit() {
 
 void
 app_update(f32 dt) {
+	coins_update(dt);
 	player_update(&player, dt);
 	player_coin_pickup_check();
 

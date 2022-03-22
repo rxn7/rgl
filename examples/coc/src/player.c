@@ -1,14 +1,12 @@
 #include "player.h"
 #include "common.h"
 
-static rglTexture _texture = {0};
-
 static void player_movement(player_t *player, f32 dt);
 
 void
 player_create(player_t *player, const char *texture_path) {
-	rglTextureLoadFromFile(&_texture, texture_path, RGL_TEXTURE_FILTER_NONE);
-	rglSpriteCreate(&player->sprite, &_texture);
+	rglTextureLoadFromFile(&player->texture, texture_path, RGL_TEXTURE_FILTER_NONE);
+	rglSpriteCreate(&player->sprite, &player->texture);
 
 	player->sprite.size.x = 44;
 	player->sprite.size.y = 88;
@@ -19,14 +17,16 @@ player_create(player_t *player, const char *texture_path) {
 	rglV2 frame_size = (rglV2){22,44};
 	f32 seconds_per_frame = 0.15f;
 
-	player->animations = malloc(PLAYER_ANIM_COUNT * sizeof(rglSpriteAnimation));
-	rglSpriteAnimationCreate(&player->animations[IDLE], player->sprite.texture, (u16[]){1}, 1, 0.2f, frame_size, true);
-	rglSpriteAnimationCreate(&player->animations[MOVE_DOWN], player->sprite.texture, (u16[]){0, 1, 2, 1},  4, seconds_per_frame, frame_size, true);
-	rglSpriteAnimationCreate(&player->animations[MOVE_LEFT], player->sprite.texture, (u16[]){3, 4, 5, 4},  4, seconds_per_frame, frame_size, true);
-	rglSpriteAnimationCreate(&player->animations[MOVE_RIGHT], player->sprite.texture, (u16[]){6, 7, 8, 7}, 4, seconds_per_frame, frame_size, true);
-	rglSpriteAnimationCreate(&player->animations[MOVE_UP], player->sprite.texture, (u16[]){9, 10, 11, 10}, 4, seconds_per_frame, frame_size, true);
+	rglAnimationTextureCreate(&player->anim_texture, &player->texture, (rglV2){22,44});
 
-	rglSpriteAnimatorCreate(&player->animator, &player->sprite, &player->animations[IDLE]);
+	player->animations = malloc(PLAYER_ANIM_COUNT * sizeof(rglSpriteAnimation));
+	rglSpriteAnimationCreate(&player->animations[IDLE], &player->anim_texture, (u16[]){1}, 1, 0.2f, true);
+	rglSpriteAnimationCreate(&player->animations[MOVE_DOWN], &player->anim_texture, (u16[]){0, 1, 2, 1},  4, seconds_per_frame, true);
+	rglSpriteAnimationCreate(&player->animations[MOVE_LEFT], &player->anim_texture, (u16[]){3, 4, 5, 4},  4, seconds_per_frame, true);
+	rglSpriteAnimationCreate(&player->animations[MOVE_RIGHT], &player->anim_texture, (u16[]){6, 7, 8, 7}, 4, seconds_per_frame, true);
+	rglSpriteAnimationCreate(&player->animations[MOVE_UP], &player->anim_texture, (u16[]){9, 10, 11, 10}, 4, seconds_per_frame, true);
+
+	rglSpriteAnimatorCreate(&player->animator, &player->animations[IDLE]);
 
 	player_play_animation(player, IDLE);
 }
@@ -42,7 +42,7 @@ player_destroy(player_t *player) {
 void
 player_update(player_t *player, f32 dt) {
 	player_movement(player, dt);
-	rglSpriteAnimatorUpdate(&player->animator, dt);
+	rglSpriteAnimatorUpdate(&player->animator, &player->sprite, dt);
 }
 
 static void
