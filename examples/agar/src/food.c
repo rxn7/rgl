@@ -4,8 +4,8 @@
 void
 food_spawn(food_t *food, player_t *player) {
 	/* TODO: Don't allow food spawning inside of player */
-	f32 x = RAND_RANGE_F(_rgl_data->camera->left, _rgl_data->camera->right);
-	f32 y = RAND_RANGE_F(_rgl_data->camera->bottom, _rgl_data->camera->top);
+	f32 x = RAND_RANGE_F32(_rgl_data->camera->left, _rgl_data->camera->right);
+	f32 y = RAND_RANGE_F32(_rgl_data->camera->bottom, _rgl_data->camera->top);
 
 	food->pos.x = x;
 	food->pos.y = y;

@@ -75,6 +75,7 @@ main(int argc, const char **argv) {
                 .title = "RGL | Balls",
 		.height = 720,
 		.width = 1280,
+		.background_color = RGL_WHITE,
                 .init_f = app_init,
                 .update_f = app_update,
 		.draw_f = app_draw,
@@ -380,7 +381,7 @@ init_balls(void) {
 void
 play_click_sound(void) {
 	rglAudioSourceSetGain(&click_audio_source, 1.0f);
-	rglAudioSourceSetPitch(&click_audio_source, RAND_RANGE_F(0.8f, 1.2f));
+	rglAudioSourceSetPitch(&click_audio_source, RAND_RANGE_F32(0.8f, 1.2f));
 	rglAudioSourcePlay(&click_audio_source);
 }
 
@@ -402,7 +403,7 @@ play_bounce_sound(f32 gain) {
 	}
 
 	rglAudioSourceSetGain(source, gain);
-	rglAudioSourceSetPitch(source, RAND_RANGE_F(0.9f, 1.1f));
+	rglAudioSourceSetPitch(source, RAND_RANGE_F32(0.9f, 1.1f));
 	rglAudioSourcePlay(source);
 }
 
@@ -411,7 +412,7 @@ add_ball(rglV2 pos) {
 	static const f32 HALF_RANDOM_INITIAL_VELOCITY = RANDOM_INITIAL_VELOCITY * 0.5f;
 
 	ball_t ball = {
-		.color = { .rgb = { (u8)(RAND_255), (u8)(RAND_255), (u8)(RAND_255) } },
+		.color = { .rgb = { (u8)(RAND_RANGE_I32(100, 255)), (u8)(RAND_RANGE_I32(0, 100)), (u8)(RAND_RANGE_I32(100, 255)) } },
 		.radius = (MAX_RADIUS - MIN_RADIUS) * ((f32)rand() / RAND_MAX) + MIN_RADIUS,
 	};
 

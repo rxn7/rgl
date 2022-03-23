@@ -12,9 +12,10 @@
 #define PI_F 3.1415926f
 #define PI_2F 2.0f*PI_F
 
-#define RAND_F ((f32)rand() / (f32)RAND_MAX)
-#define RAND_255 (rand() % 256) 
-#define RAND_RANGE_F(min, max) (RAND_F * (max-min) + min)
+#define RAND_F32 ((f32)rand() / (f32)RAND_MAX)
+#define RAND_U8 (rand() % 256) 
+#define RAND_RANGE_F32(min, max) (RAND_F32 * (max-min) + min)
+#define RAND_RANGE_I32(min, max) (rand() % (max-min) + min)
 
 typedef int8_t          i8;
 typedef int16_t         i16;
