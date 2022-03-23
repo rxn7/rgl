@@ -21,3 +21,6 @@ OBJ = rgl.o \
       rgl_camera.o
 
 all: compile link
+
+clear:
+	rm -rf *.o
