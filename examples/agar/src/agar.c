@@ -19,8 +19,8 @@ int
 main(int argc, const char **argv) {
 	rglAppDesc desc = (rglAppDesc){
 		.title = "RGL | Agar",
-		.width = 640,
-		.height = 480,
+		.width = 1280,
+		.height = 720,
 		.background_color = RGL_RGB(255,255,255),
 		.init_f = app_init,
 		.update_f = app_update,

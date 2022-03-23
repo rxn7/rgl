@@ -1,10 +1,10 @@
 /* Settings */
 #define RANDOM_INITIAL_VELOCITY 2000
-#define MAX_RADIUS 20.f
-#define MIN_RADIUS 15.f
+#define MAX_RADIUS 25.f
+#define MIN_RADIUS 10.f
 #define GRAVITY 980
 #define FRICTION 0.99f
-#define START_BALL_COUNT 100
+#define START_BALL_COUNT 500
 #define MIN_TIME_BETWEEN_BOUNCE_SOUNDS 0.1f
 #define BOUNCE_AUDIO_SOURCE_COUNT 30
 #define CLICK_SOUND_PATH "res/click.ogg"
@@ -73,8 +73,8 @@ int
 main(int argc, const char **argv) {
         rglAppDesc desc = {
                 .title = "RGL | Balls",
-                .height = 480,
-                .width = 640,
+		.height = 720,
+		.width = 1280,
                 .init_f = app_init,
                 .update_f = app_update,
 		.draw_f = app_draw,

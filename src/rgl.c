@@ -18,6 +18,11 @@ rglStart(rglAppDesc *desc) {
         if(!desc->update_f)             desc->update_f = _rglDefaultUpdateFunc;
 	if(!desc->draw_f)		desc->draw_f = _rglDefaultDrawFunc;
 
+	if(!desc->aspect_x || !desc->aspect_y) {
+		desc->aspect_x = 16;
+		desc->aspect_y = 9;
+	}
+
 	srand(time(0));
 
 	_rgl_data = malloc(sizeof(_rglAppData));
@@ -65,7 +70,24 @@ void
 _rglUpdateProjection(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glViewport(0, 0, _rgl_data->width, _rgl_data->height);
+
+	f32 width = _rgl_data->width;
+	f32 height = _rgl_data->height;
+
+	f32 viewport_x = 0, viewport_y = 0;
+	f32 viewport_width = width;
+	f32 viewport_height = height;
+
+	if(width * _rgl_data->desc->aspect_y > height * _rgl_data->desc->aspect_x) {
+		viewport_width = height * _rgl_data->desc->aspect_x / _rgl_data->desc->aspect_y ;
+		viewport_x = (width - viewport_width) / 2;
+	} else if(width * _rgl_data->desc->aspect_y < height * _rgl_data->desc->aspect_x) {
+		viewport_height = width * _rgl_data->desc->aspect_y / _rgl_data->desc->aspect_x;
+		viewport_y = (height - viewport_height) / 2;
+	}
+
+	glViewport(viewport_x, viewport_y, viewport_width, viewport_height);
+	glScissor(viewport_x, viewport_y, viewport_width, viewport_height);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -88,6 +110,7 @@ _rglAppDataCreate(_rglAppData *data, rglAppDesc *desc) {
 	RGL_ASSERT_VALID_PTR(desc);
 
         data->desc = desc;
+
 	data->width = desc->width;
 	data->height = desc->width;
 
@@ -118,9 +141,6 @@ void
 _rglSetupOpenGL(void) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	rglColor *col = &_rgl_data->desc->background_color;
-	glClearColor((f32)col->r / 255.f, (f32)col->g / 255.f, (f32)col->b / 255.f, 1.f);
 }
 
 void
@@ -136,7 +156,15 @@ _rglMainLoop(void) {
                 last = now;
 
 		RGL_PLATFORM_FUN(StartFrame);
+
+		/* Black bars viewport */
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glClearColor((f32)_rgl_data->desc->background_color.r / 255.f, (f32)_rgl_data->desc->background_color.g / 255.f, (f32)_rgl_data->desc->background_color.b / 255.f, 1.f);
+		glEnable(GL_SCISSOR_TEST);
 		glClear(GL_COLOR_BUFFER_BIT);
+		glDisable(GL_SCISSOR_TEST);
 
 		if(!first_frame) {
 			_rgl_data->desc->update_f(dt);

@@ -15,8 +15,8 @@
 
 typedef struct rglAppDesc {
         const char *title;
-        u16 height;
-        u16 width;
+        u16 height, width;
+	u16 aspect_x, aspect_y; /* TODO: Auto calculate the aspect_x and aspect_y. */
 	rglColor background_color;
         rglAppInitFunc init_f;
         rglAppUpdateFunc update_f;

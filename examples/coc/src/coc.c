@@ -16,8 +16,8 @@ u32 score = 0;
 int 
 main(int argc, const char **argv) {
 	rglAppDesc desc = (rglAppDesc) {
-		.width = 640,
-		.height = 480,
+		.width = 1280,
+		.height = 720,
 		.title = "RGL | Coc",
 		.background_color = RGL_WHITE,
 		.update_f = app_update,
