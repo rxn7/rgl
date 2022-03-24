@@ -68,7 +68,7 @@ player_movement(player_t *player, f32 dt) {
 		player_handle_animations(player);
 
 		rglV2Normalize(&player->move_dir, &player->move_dir);
-		rglV2Mulf(&player->move_dir, dt * PLAYER_MOVE_SPEED, &player->move_dir);
+		rglV2Mulf(&player->move_dir, dt * PLAYER_MOVE_MASS, &player->move_dir);
 		rglV2Add(&player->sprite.position, &player->move_dir, &player->sprite.position);
 	} else {
 		player_play_animation(player, IDLE);

@@ -4,12 +4,12 @@
 #include <rgl/rgl.h>
 
 #define PLAYER_SPAWN_RADIUS 20
-#define PLAYER_MOVE_SPEED 100
+#define PLAYER_MOVE_MASS 100
 
 typedef struct player_t {
 	rglV2 pos;
 	rglColor color;
-	f32 radius;
+	f32 mass;
 } player_t;
 
 void player_spawn(player_t *player);

@@ -1,4 +1,5 @@
 #include "rgl_immediate.h"
+#include "rgl.h"
 
 static void
 _rglDrawRect(u32 mode, rglColor *col, rglV2 *pos, rglV2 *size) {
@@ -33,7 +34,8 @@ _rglDrawCircle(u32 mode, rglColor *col, rglV2 *pos, f32 radius) {
 		return;
 	}
 
-	u32 segments = 4.f * sqrtf(radius);
+	/* TODO: Find optimal segments algorithm */
+	u32 segments = sqrtf(radius) * (_rgl_data->camera->zoom * 0.25f);
 	if(segments < CIRCLE_MIN_SEGMENTS) segments = CIRCLE_MIN_SEGMENTS;
 	else if(segments > CIRCLE_MAX_SEGMENTS) segments = CIRCLE_MAX_SEGMENTS;
 

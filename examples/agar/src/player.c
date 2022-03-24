@@ -8,7 +8,7 @@ player_spawn(player_t *player) {
 	player->pos.x = hww;
 	player->pos.y = hwh;
 
-	player->radius = PLAYER_SPAWN_RADIUS;
+	player->mass = PLAYER_SPAWN_RADIUS;
 	player->color = RGL_RED;
 }
 
@@ -20,14 +20,16 @@ player_update(player_t *player, f32 dt) {
 	rglV2 delta_pos;
 	rglV2Sub(&mouse_pos, &player->pos, &delta_pos);
 	rglV2Normalize(&delta_pos, &delta_pos);
-	rglV2Mulf(&delta_pos, dt * PLAYER_MOVE_SPEED, &delta_pos);
+	rglV2Mulf(&delta_pos, dt * PLAYER_MOVE_MASS, &delta_pos);
 
 	rglV2Add(&player->pos, &delta_pos, &player->pos);
 
 	rglV2Lerp(&_rgl_data->camera->position, &player->pos, dt * 10, &_rgl_data->camera->position);
+
+	_rgl_data->camera->zoom = rgl_math_lerp(_rgl_data->camera->zoom, 1.f / player->mass * 100, dt * 3); 
 }
 
 void
 player_draw(player_t *player) {
-	rglDrawCircle(player->color, player->pos, player->radius);
+	rglDrawCircle(player->color, player->pos, player->mass);
 }

@@ -18,7 +18,8 @@ OBJ = rgl.o \
       rgl_sprite_animation.o \
       rgl_sprite_animator.o \
       rgl_animation_texture.o \
-      rgl_camera.o
+      rgl_camera.o \
+      rgl_math.o
 
 all: compile link
 

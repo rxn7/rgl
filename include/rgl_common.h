@@ -29,9 +29,10 @@ typedef float           f32;
 typedef double          f64;
 typedef bool            b8;
 
+#include "rgl_math.h"
 #include "rgl_v2.h"
-#include "rgl_color.h"
 #include "rgl_mat4.h"
+#include "rgl_color.h"
 #include "rgl_log.h"
 
 #ifdef RGL_BUILD

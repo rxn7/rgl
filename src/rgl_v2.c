@@ -1,4 +1,5 @@
 #include "rgl_v2.h"
+#include "rgl_math.h"
 #include <math.h>
 
 void 
@@ -66,17 +67,16 @@ rglV2Divf(rglV2 *v, f32 f, rglV2 *dest) {
 	if(v != 0) {
 		dest->x = v->x / f;
 		dest->y = v->y / f;
+	} else {
+		dest->x = 0;
+		dest->y = 0;
 	}
 }
 
 void
 rglV2Normalize(rglV2 *v, rglV2 *dest) {
 	f32 len = rglV2Length(v);
-
-	if(len != 0) {
-		dest->x /= len;
-		dest->y /= len;
-	}
+	rglV2Divf(v, len, dest);
 }
 
 f32
@@ -86,8 +86,8 @@ rglV2Length(rglV2 *a) {
 
 void 
 rglV2Lerp(rglV2 *a, rglV2 *b, f32 v, rglV2 *dest) {
-	dest->x = (a->x * (1.0f - v)) + (b->x * v);
-	dest->y = (a->y * (1.0f - v)) + (b->y * v);
+	dest->x = rgl_math_lerp(a->x, b->x, v);
+	dest->y = rgl_math_lerp(a->y, b->y, v);
 }
 
 void
