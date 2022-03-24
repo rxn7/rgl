@@ -31,5 +31,5 @@ Run ```./run_example.sh``` for more info on how to run an RGL example
 Run ```make -f linux.mk install``` to install the RGL library on a Linux system.
 
 # Windows/MacOS support
-MacOS support is not planned, who uses MacOS in 2022?  
+MacOS support is not planned,   
 Windows support is planned 
