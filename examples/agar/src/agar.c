@@ -9,8 +9,6 @@ void app_draw(void);
 void spawn_foods(void);
 
 #define FOOD_COUNT 300
-#define PLAYER_RADIUS_INC 0.2f
-#define PLAYER_RADIUS_MAX 500
 
 food_t foods[FOOD_COUNT];
 player_t player;
@@ -45,21 +43,7 @@ app_update(f32 dt) {
 	}
 
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
-		rglV2 delta_pos;
-		rglV2Sub(&foods[i].pos, &player.pos, &delta_pos);
-
-		f32 dist = rglV2Length(&delta_pos);
-
-		if(dist <= player.radius + FOOD_RADIUS) {
-			if(player.radius < PLAYER_RADIUS_MAX - PLAYER_RADIUS_INC) {
-				player.radius += PLAYER_RADIUS_INC;
-			}
-			food_spawn(&foods[i], &player);
-		}
-
-		if(foods[i].pos.x < _rgl_data->camera->left || foods[i].pos.x > _rgl_data->camera->right || foods[i].pos.y > _rgl_data->camera->bottom || foods[i].pos.y < _rgl_data->camera->top) {
-			food_spawn(&foods[i], &player);
-		}
+		food_update(&foods[i], &player, dt);
 	}
 
 	player_update(&player, dt);
