@@ -1,7 +1,6 @@
 # RGL
-Game Framework written in c99.   
-RGL is currently a huge mess, don't try to use it, come back here later.
-   
+Game Framework written in c99.
+  
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/rxtthin/rgl?style=plastic)  
 
 # Todo
