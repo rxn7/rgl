@@ -4,7 +4,7 @@ Game Framework written in c99.
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/rxtthin/rgl?style=plastic)  
 
 # Todo
-You can check out the [KanbanFlow board](https://kanbanflow.com/board/zK5jp54)
+You can check out the [Trello board](https://trello.com/b/35zRL8wO/rgl)
 
 # Features
 * Input system
