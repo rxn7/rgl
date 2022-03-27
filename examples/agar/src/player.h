@@ -4,7 +4,7 @@
 #include <rgl/rgl.h>
 
 #define PLAYER_SPAWN_RADIUS 20
-#define PLAYER_MOVE_MASS 100
+#define PLAYER_MOVE_SPEED 50
 
 typedef struct player_t {
 	rglV2 pos;

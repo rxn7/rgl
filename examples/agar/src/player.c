@@ -20,7 +20,7 @@ player_update(player_t *player, f32 dt) {
 	rglV2 delta_pos;
 	rglV2Sub(&mouse_pos, &player->pos, &delta_pos);
 	rglV2Normalize(&delta_pos, &delta_pos);
-	rglV2Mulf(&delta_pos, dt * PLAYER_MOVE_MASS, &delta_pos);
+	rglV2Mulf(&delta_pos, dt * PLAYER_MOVE_SPEED, &delta_pos);
 
 	rglV2Add(&player->pos, &delta_pos, &player->pos);
 

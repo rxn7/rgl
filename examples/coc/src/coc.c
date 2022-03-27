@@ -51,6 +51,14 @@ app_update(f32 dt) {
 	player_coin_pickup_check();
 
 	rglV2Lerp(&_rgl_data->camera->position, &player.sprite.position, dt * 10, &_rgl_data->camera->position);
+
+	if(rglIsButtonPressed(RGL_MOUSE_SCROLL_UP)) {
+		_rgl_data->camera->zoom += 0.1f;
+		puts("cock");
+	} else if(rglIsButtonPressed(RGL_MOUSE_SCROLL_DOWN)) {
+		_rgl_data->camera->zoom -= 0.1f;
+		puts("cum");
+	}
 }
 
 void 

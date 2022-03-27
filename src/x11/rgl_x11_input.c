@@ -60,6 +60,20 @@ _rglKeyToKeysym(rglKey key) {
 	return 0;
 }
 
+static u32
+_rglBtnToMask(rglBtn btn) {
+	switch(btn) {
+		case RGL_MOUSE_LEFT: return Button1Mask;
+		case RGL_MOUSE_MIDDLE: return Button2Mask;
+		case RGL_MOUSE_RIGHT: return Button3Mask;
+		case RGL_MOUSE_SCROLL_UP: return Button4Mask;
+		case RGL_MOUSE_SCROLL_DOWN: return Button5Mask;
+		default: break;
+	}
+
+	return 0;
+}
+
 void
 rglX11InputUpdate(void) {
 	i32 rx, ry;
@@ -107,36 +121,17 @@ rglX11IsKeyJustReleased(rglKey key) {
 
 b8
 rglX11IsBtnPressed(rglBtn btn) {
-	switch(btn) {
-		case RGL_MOUSE_LEFT: return _buttons & Button1Mask;
-		case RGL_MOUSE_RIGHT: return _buttons & Button3Mask;
-		case RGL_MOUSE_MIDDLE: return _buttons & Button2Mask;
-		default: break;
-	}
-
-	return false;
+	return _buttons & _rglBtnToMask(btn);
 }
 
 b8
 rglX11IsBtnJustPressed(rglBtn btn) {
-	switch(btn) {
-		case RGL_MOUSE_LEFT: return _buttons & Button1Mask && !(_prev_buttons & Button1Mask);
-		case RGL_MOUSE_RIGHT: return _buttons & Button3Mask && !(_prev_buttons & Button3Mask);
-		case RGL_MOUSE_MIDDLE: return _buttons & Button2Mask && !(_prev_buttons & Button2Mask);
-		default: break;
-	}
-
-	return false;
+	u32 mask = _rglBtnToMask(btn);
+	return !(_prev_buttons & mask) && (_buttons & mask);
 }
 
 b8
 rglX11IsBtnJustReleased(rglBtn btn) {
-	switch(btn) {
-		case RGL_MOUSE_LEFT: return !(_buttons & Button1Mask) && _prev_buttons & Button1Mask;
-		case RGL_MOUSE_RIGHT: return !(_buttons & Button3Mask) && _prev_buttons & Button3Mask;
-		case RGL_MOUSE_MIDDLE: return !(_buttons & Button2Mask) && _prev_buttons & Button2Mask;
-		default: break;
-	}
-
-	return false;
+	u32 mask = _rglBtnToMask(btn);
+	return (_prev_buttons & mask) && !(_buttons & mask);
 }

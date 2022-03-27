@@ -74,20 +74,23 @@ _rglUpdateProjection(void) {
 	f32 width = _rgl_data->width;
 	f32 height = _rgl_data->height;
 
-	f32 viewport_x = 0, viewport_y = 0;
-	f32 viewport_width = width;
-	f32 viewport_height = height;
+	_rgl_data->vp_x = 0;
+	_rgl_data->vp_y = 0;
+	_rgl_data->vp_width = width;
+	_rgl_data->vp_height = height;
 
 	if(width * _rgl_data->desc->aspect_y > height * _rgl_data->desc->aspect_x) {
-		viewport_width = height * _rgl_data->desc->aspect_x / _rgl_data->desc->aspect_y ;
-		viewport_x = (width - viewport_width) / 2;
+		_rgl_data->vp_width = height * _rgl_data->desc->aspect_x / _rgl_data->desc->aspect_y ;
+		_rgl_data->vp_x = (width - _rgl_data->vp_width) / 2;
 	} else if(width * _rgl_data->desc->aspect_y < height * _rgl_data->desc->aspect_x) {
-		viewport_height = width * _rgl_data->desc->aspect_y / _rgl_data->desc->aspect_x;
-		viewport_y = (height - viewport_height) / 2;
+		_rgl_data->vp_height = width * _rgl_data->desc->aspect_y / _rgl_data->desc->aspect_x;
+		_rgl_data->vp_y = (height - _rgl_data->vp_height) / 2;
 	}
 
-	glViewport(viewport_x, viewport_y, viewport_width, viewport_height);
-	glScissor(viewport_x, viewport_y, viewport_width, viewport_height);
+	printf("%f | %f\n", _rgl_data->vp_x, _rgl_data->vp_y);
+
+	glViewport(_rgl_data->vp_x, _rgl_data->vp_y, _rgl_data->vp_width, _rgl_data->vp_height);
+	glScissor(_rgl_data->vp_x, _rgl_data->vp_y, _rgl_data->vp_width, _rgl_data->vp_height);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -159,7 +162,7 @@ _rglMainLoop(void) {
 
 		/* Black bars viewport */
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		glClearColor((f32)_rgl_data->desc->background_color.r / 255.f, (f32)_rgl_data->desc->background_color.g / 255.f, (f32)_rgl_data->desc->background_color.b / 255.f, 1.f);
 		glEnable(GL_SCISSOR_TEST);

@@ -42,6 +42,8 @@ typedef struct _rglAppData {
 
 	b8 running;
 	i32 width, height;
+	f32 vp_width, vp_height;
+	f32 vp_x, vp_y;
 } _rglAppData;
 
 extern _rglAppData *_rgl_data; /* Defined in rgl.c */

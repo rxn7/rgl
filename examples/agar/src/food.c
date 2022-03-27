@@ -29,7 +29,7 @@ food_update(food_t *food, player_t *player, f32 dt) {
 	rglV2Sub(&food->pos, &player->pos, &delta_pos);
 	f32 dist = rglV2Length(&delta_pos);
 
-	if(dist <= player->mass + food->mass) {
+	if(dist <= player->mass + FOOD_RADIUS(food->mass)) {
 		if(!food->eaten) {
 			player->mass += food->mass;
 			food_eat(food);
@@ -40,11 +40,9 @@ food_update(food_t *food, player_t *player, f32 dt) {
 		food_spawn(food, player);
 	}
 
-	if(dist < (player->mass / 2) + (FOOD_RADIUS(food) / 2)) {
-		food_spawn(food, player);
-	} else if(food->eaten) {
-		food->mass -= dt * 2.f;
-		rglV2Lerp(&food->pos, &player->pos, dt * 3.5f, &food->pos);
+	if(food->eaten) {
+		food->mass -= dt * 0.05f;
+		rglV2Lerp(&food->pos, &player->pos, dt * 1.01f, &food->pos);
 
 		if(food->mass <= 0) {
 			food_spawn(food, player);
