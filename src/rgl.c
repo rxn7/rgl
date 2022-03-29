@@ -87,8 +87,6 @@ _rglUpdateProjection(void) {
 		_rgl_data->vp_y = (height - _rgl_data->vp_height) / 2;
 	}
 
-	printf("%f | %f\n", _rgl_data->vp_x, _rgl_data->vp_y);
-
 	glViewport(_rgl_data->vp_x, _rgl_data->vp_y, _rgl_data->vp_width, _rgl_data->vp_height);
 	glScissor(_rgl_data->vp_x, _rgl_data->vp_y, _rgl_data->vp_width, _rgl_data->vp_height);
 
@@ -116,6 +114,7 @@ _rglAppDataCreate(_rglAppData *data, rglAppDesc *desc) {
 
 	data->width = desc->width;
 	data->height = desc->width;
+	data->scroll_value = 0.0f;
 
 	data->plat_cxt = malloc(sizeof(RGL_PLATFORM_CONTEXT_T));
 	RGL_ASSERT(RGL_PLATFORM_FUN(ContextCreate, data->plat_cxt, desc->title, desc->width, desc->height), "failed to initialize platform context");

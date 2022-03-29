@@ -38,9 +38,10 @@ rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 height
 	XSetWindowAttributes swa;
 	swa.colormap = XCreateColormap(cxt->dpy, cxt->root, vi->visual, AllocNone);
 	swa.border_pixel = 0;
-	swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | KeyReleaseMask | ButtonReleaseMask;
+	swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | KeyReleaseMask | ButtonReleaseMask | FocusChangeMask;
 
 	cxt->win = XCreateWindow(cxt->dpy, cxt->root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa);
+	cxt->focus = true;
 	RGL_ASSERT_VALID_PTR(cxt->win);
 
 	XMapRaised(cxt->dpy, cxt->win);
@@ -118,6 +119,26 @@ _rglX11ProcessEvent() {
 			_rgl_data->width = _rgl_data->plat_cxt->win_attr.width;
 			_rgl_data->height = _rgl_data->plat_cxt->win_attr.height;
 			_rglUpdateProjection();
+			break;
+
+		case FocusOut:
+			_rgl_data->plat_cxt->focus = false;
+			break;
+
+		case FocusIn:
+			_rgl_data->plat_cxt->focus = true;
+			break;
+
+		case KeyPress:
+			break;
+
+		case ButtonPress:
+			if(_rgl_data->plat_cxt->event.xbutton.button == Button4) {
+				_rgl_data->scroll_value = 1.0f;
+			} else if(_rgl_data->plat_cxt->event.xbutton.button == Button5) {
+				_rgl_data->scroll_value = -1.0f;
+			}
+
 			break;
 	}
 }

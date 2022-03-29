@@ -66,8 +66,6 @@ _rglBtnToMask(rglBtn btn) {
 		case RGL_MOUSE_LEFT: return Button1Mask;
 		case RGL_MOUSE_MIDDLE: return Button2Mask;
 		case RGL_MOUSE_RIGHT: return Button3Mask;
-		case RGL_MOUSE_SCROLL_UP: return Button4Mask;
-		case RGL_MOUSE_SCROLL_DOWN: return Button5Mask;
 		default: break;
 	}
 
@@ -76,15 +74,17 @@ _rglBtnToMask(rglBtn btn) {
 
 void
 rglX11InputUpdate(void) {
-	i32 rx, ry;
-	i32 mx, my;
-	Window win;
-	XQueryPointer(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win, &win, &win, &rx, &ry, &mx, &my, &_buttons);
+	if(_rgl_data->plat_cxt->focus) {
+		i32 rx, ry;
+		i32 mx, my;
+		Window win;
+		XQueryPointer(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win, &win, &win, &rx, &ry, &mx, &my, &_buttons);
 
-	_cursor_pos.x = mx;
-	_cursor_pos.y = my;
+		_cursor_pos.x = mx;
+		_cursor_pos.y = my;
 
-	XQueryKeymap(_rgl_data->plat_cxt->dpy, _keys);
+		XQueryKeymap(_rgl_data->plat_cxt->dpy, _keys);
+	}
 }
 
 void
@@ -93,6 +93,7 @@ rglX11InputPostUpdate(void) {
 		_prev_keys[i] = _keys[i];
 	}
 
+	_rgl_data->scroll_value = 0.0f;
 	_prev_buttons = _buttons;
 }
 

@@ -14,6 +14,7 @@ typedef struct rglX11Context {
 	XWindowAttributes win_attr;
 	XEvent event;
 	GLXContext glx;
+	b8 focus;
 } rglX11Context;
 
 b8 rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 height);

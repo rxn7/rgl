@@ -39,11 +39,11 @@ typedef struct _rglAppData {
         rglAppDesc *desc;
 	rglAudioContext *audio_cxt;
 	rglCamera *camera;
-
 	b8 running;
 	i32 width, height;
 	f32 vp_width, vp_height;
 	f32 vp_x, vp_y;
+	f32 scroll_value;
 } _rglAppData;
 
 extern _rglAppData *_rgl_data; /* Defined in rgl.c */

@@ -52,13 +52,7 @@ app_update(f32 dt) {
 
 	rglV2Lerp(&_rgl_data->camera->position, &player.sprite.position, dt * 10, &_rgl_data->camera->position);
 
-	if(rglIsButtonPressed(RGL_MOUSE_SCROLL_UP)) {
-		_rgl_data->camera->zoom += 0.1f;
-		puts("cock");
-	} else if(rglIsButtonPressed(RGL_MOUSE_SCROLL_DOWN)) {
-		_rgl_data->camera->zoom -= 0.1f;
-		puts("cum");
-	}
+	_rgl_data->camera->zoom += _rgl_data->scroll_value * 0.05f;
 }
 
 void 
