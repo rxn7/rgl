@@ -25,7 +25,10 @@ You can check out the [Trello board](https://trello.com/b/35zRL8wO/rgl)
 * x11
 
 # Examples
-Run ```./run_example.sh``` for more info on how to run an RGL example
+## Coc - Collector of coins  
+## Balls - Balls simulation  
+## Agar - agar.io kind of game  
+Run ```./run_example.sh``` for more info on how to run an RGL example  
 
 # Install
 Run ```make -f linux.mk install``` to install the RGL library on a Linux system.

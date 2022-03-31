@@ -9,6 +9,7 @@ RGL_PLATFORM_CONTEXT_T *_rgl_plat_ctx = NULL;
 rglAppDesc *_rgl_app_desc = NULL;
 rglAudioContext *_rgl_audio_ctx = NULL;
 rglCamera *_rgl_camera = NULL;
+
 b8 _rgl_running = false;
 i32 _rgl_width, _rgl_height;
 f32 _rgl_vp_width, _rgl_vp_height;

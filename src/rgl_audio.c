@@ -31,7 +31,6 @@ rglAudioContextDestroy(rglAudioContext *cxt) {
 	}
 }
 
-
 void
 rglAudioBufferLoadFromVorbis(rglAudioBuffer *audio_buffer, const char *path) {
 	RGL_ASSERT_VALID_PTR(audio_buffer);
