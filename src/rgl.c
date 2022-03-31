@@ -5,7 +5,17 @@
 #include <sys/resource.h>
 #include <sched.h>
 
-_rglAppData *_rgl_data = 0;
+RGL_PLATFORM_CONTEXT_T *_rgl_plat_ctx = NULL;
+rglAppDesc *_rgl_app_desc = NULL;
+rglAudioContext *_rgl_audio_ctx = NULL;
+rglCamera *_rgl_camera = NULL;
+b8 _rgl_running = false;
+i32 _rgl_width, _rgl_height;
+f32 _rgl_vp_width, _rgl_vp_height;
+f32 _rgl_vp_x, _rgl_vp_y;
+f32 _rgl_scroll_value = 0.0f;
+u16 _rgl_aspect_x = 0.0f;
+u16 _rgl_aspect_y = 0.0f;
 
 b8
 rglStart(rglAppDesc *desc) {
@@ -18,17 +28,13 @@ rglStart(rglAppDesc *desc) {
         if(!desc->update_f)             desc->update_f = _rglDefaultUpdateFunc;
 	if(!desc->draw_f)		desc->draw_f = _rglDefaultDrawFunc;
 
-	if(!desc->aspect_x || !desc->aspect_y) {
-		i32 gcd = rglMathGcd(desc->width, desc->height);
-		desc->aspect_x = desc->width / gcd;
-		desc->aspect_y = desc->height / gcd;
-	}
+	i32 gcd = rglMathGcd(desc->width, desc->height);
+	_rgl_aspect_x = desc->width / gcd;
+	_rgl_aspect_y = desc->height / gcd;
 
 	srand(time(0));
 
-	_rgl_data = malloc(sizeof(_rglAppData));
-	_rglAppDataCreate(_rgl_data, desc);
-
+	_rglInitGlobals(desc);
 	_rglSetupOpenGL();
 	_rglUpdateProjection();
 	_rglShaderCreateDefaults();
@@ -47,17 +53,15 @@ rglStart(rglAppDesc *desc) {
 
 void 
 rglQuit(void) {
-	_rgl_data->running = false;
+	_rgl_running = false;
 
 	/* Call user-defined quit func */
-        if(_rgl_data->desc->quit_f) {
-                _rgl_data->desc->quit_f();
+        if(_rgl_app_desc->quit_f) {
+                _rgl_app_desc->quit_f();
         }
 
 	_rglShaderDestroyDefaults();
-	_rglAppDataDestroy(_rgl_data);
-
-	free(_rgl_data);
+	_rglDestroyGlobals();
 
 	exit(0);
 }
@@ -72,24 +76,21 @@ _rglUpdateProjection(void) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	f32 width = _rgl_data->width;
-	f32 height = _rgl_data->height;
+	_rgl_vp_x = 0;
+	_rgl_vp_y = 0;
+	_rgl_vp_width = _rgl_width;
+	_rgl_vp_height = _rgl_height;
 
-	_rgl_data->vp_x = 0;
-	_rgl_data->vp_y = 0;
-	_rgl_data->vp_width = width;
-	_rgl_data->vp_height = height;
-
-	if(width * _rgl_data->desc->aspect_y > height * _rgl_data->desc->aspect_x) {
-		_rgl_data->vp_width = height * _rgl_data->desc->aspect_x / _rgl_data->desc->aspect_y ;
-		_rgl_data->vp_x = (width - _rgl_data->vp_width) / 2;
-	} else if(width * _rgl_data->desc->aspect_y < height * _rgl_data->desc->aspect_x) {
-		_rgl_data->vp_height = width * _rgl_data->desc->aspect_y / _rgl_data->desc->aspect_x;
-		_rgl_data->vp_y = (height - _rgl_data->vp_height) / 2;
+	if(_rgl_width * _rgl_aspect_y > _rgl_height * _rgl_aspect_x) {
+		_rgl_vp_width = _rgl_height * _rgl_aspect_x / _rgl_aspect_y ;
+		_rgl_vp_x = (_rgl_width - _rgl_vp_width) / 2;
+	} else if(_rgl_width * _rgl_aspect_y < _rgl_height * _rgl_aspect_x) {
+		_rgl_vp_height = _rgl_width * _rgl_aspect_y / _rgl_aspect_x;
+		_rgl_vp_y = (_rgl_height - _rgl_vp_height) / 2;
 	}
 
-	glViewport(_rgl_data->vp_x, _rgl_data->vp_y, _rgl_data->vp_width, _rgl_data->vp_height);
-	glScissor(_rgl_data->vp_x, _rgl_data->vp_y, _rgl_data->vp_width, _rgl_data->vp_height);
+	glViewport(_rgl_vp_x, _rgl_vp_y, _rgl_vp_width, _rgl_vp_height);
+	glScissor(_rgl_vp_x, _rgl_vp_y, _rgl_vp_width, _rgl_vp_height);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -101,43 +102,36 @@ rglGetTime(void) {
 }
 
 void
-rglGetWindowSize(i32 *w, i32 *h) {
-	*w = _rgl_data->width;
-	*h = _rgl_data->height;
-}
-
-void
-_rglAppDataCreate(_rglAppData *data, rglAppDesc *desc) {
-	RGL_ASSERT_VALID_PTR(data);
+_rglInitGlobals(rglAppDesc *desc) {
 	RGL_ASSERT_VALID_PTR(desc);
 
-        data->desc = desc;
+        _rgl_app_desc = desc;
 
-	data->width = desc->width;
-	data->height = desc->width;
-	data->scroll_value = 0.0f;
+	_rgl_width = desc->width;
+	_rgl_height = desc->width;
+	_rgl_scroll_value = 0.0f;
 
-	data->plat_cxt = malloc(sizeof(RGL_PLATFORM_CONTEXT_T));
-	RGL_ASSERT(RGL_PLATFORM_FUN(ContextCreate, data->plat_cxt, desc->title, desc->width, desc->height), "failed to initialize platform context");
+	_rgl_plat_ctx = malloc(sizeof(RGL_PLATFORM_CONTEXT_T));
+	RGL_ASSERT(RGL_PLATFORM_FUN(ContextCreate, _rgl_plat_ctx, desc->title, desc->width, desc->height), "failed to initialize platform context");
 
-	data->audio_cxt = malloc(sizeof(rglAudioContext));
-	rglAudioContextCreate(data->audio_cxt);
+	_rgl_audio_ctx = malloc(sizeof(rglAudioContext));
+	rglAudioContextCreate(_rgl_audio_ctx);
 
-	data->camera = malloc(sizeof(rglCamera));
-	rglCameraCreate(data->camera, (rglV2){0,0}, 1);
-	rglCameraUpdate(_rgl_data->camera);
+	_rgl_camera = malloc(sizeof(rglCamera));
+	rglCameraCreate(_rgl_camera, (rglV2){0,0}, 1);
+	rglCameraUpdate(_rgl_camera);
 }
 
 void
-_rglAppDataDestroy(_rglAppData *data) {
-	RGL_PLATFORM_FUN(ContextDestroy, data->plat_cxt);
-	free(data->plat_cxt);
+_rglDestroyGlobals() {
+	RGL_PLATFORM_FUN(ContextDestroy, _rgl_plat_ctx);
+	free(_rgl_plat_ctx);
 
-	rglAudioContextDestroy(data->audio_cxt);
-	free(data->audio_cxt);
+	rglAudioContextDestroy(_rgl_audio_ctx);
+	free(_rgl_audio_ctx);
 
-	rglCameraDestroy(data->camera);
-	free(data->camera);
+	rglCameraDestroy(_rgl_camera);
+	free(_rgl_camera);
 }
 
 void
@@ -148,11 +142,11 @@ _rglSetupOpenGL(void) {
 
 void
 _rglMainLoop(void) {
-	_rgl_data->running = true;
+	_rgl_running = true;
 
 	b8 first_frame = true;
         f32 dt = 0, now = RGL_PLATFORM_FUN(GetTime), last = now;
-        while(_rgl_data->running) {
+        while(_rgl_running) {
                 /* Calculate delta time between frames */
                 now = RGL_PLATFORM_FUN(GetTime);
 		dt = (f32)(now - last);
@@ -164,19 +158,18 @@ _rglMainLoop(void) {
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glClearColor((f32)_rgl_data->desc->background_color.r / 255.f, (f32)_rgl_data->desc->background_color.g / 255.f, (f32)_rgl_data->desc->background_color.b / 255.f, 1.f);
+		glClearColor((f32)_rgl_app_desc->background_color.r / 255.f, (f32)_rgl_app_desc->background_color.g / 255.f, (f32)_rgl_app_desc->background_color.b / 255.f, 1.f);
 		glEnable(GL_SCISSOR_TEST);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_SCISSOR_TEST);
 
 		if(!first_frame) {
-			_rgl_data->desc->update_f(dt);
+			_rgl_app_desc->update_f(dt);
 		}
 
-		rglCameraUpdate(_rgl_data->camera);
+		rglCameraUpdate(_rgl_camera);
 
-		_rgl_data->desc->draw_f();
-
+		_rgl_app_desc->draw_f();
 
 		RGL_PLATFORM_FUN(EndFrame);
 

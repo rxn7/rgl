@@ -74,16 +74,16 @@ _rglBtnToMask(rglBtn btn) {
 
 void
 rglX11InputUpdate(void) {
-	if(_rgl_data->plat_cxt->focus) {
+	if(_rgl_plat_ctx->focus) {
 		i32 rx, ry;
 		i32 mx, my;
 		Window win;
-		XQueryPointer(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win, &win, &win, &rx, &ry, &mx, &my, &_buttons);
+		XQueryPointer(_rgl_plat_ctx->dpy, _rgl_plat_ctx->win, &win, &win, &rx, &ry, &mx, &my, &_buttons);
 
 		_cursor_pos.x = mx;
 		_cursor_pos.y = my;
 
-		XQueryKeymap(_rgl_data->plat_cxt->dpy, _keys);
+		XQueryKeymap(_rgl_plat_ctx->dpy, _keys);
 	}
 }
 
@@ -93,7 +93,7 @@ rglX11InputPostUpdate(void) {
 		_prev_keys[i] = _keys[i];
 	}
 
-	_rgl_data->scroll_value = 0.0f;
+	_rgl_scroll_value = 0.0f;
 	_prev_buttons = _buttons;
 }
 
@@ -104,19 +104,19 @@ rglX11GetCursorPos(rglV2 *vec) {
 
 b8
 rglX11IsKeyPressed(rglKey key) {
-	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyToKeysym(key));
+	KeyCode keycode = XKeysymToKeycode(_rgl_plat_ctx->dpy, _rglKeyToKeysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 
 b8
 rglX11IsKeyJustPressed(rglKey key) {
-	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyToKeysym(key));
+	KeyCode keycode = XKeysymToKeycode(_rgl_plat_ctx->dpy, _rglKeyToKeysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) != 0 && (_prev_keys[keycode / 8] & (1 << (keycode % 8))) == 0;
 }
 
 b8
 rglX11IsKeyJustReleased(rglKey key) {
-	KeyCode keycode = XKeysymToKeycode(_rgl_data->plat_cxt->dpy, _rglKeyToKeysym(key));
+	KeyCode keycode = XKeysymToKeycode(_rgl_plat_ctx->dpy, _rglKeyToKeysym(key));
 	return (_keys[keycode / 8] & (1 << (keycode % 8))) == 0 && (_prev_keys[keycode / 8] & (1 << (keycode % 8))) != 0;
 }
 

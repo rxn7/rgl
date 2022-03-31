@@ -62,7 +62,7 @@ rglSpriteRender(rglSprite *sprite) {
 	rglMat4Mul(model_matrix, rotation_matrix);
 	rglMat4Mul(model_matrix, scale_matrix);
 
-	glUniformMatrix4fv(_shader->uniform_locations[0], 1, false, (float *)_rgl_data->camera->projection);
+	glUniformMatrix4fv(_shader->uniform_locations[0], 1, false, (float *)_rgl_camera->projection);
 	glUniformMatrix4fv(_shader->uniform_locations[1], 1, false, (float *)model_matrix);
 
 	rglVaoRender(&sprite->vao, GL_QUADS);

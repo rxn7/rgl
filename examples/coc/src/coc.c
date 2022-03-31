@@ -50,9 +50,9 @@ app_update(f32 dt) {
 	player_update(&player, dt);
 	player_coin_pickup_check();
 
-	rglV2Lerp(&_rgl_data->camera->position, &player.sprite.position, dt * 10, &_rgl_data->camera->position);
+	rglV2Lerp(&_rgl_camera->position, &player.sprite.position, dt * 10, &_rgl_camera->position);
 
-	_rgl_data->camera->zoom += _rgl_data->scroll_value * 0.05f;
+	_rgl_camera->zoom += _rgl_scroll_value * 0.05f;
 }
 
 void 

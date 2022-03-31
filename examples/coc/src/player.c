@@ -12,9 +12,6 @@ player_create(player_t *player, const char *texture_path) {
 	player->sprite.size.x *= 0.3f;
 	player->sprite.size.y *= 0.3f;
 
-	player->sprite.position.x = (f32)_rgl_data->width / 2.f;
-	player->sprite.position.y = (f32)_rgl_data->height / 2.f;
-
 	f32 seconds_per_frame = 0.15f;
 	rglAnimationTextureCreate(&player->anim_texture, &player->texture, (rglV2){22,44});
 

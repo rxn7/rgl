@@ -11,14 +11,14 @@ static Atom _wm_delete_msg;
 static void _rglX11ProcessEvent();
 
 b8
-rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 height) { 
-	RGL_ASSERT_VALID_PTR(cxt);
+rglX11ContextCreate(rglX11Context *ctx, const char *title, i32 width, i32 height) { 
+	RGL_ASSERT_VALID_PTR(ctx);
 
-	cxt->dpy = XOpenDisplay(0);
-	RGL_ASSERT_VALID_PTR(cxt->dpy);
+	ctx->dpy = XOpenDisplay(0);
+	RGL_ASSERT_VALID_PTR(ctx->dpy);
 
-	cxt->root = DefaultRootWindow(cxt->dpy);
-	RGL_ASSERT_VALID_PTR(cxt->root);
+	ctx->root = DefaultRootWindow(ctx->dpy);
+	RGL_ASSERT_VALID_PTR(ctx->root);
 
 	i32 visual_attribs[] = {
 		GLX_RENDER_TYPE, GLX_RGBA_BIT,
@@ -30,56 +30,56 @@ rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 height
 	};
 
 	i32 fbcount;
-	GLXFBConfig *fbc = glXChooseFBConfig(cxt->dpy, DefaultScreen(cxt->dpy), visual_attribs, &fbcount);
+	GLXFBConfig *fbc = glXChooseFBConfig(ctx->dpy, DefaultScreen(ctx->dpy), visual_attribs, &fbcount);
 	RGL_ASSERT_VALID_PTR(fbc);
 
-	XVisualInfo *vi = glXGetVisualFromFBConfig(cxt->dpy, fbc[0]);
+	XVisualInfo *vi = glXGetVisualFromFBConfig(ctx->dpy, fbc[0]);
 
 	XSetWindowAttributes swa;
-	swa.colormap = XCreateColormap(cxt->dpy, cxt->root, vi->visual, AllocNone);
+	swa.colormap = XCreateColormap(ctx->dpy, ctx->root, vi->visual, AllocNone);
 	swa.border_pixel = 0;
 	swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | KeyReleaseMask | ButtonReleaseMask | FocusChangeMask;
 
-	cxt->win = XCreateWindow(cxt->dpy, cxt->root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa);
-	cxt->focus = true;
-	RGL_ASSERT_VALID_PTR(cxt->win);
+	ctx->win = XCreateWindow(ctx->dpy, ctx->root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa);
+	ctx->focus = true;
+	RGL_ASSERT_VALID_PTR(ctx->win);
 
-	XMapRaised(cxt->dpy, cxt->win);
-	XStoreName(cxt->dpy, cxt->win, title);
+	XMapRaised(ctx->dpy, ctx->win);
+	XStoreName(ctx->dpy, ctx->win, title);
 
-	i32 cxt_attribs[] = {
+	i32 ctx_attribs[] = {
 		GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
 		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
 		GLX_CONTEXT_MINOR_VERSION_ARB, 3,
 		None
 	};
 
-	cxt->glx = glXCreateContextAttribsARB(cxt->dpy, fbc[0], NULL, true, cxt_attribs);
-	RGL_ASSERT_VALID_PTR(cxt->glx);
+	ctx->glx = glXCreateContextAttribsARB(ctx->dpy, fbc[0], NULL, true, ctx_attribs);
+	RGL_ASSERT_VALID_PTR(ctx->glx);
 
-	glXMakeCurrent(cxt->dpy, cxt->win, cxt->glx);
+	glXMakeCurrent(ctx->dpy, ctx->win, ctx->glx);
 
-	_wm_delete_msg = XInternAtom(cxt->dpy, "WM_DELETE_WINDOW", false);
-	XSetWMProtocols(cxt->dpy, cxt->win, &_wm_delete_msg, 1);
+	_wm_delete_msg = XInternAtom(ctx->dpy, "WM_DELETE_WINDOW", false);
+	XSetWMProtocols(ctx->dpy, ctx->win, &_wm_delete_msg, 1);
 
 	return true;
 }
 
 void
-rglX11ContextDestroy(rglX11Context *cxt) {
-	RGL_ASSERT(cxt, false);
+rglX11ContextDestroy(rglX11Context *ctx) {
+	RGL_ASSERT(ctx, false);
 
-	glXMakeCurrent(cxt->dpy, None, 0);
-	glXDestroyContext(cxt->dpy, cxt->glx);
+	glXMakeCurrent(ctx->dpy, None, 0);
+	glXDestroyContext(ctx->dpy, ctx->glx);
 
-	XDestroyWindow(cxt->dpy, cxt->win);
-	XCloseDisplay(cxt->dpy);
+	XDestroyWindow(ctx->dpy, ctx->win);
+	XCloseDisplay(ctx->dpy);
 }
 
 void
 rglX11StartFrame(void) {
-	while(XPending(_rgl_data->plat_cxt->dpy)) {
-		XNextEvent(_rgl_data->plat_cxt->dpy, &_rgl_data->plat_cxt->event);
+	while(XPending(_rgl_plat_ctx->dpy)) {
+		XNextEvent(_rgl_plat_ctx->dpy, &_rgl_plat_ctx->event);
 		_rglX11ProcessEvent();
 	}
 
@@ -89,7 +89,7 @@ rglX11StartFrame(void) {
 void
 rglX11EndFrame(void) {
 	rglX11InputPostUpdate();
-	glXSwapBuffers(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win);
+	glXSwapBuffers(_rgl_plat_ctx->dpy, _rgl_plat_ctx->win);
 }
 
 f32
@@ -101,42 +101,42 @@ rglX11GetTime(void) {
 
 void
 rglX11SetVsync(b8 value) {
-	glXSwapIntervalEXT(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win, value);
+	glXSwapIntervalEXT(_rgl_plat_ctx->dpy, _rgl_plat_ctx->win, value);
 }
 
 static void
 _rglX11ProcessEvent() {
-	switch(_rgl_data->plat_cxt->event.type) {
+	switch(_rgl_plat_ctx->event.type) {
 		case ClientMessage:
-			if(_rgl_data->plat_cxt->event.xclient.data.l[0] == _wm_delete_msg) {
+			if(_rgl_plat_ctx->event.xclient.data.l[0] == _wm_delete_msg) {
 				rglQuit();
 			}
 
 			break;
 
 		case Expose:
-			XGetWindowAttributes(_rgl_data->plat_cxt->dpy, _rgl_data->plat_cxt->win, &_rgl_data->plat_cxt->win_attr);
-			_rgl_data->width = _rgl_data->plat_cxt->win_attr.width;
-			_rgl_data->height = _rgl_data->plat_cxt->win_attr.height;
+			XGetWindowAttributes(_rgl_plat_ctx->dpy, _rgl_plat_ctx->win, &_rgl_plat_ctx->win_attr);
+			_rgl_width = _rgl_plat_ctx->win_attr.width;
+			_rgl_height = _rgl_plat_ctx->win_attr.height;
 			_rglUpdateProjection();
 			break;
 
 		case FocusOut:
-			_rgl_data->plat_cxt->focus = false;
+			_rgl_plat_ctx->focus = false;
 			break;
 
 		case FocusIn:
-			_rgl_data->plat_cxt->focus = true;
+			_rgl_plat_ctx->focus = true;
 			break;
 
 		case KeyPress:
 			break;
 
 		case ButtonPress:
-			if(_rgl_data->plat_cxt->event.xbutton.button == Button4) {
-				_rgl_data->scroll_value = 1.0f;
-			} else if(_rgl_data->plat_cxt->event.xbutton.button == Button5) {
-				_rgl_data->scroll_value = -1.0f;
+			if(_rgl_plat_ctx->event.xbutton.button == Button4) {
+				_rgl_scroll_value = 1.0f;
+			} else if(_rgl_plat_ctx->event.xbutton.button == Button5) {
+				_rgl_scroll_value = -1.0f;
 			}
 
 			break;

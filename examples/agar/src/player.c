@@ -2,8 +2,8 @@
 
 void
 player_spawn(player_t *player) {
-	f32 hww = (f32)_rgl_data->width * 0.5f;
-	f32 hwh = (f32)_rgl_data->height * 0.5f;
+	f32 hww = (f32)_rgl_width * 0.5f;
+	f32 hwh = (f32)_rgl_height * 0.5f;
 
 	player->pos.x = hww;
 	player->pos.y = hwh;
@@ -24,9 +24,9 @@ player_update(player_t *player, f32 dt) {
 
 	rglV2Add(&player->pos, &delta_pos, &player->pos);
 
-	rglV2Lerp(&_rgl_data->camera->position, &player->pos, dt * 10, &_rgl_data->camera->position);
+	rglV2Lerp(&_rgl_camera->position, &player->pos, dt * 10, &_rgl_camera->position);
 
-	_rgl_data->camera->zoom = rglMathLerpf(_rgl_data->camera->zoom, 1.f / player->mass * 100, dt * 3); 
+	_rgl_camera->zoom = rglMathLerpf(_rgl_camera->zoom, 1.f / player->mass * 100, dt * 3); 
 }
 
 void

@@ -235,24 +235,24 @@ thr_physics_func(void) {
 			u32 j=0;
 
 			/* Left wall */
-			if(ball.pos.x - ball.radius < _rgl_data->camera->left) {
-				ball.pos.x = _rgl_data->camera->left + ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_data->camera->left, ball.pos.y} } });
+			if(ball.pos.x - ball.radius < _rgl_camera->left) {
+				ball.pos.x = _rgl_camera->left + ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_camera->left, ball.pos.y} } });
 			} 
 			/* Right wall */
-			else if(ball.pos.x + ball.radius > _rgl_data->camera->right) {
-				ball.pos.x = _rgl_data->camera->right - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_data->camera->right, ball.pos.y} } });
+			else if(ball.pos.x + ball.radius > _rgl_camera->right) {
+				ball.pos.x = _rgl_camera->right - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_camera->right, ball.pos.y} } });
 			} 
 			/* Top wall */
-			if(ball.pos.y + ball.radius > _rgl_data->camera->bottom) {
-				ball.pos.y = _rgl_data->camera->bottom - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_data->camera->bottom } } });
+			if(ball.pos.y + ball.radius > _rgl_camera->bottom) {
+				ball.pos.y = _rgl_camera->bottom - ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_camera->bottom } } });
 			} 
 			/* Bottom wall */
-			else if(ball.pos.y - ball.radius < _rgl_data->camera->top) {
-				ball.pos.y = _rgl_data->camera->top + ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_data->camera->top} } });
+			else if(ball.pos.y - ball.radius < _rgl_camera->top) {
+				ball.pos.y = _rgl_camera->top + ball.radius; 
+				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_camera->top} } });
 			} 
 
 			/* Overlap collisions */
@@ -371,8 +371,8 @@ void
 init_balls(void) {
 	rglV2 pos;
 	for(u32 i=0; i<START_BALL_COUNT; ++i) {
-		pos.x = (f32)(rand() % _rgl_data->width);
-		pos.y = (f32)(rand() % _rgl_data->height);
+		pos.x = (f32)(rand() % _rgl_width);
+		pos.y = (f32)(rand() % _rgl_height);
 
 		add_ball(pos);
 	}

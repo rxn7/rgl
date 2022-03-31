@@ -13,10 +13,10 @@ rglCameraDestroy(rglCamera *camera) {
 
 void
 rglCameraUpdate(rglCamera *camera) {
-	camera->left	= -_rgl_data->desc->width / camera->zoom + camera->position.x;
-	camera->top	= -_rgl_data->desc->height / camera->zoom + camera->position.y;
-	camera->right	= _rgl_data->desc->width / camera->zoom + camera->position.x;
-	camera->bottom	= _rgl_data->desc->height / camera->zoom + camera->position.y;
+	camera->left	= -_rgl_app_desc->width / camera->zoom + camera->position.x;
+	camera->top	= -_rgl_app_desc->height / camera->zoom + camera->position.y;
+	camera->right	= _rgl_app_desc->width / camera->zoom + camera->position.x;
+	camera->bottom	= _rgl_app_desc->height / camera->zoom + camera->position.y;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

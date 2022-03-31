@@ -17,8 +17,8 @@ typedef struct rglX11Context {
 	b8 focus;
 } rglX11Context;
 
-b8 rglX11ContextCreate(rglX11Context *cxt, const char *title, i32 width, i32 height);
-void rglX11ContextDestroy(rglX11Context *cxt);
+b8 rglX11ContextCreate(rglX11Context *ctx, const char *title, i32 width, i32 height);
+void rglX11ContextDestroy(rglX11Context *ctx);
 
 f32 rglX11GetTime(void);
 void rglX11StartFrame(void);

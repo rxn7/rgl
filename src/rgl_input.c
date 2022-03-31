@@ -7,19 +7,19 @@ void
 rglGetCursorPos(rglV2 *vec) {
 	RGL_PLATFORM_FUN(GetCursorPos, vec);
 
-	vec->x -= _rgl_data->vp_x;
-	vec->y -= _rgl_data->vp_y;
+	vec->x -= _rgl_vp_x;
+	vec->y -= _rgl_vp_y;
 }
 
 void
 rglGetCursorPosInWorld(rglV2 *vec) {
 	rglGetCursorPos(vec);
 
-	f32 cam_w = _rgl_data->camera->right - _rgl_data->camera->left;
-	f32 cam_h = _rgl_data->camera->bottom - _rgl_data->camera->top;
+	f32 cam_w = _rgl_camera->right - _rgl_camera->left;
+	f32 cam_h = _rgl_camera->bottom - _rgl_camera->top;
 
-	vec->x = _rgl_data->camera->left + (vec->x / _rgl_data->vp_width * cam_w);
-	vec->y = _rgl_data->camera->top + (vec->y / _rgl_data->vp_height * cam_h);
+	vec->x = _rgl_camera->left + (vec->x / _rgl_vp_width * cam_w);
+	vec->y = _rgl_camera->top + (vec->y / _rgl_vp_height * cam_h);
 }
 
 b8

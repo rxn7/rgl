@@ -16,7 +16,6 @@
 typedef struct rglAppDesc {
         const char *title;
         u16 height, width;
-	u16 aspect_x, aspect_y; /* TODO: Auto calculate the aspect_x and aspect_y. */
 	rglColor background_color;
         rglAppInitFunc init_f;
         rglAppUpdateFunc update_f;
@@ -30,30 +29,25 @@ b8 rglStart(rglAppDesc *desc);
 f32 rglGetTime(void);
 void rglQuit(void);
 void rglSetVsync(b8 value);
-void rglGetWindowSize(i32 *w, i32 *h);
 
-void _rglUpdateProjection(void);
-
-typedef struct _rglAppData {
-	RGL_PLATFORM_CONTEXT_T *plat_cxt;
-        rglAppDesc *desc;
-	rglAudioContext *audio_cxt;
-	rglCamera *camera;
-	b8 running;
-	i32 width, height;
-	f32 vp_width, vp_height;
-	f32 vp_x, vp_y;
-	f32 scroll_value;
-} _rglAppData;
-
-extern _rglAppData *_rgl_data; /* Defined in rgl.c */
-
-void _rglAppDataCreate(_rglAppData *data, rglAppDesc *desc);
-void _rglAppDataDestroy(_rglAppData *data);
+extern RGL_PLATFORM_CONTEXT_T *_rgl_plat_ctx;
+extern rglAppDesc *_rgl_app_desc;
+extern rglAudioContext *_rgl_audio_ctx;
+extern rglCamera *_rgl_camera;
+extern b8 _rgl_running;
+extern i32 _rgl_width, _rgl_height;
+extern f32 _rgl_vp_width, _rgl_vp_height;
+extern f32 _rgl_vp_x, _rgl_vp_y;
+extern f32 _rgl_scroll_value;
+extern u16 _rgl_aspect_x;
+extern u16 _rgl_aspect_y;
 
 void _rglSetupOpenGL(void);
 void _rglMainLoop(void);
 void _rglDefaultUpdateFunc(f32 dt);
 void _rglDefaultDrawFunc(void);
+void _rglUpdateProjection(void);
+void _rglInitGlobals(rglAppDesc *desc);
+void _rglDestroyGlobals();
 
 #endif /* __RGL_H */
