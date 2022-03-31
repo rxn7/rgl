@@ -26,10 +26,10 @@ typedef struct rglAppDesc {
 
 #include "rgl_platform.h"
 
-b8 rglStart(rglAppDesc *desc);
-f32 rglGetTime(void);
+void rglStart(rglAppDesc *desc);
 void rglQuit(void);
 void rglSetVsync(b8 value);
+f32 rglGetTime(void);
 
 extern RGL_PLATFORM_CONTEXT_T *_rgl_plat_ctx;
 extern rglAppDesc *_rgl_app_desc;

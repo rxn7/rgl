@@ -18,9 +18,11 @@ f32 _rgl_scroll_value = 0.0f;
 u16 _rgl_aspect_x = 0.0f;
 u16 _rgl_aspect_y = 0.0f;
 
-b8
+void
 rglStart(rglAppDesc *desc) {
 	RGL_ASSERT_VALID_PTR(desc);
+
+	srand(time(0));
 
 	/* Sanity checks */
         if(desc->width <= 0)            desc->width = 960; 
@@ -29,11 +31,10 @@ rglStart(rglAppDesc *desc) {
         if(!desc->update_f)             desc->update_f = _rglDefaultUpdateFunc;
 	if(!desc->draw_f)		desc->draw_f = _rglDefaultDrawFunc;
 
+	/* Calculate the aspect ratio */
 	i32 gcd = rglMathGcd(desc->width, desc->height);
 	_rgl_aspect_x = desc->width / gcd;
 	_rgl_aspect_y = desc->height / gcd;
-
-	srand(time(0));
 
 	_rglInitGlobals(desc);
 	_rglSetupOpenGL();
@@ -48,8 +49,6 @@ rglStart(rglAppDesc *desc) {
         _rglMainLoop();
 
         rglQuit();
-
-        return true;
 }
 
 void 
