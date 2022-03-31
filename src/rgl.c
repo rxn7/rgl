@@ -19,8 +19,9 @@ rglStart(rglAppDesc *desc) {
 	if(!desc->draw_f)		desc->draw_f = _rglDefaultDrawFunc;
 
 	if(!desc->aspect_x || !desc->aspect_y) {
-		desc->aspect_x = 16;
-		desc->aspect_y = 9;
+		i32 gcd = rglMathGcd(desc->width, desc->height);
+		desc->aspect_x = desc->width / gcd;
+		desc->aspect_y = desc->height / gcd;
 	}
 
 	srand(time(0));

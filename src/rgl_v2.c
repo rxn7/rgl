@@ -86,8 +86,8 @@ rglV2Length(rglV2 *a) {
 
 void 
 rglV2Lerp(rglV2 *a, rglV2 *b, f32 v, rglV2 *dest) {
-	dest->x = rgl_math_lerpf(a->x, b->x, v);
-	dest->y = rgl_math_lerpf(a->y, b->y, v);
+	dest->x = rglMathLerpf(a->x, b->x, v);
+	dest->y = rglMathLerpf(a->y, b->y, v);
 }
 
 void

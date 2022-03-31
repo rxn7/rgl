@@ -3,7 +3,8 @@
 
 #include "rgl_common.h"
 
-f32 rgl_math_lerpf(f32 a, f32 b, f32 v);
-f32 rgl_math_clampf(f32 val, f32 min, f32 max);
+f32 rglMathLerpf(f32 a, f32 b, f32 v);
+f32 rglMathClampf(f32 val, f32 min, f32 max);
+i32 rglMathGcd(i32 a, i32 b); /* Greates common divisor */
 
 #endif /* __RGL_MATH_H */

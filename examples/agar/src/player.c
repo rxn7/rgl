@@ -26,7 +26,7 @@ player_update(player_t *player, f32 dt) {
 
 	rglV2Lerp(&_rgl_data->camera->position, &player->pos, dt * 10, &_rgl_data->camera->position);
 
-	_rgl_data->camera->zoom = rgl_math_lerpf(_rgl_data->camera->zoom, 1.f / player->mass * 100, dt * 3); 
+	_rgl_data->camera->zoom = rglMathLerpf(_rgl_data->camera->zoom, 1.f / player->mass * 100, dt * 3); 
 }
 
 void
