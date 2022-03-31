@@ -2,7 +2,6 @@
 #include "rgl.h"
 #include <stdarg.h>
 
-/* TODO: Format the msg text */
 void
 _rglAssert(const char *file, i32 line, b8 expr, const char *expr_str, const char *fmsg, ...) {
 	if(!expr) {
