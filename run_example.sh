@@ -23,6 +23,10 @@ then
 fi
 
 ./build_rgl.sh
+if [ $? -ne 0 ]
+then
+	exit -1
+fi
 
 echo "==========================="
 echo "Comiling example $1..."

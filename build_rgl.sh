@@ -4,10 +4,10 @@
 
 echo "==========================="
 echo "Compiling RGL for linux..."
-make -f linux.mk
+make -f linux.mk install
 
 if [ $? -ne 0 ]
 then
 	echo "Failed to compile RGL for linux, please submit a bug report to https://github.com/rxtthin/rgl/issues"
-	exit
+	exit -1
 fi
