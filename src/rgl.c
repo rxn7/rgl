@@ -45,7 +45,7 @@ rglStart(rglAppDesc *desc) {
         if(desc->init_f) {
                 desc->init_f();
         }
-
+	
         _rglMainLoop();
 
         rglQuit();
