@@ -19,7 +19,10 @@ do
 
 		while read -r line
 		do
-			echo "\"$line\n\"" >> $OUTFILE
+			if [ -n "$line" ]
+			then
+				echo "\"$line\n\"" >> $OUTFILE
+			fi
 		done < "$f"
 	else
 		echo "File $f doesn't exist!"
