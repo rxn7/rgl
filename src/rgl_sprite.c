@@ -95,29 +95,15 @@ void
 _rglSpriteShaderCreate(void) {
 	_shader = malloc(sizeof(rglShader));
 
-	/* Sprite shader */
-	rglShaderCreate(_shader, 
-		/* VERTEX SHADER */
-		"#version 330 core\n" \
-		"layout (location = 0) in vec2 a_Pos;\n" \
-		"layout (location = 1) in vec2 a_UV;\n" \
-		"uniform mat4 u_Projection;\n" \
-		"uniform mat4 u_Model;\n" \
-		"out vec2 UV;\n" \
-		"void main() {\n" \
-		"	gl_Position = u_Projection * u_Model * vec4(a_Pos, 0.0, 1.0);\n" \
-		"	UV = a_UV;\n" \
-		"}\n",
+	const char *frag = { 
+		#include "../shaders/sprite_frag.glsl" 
+	};
 
-		/* FRAGMENT SHADER */
-		"#version 330 core\n" \
-		"out vec4 FragColor;\n" \
-		"in vec2 UV;\n" \
-		"uniform sampler2D u_Texture;\n" \
-		"void main() {\n" \
-		"	FragColor = texture(u_Texture, UV);\n" \
-		"}\n"
-	);
+	const char *vert = { 
+		#include "../shaders/sprite_vert.glsl" 
+	};
+
+	rglShaderCreate(_shader, vert, frag);
 
 	_shader->uniform_locations = calloc(2, sizeof(u32));
 	_shader->uniform_locations[0] = glGetUniformLocation(_shader->id, "u_Projection");
