@@ -1,9 +1,9 @@
-"#version 330 core\n"
-"in vec2 UV;\n"
-"out vec4 FragColor;\n"
+#version 330 core
+in vec2 UV;
+out vec4 FragColor;
 
-"uniform sampler2D u_Texture;\n"
+uniform sampler2D u_Texture;
 
-"void main() {\n"
-"	FragColor = texture(u_Texture, UV);\n"
-"}"
+void main() {
+	FragColor = texture(u_Texture, UV);
+}

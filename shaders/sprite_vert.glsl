@@ -1,13 +1,13 @@
-"#version 330 core\n"
-"layout (location = 0) in vec2 a_Pos;\n"
-"layout (location = 1) in vec2 a_UV;\n"
+#version 330 core
+layout (location = 0) in vec2 a_Pos;
+layout (location = 1) in vec2 a_UV;
 
-"uniform mat4 u_Projection;\n"
-"uniform mat4 u_Model;\n"
+uniform mat4 u_Projection;
+uniform mat4 u_Model;
 
-"out vec2 UV;\n"
+out vec2 UV;
 
-"void main() {\n"
-"	gl_Position = u_Projection * u_Model * vec4(a_Pos, 0.0, 1.0);\n"
-"	UV = a_UV;\n"
-"}"
+void main() {
+	gl_Position = u_Projection * u_Model * vec4(a_Pos, 0.0, 1.0);
+	UV = a_UV;
+}

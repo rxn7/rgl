@@ -96,11 +96,11 @@ _rglSpriteShaderCreate(void) {
 	_shader = malloc(sizeof(rglShader));
 
 	const char *frag = { 
-		#include "../shaders/sprite_frag.glsl" 
+		#include "../shaders_out/sprite_frag.glsl" 
 	};
 
 	const char *vert = { 
-		#include "../shaders/sprite_vert.glsl" 
+		#include "../shaders_out/sprite_vert.glsl" 
 	};
 
 	rglShaderCreate(_shader, vert, frag);

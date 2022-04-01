@@ -1,13 +1,14 @@
 #!/bin/sh
 
 list_examples() {
+	echo "==========================="
 	echo "List of examples:"
-	echo "=-=-=-=-=-=-=-=-="
 	ls examples
 }
 
 if [ $# -ne 1 ]
 then
+	echo "==========================="
 	echo "You need to specify the example to run i.e. ./run_example.sh <example's name>"
 	list_examples
 	exit
@@ -15,26 +16,29 @@ fi
 
 if [ ! -d "examples/$1" ]
 then
+	echo "==========================="
 	echo "Example '$1' does not exist."
 	list_examples
 	exit
 fi
 
-make -f linux.mk install
-if [ $? -ne 0 ]
-then
-	echo "Failed to compile RGL, please submit a bug report to https://github.com/rxtthin/rgl/issues"
-	exit
-fi
+./build_rgl.sh
+
+echo "==========================="
+echo "Comiling example $1..."
 
 cd examples/$1
 make
 if [ $? -ne 0 ]
 then
+	echo "==========================="
 	echo "Failed to compile example '$1', please submit a bug report to https://github.com/rxtthin/rgl/issues"
-	cd ../..
-	exit
+else
+	echo "==========================="
+	echo "Example $1 compiled successfully..."
+	echo "Running example $1..."
+	echo "==========================="
+	./$1
 fi
 
-./$1
 cd ../..
