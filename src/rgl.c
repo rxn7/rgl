@@ -36,6 +36,8 @@ rglStart(rglAppDesc *desc) {
 	_rgl_aspect_x = desc->width / gcd;
 	_rgl_aspect_y = desc->height / gcd;
 
+	RGL_LOG("Aspect Ratio: %i:%i", _rgl_aspect_x, _rgl_aspect_y);
+
 	_rglInitGlobals(desc);
 	_rglSetupOpenGL();
 	_rglUpdateProjection();
@@ -143,7 +145,6 @@ _rglSetupOpenGL(void) {
 void
 _rglMainLoop(void) {
 	_rgl_running = true;
-
 	b8 first_frame = true;
         f32 dt = 0, now = RGL_PLATFORM_FUN(GetTime), last = now;
         while(_rgl_running) {
@@ -154,21 +155,18 @@ _rglMainLoop(void) {
 
 		RGL_PLATFORM_FUN(StartFrame);
 
-		/* Black bars viewport */
+		/* Clear entire window */
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		/* Clear only the viewport area with background_color specified by user */
 		glClearColor((f32)_rgl_app_desc->background_color.r / 255.f, (f32)_rgl_app_desc->background_color.g / 255.f, (f32)_rgl_app_desc->background_color.b / 255.f, 1.f);
 		glEnable(GL_SCISSOR_TEST);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_SCISSOR_TEST);
 
-		if(!first_frame) {
-			_rgl_app_desc->update_f(dt);
-		}
-
+		if(!first_frame) _rgl_app_desc->update_f(dt);
 		rglCameraUpdate(_rgl_camera);
-
 		_rgl_app_desc->draw_f();
 
 		RGL_PLATFORM_FUN(EndFrame);

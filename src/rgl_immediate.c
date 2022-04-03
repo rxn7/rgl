@@ -39,7 +39,7 @@ _rglDrawCircle(u32 mode, rglColor *col, rglV2 *pos, f32 radius) {
 	if(segments < CIRCLE_MIN_SEGMENTS) segments = CIRCLE_MIN_SEGMENTS;
 	else if(segments > CIRCLE_MAX_SEGMENTS) segments = CIRCLE_MAX_SEGMENTS;
 
-	f32 theta = PI_2F / (float)segments;
+	f32 theta = RGL_PI_2F / (float)segments;
 	f32 c = cosf(theta);
 	f32 s = sinf(theta);
 	f32 x = radius;

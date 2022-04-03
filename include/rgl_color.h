@@ -13,9 +13,7 @@ typedef struct rglColor {
 } rglColor;
 
 #define RGL_RGB(r, g, b) (rglColor) { .rgb = {r, g, b}  }
-#define RGL_U8_TO_F32(col) (f32)col.r / 255.f, (f32)col.g / 255.f, (f32)col.b / 255.f
-
-#define RGL_COLOR_RAND ((rglColor){.rgb = {RAND_U8,RAND_U8,RAND_U8}})
+#define RGL_COLOR_RAND ((rglColor){.rgb = {RGL_RAND_U8,RGL_RAND_U8,RGL_RAND_U8}})
 
 #define RGL_BLACK         RGL_RGB(0, 0, 0)
 #define RGL_WHITE         RGL_RGB(255, 255, 255)

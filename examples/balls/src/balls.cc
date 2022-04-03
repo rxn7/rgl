@@ -1,42 +1,9 @@
-/* Settings */
-#define RANDOM_INITIAL_VELOCITY 2000
-#define MAX_RADIUS 25.f
-#define MIN_RADIUS 10.f
-#define GRAVITY 980
-#define FRICTION 0.99f
-#define START_BALL_COUNT 500
-#define MIN_TIME_BETWEEN_BOUNCE_SOUNDS 0.1f
-#define BOUNCE_AUDIO_SOURCE_COUNT 20
-#define CLICK_SOUND_PATH "res/click.ogg"
-#define BOUNCE_SOUND_PATH "res/bounce.ogg"
+#include "./ball.h"
+#include "./collision.h"
 
 #include <vector> 
 #include <thread>
 #include <unistd.h>
-
-#include <rgl/rgl.h>
-
-struct ball_t {
-	rglColor color;
-	rglV2 pos;
-	rglV2 vel;
-	f32 radius;
-	f32 sound_played_time;
-};
-
-struct collision_t {
-	enum : b8 {
-		COLLISION_W_WALL,
-		COLLISION_W_BALL,
-	} type;
-
-	ball_t *a;
-
-	union {
-		rglV2 pos;
-		ball_t *b;
-	};
-};
 
 void app_quit(void);
 void app_update(f32 dt);
@@ -50,11 +17,10 @@ void update_balls(void);
 void draw_balls(void);
 void add_ball(rglV2 pos);
 void thr_physics_func(void);
-b8 is_point_in_ball(ball_t *ball, rglV2 point);
 
-std::vector<ball_t> vec_balls;
+std::vector<Ball> vec_balls;
 std::thread thr_physics;
-ball_t *selected_ball = NULL;
+Ball *selected_ball = NULL;
 
 rglAudioBuffer click_audio_buffer;
 rglAudioSource click_audio_source;
@@ -114,8 +80,7 @@ app_quit(void) {
 	thr_physics.join();
 }
 
-void
-app_update(f32 dt) {
+void app_update(f32 dt) {
 	b8 left_pressed = rglIsButtonPressed(RGL_MOUSE_LEFT);
 	b8 right_pressed = rglIsButtonPressed(RGL_MOUSE_RIGHT);
 
@@ -124,21 +89,21 @@ app_update(f32 dt) {
 
 	if(left_pressed || right_pressed) {
 		if(selected_ball == NULL) {
-			for(ball_t &ball : vec_balls) {
-				if(is_point_in_ball(&ball, mouse_pos)) {
+			for(Ball &ball : vec_balls) {
+				if(ball.isPointInside(mouse_pos)) {
 					selected_ball = &ball;
 					break;
 				}
 			}
 		} else if(left_pressed){
-			selected_ball->vel.x = -5.0f * (selected_ball->pos.x - mouse_pos.x);
-			selected_ball->vel.y = -5.0f * (selected_ball->pos.y - mouse_pos.y);
+			selected_ball->velocity.x = -5.0f * (selected_ball->position.x - mouse_pos.x);
+			selected_ball->velocity.y = -5.0f * (selected_ball->position.y - mouse_pos.y);
 		}
 	} else {
 		if(rglIsButtonJustReleased(RGL_MOUSE_RIGHT) && selected_ball != NULL) {
 			play_click_sound();
-			selected_ball->vel.x = 5.0f * (selected_ball->pos.x - mouse_pos.x);
-			selected_ball->vel.y = 5.0f * (selected_ball->pos.y - mouse_pos.y);
+			selected_ball->velocity.x = 5.0f * (selected_ball->position.x - mouse_pos.x);
+			selected_ball->velocity.y = 5.0f * (selected_ball->position.y - mouse_pos.y);
 		}
 
 		selected_ball = NULL;
@@ -186,25 +151,25 @@ app_update(f32 dt) {
 		play_click_sound();
 	}
 
-	for(ball_t &ball : vec_balls) {
+	for(Ball &ball : vec_balls) {
 		/* Apply physics only if game's not paused */
 		if(!paused) {
 			/* Apply drag */
-			ball.vel.x *= FRICTION;
-			ball.vel.y *= FRICTION;
+			ball.velocity.x *= FRICTION;
+			ball.velocity.y *= FRICTION;
 
 			/* Apply gravity */
 			if(gravity) {
-				ball.vel.y += GRAVITY * dt;
+				ball.velocity.y += GRAVITY * dt;
 			}
 
-			/* Apply velocity */
-			ball.pos.x += ball.vel.x * dt;
-			ball.pos.y += ball.vel.y * dt;
+			/* Apply velocityocity */
+			ball.position.x += ball.velocity.x * dt;
+			ball.position.y += ball.velocity.y * dt;
 
-			/* Stop balls with very low velocity */
-			if(rglV2Length(&ball.vel) < 0.1f) {
-				rglV2Zero(&ball.vel);
+			/* Stop balls with very low velocityocity */
+			if(rglV2Length(&ball.velocity) < 0.1f) {
+				rglV2Zero(&ball.velocity);
 			}
 		}
 
@@ -220,7 +185,7 @@ void app_draw(void) {
 
 void
 thr_physics_func(void) {
-	std::vector<collision_t> vec_collisions;
+	std::vector<Collision> vec_collisions;
 
 	while(running) {
 		usleep(1);
@@ -229,54 +194,56 @@ thr_physics_func(void) {
 
 		u32 i=0; 
 		/* Static colliisions */
-		for(ball_t &ball : vec_balls) {
+		for(Ball &ball : vec_balls) {
 			u32 j=0;
 
 			/* Left wall */
-			if(ball.pos.x - ball.radius < _rgl_camera->left) {
-				ball.pos.x = _rgl_camera->left + ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_camera->left, ball.pos.y} } });
+			if(ball.position.x - ball.radius < _rgl_camera->left) {
+				ball.position.x = _rgl_camera->left + ball.radius; 
+				vec_collisions.push_back({ Collision::COLLISION_W_WALL, &ball, { .position = {_rgl_camera->left, ball.position.y} } });
 			} 
 			/* Right wall */
-			else if(ball.pos.x + ball.radius > _rgl_camera->right) {
-				ball.pos.x = _rgl_camera->right - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {_rgl_camera->right, ball.pos.y} } });
+			else if(ball.position.x + ball.radius > _rgl_camera->right) {
+				ball.position.x = _rgl_camera->right - ball.radius; 
+				vec_collisions.push_back({ Collision::COLLISION_W_WALL, &ball, { .position = {_rgl_camera->right, ball.position.y} } });
 			} 
 			/* Top wall */
-			if(ball.pos.y + ball.radius > _rgl_camera->bottom) {
-				ball.pos.y = _rgl_camera->bottom - ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_camera->bottom } } });
+			if(ball.position.y + ball.radius > _rgl_camera->bottom) {
+				ball.position.y = _rgl_camera->bottom - ball.radius; 
+				vec_collisions.push_back({ Collision::COLLISION_W_WALL, &ball, { .position = {ball.position.x, _rgl_camera->bottom } } });
 			} 
 			/* Bottom wall */
-			else if(ball.pos.y - ball.radius < _rgl_camera->top) {
-				ball.pos.y = _rgl_camera->top + ball.radius; 
-				vec_collisions.push_back({ collision_t::COLLISION_W_WALL, &ball, { .pos = {ball.pos.x, _rgl_camera->top} } });
+			else if(ball.position.y - ball.radius < _rgl_camera->top) {
+				ball.position.y = _rgl_camera->top + ball.radius; 
+				vec_collisions.push_back({ Collision::COLLISION_W_WALL, &ball, { .position = {ball.position.x, _rgl_camera->top} } });
 			} 
 
 			/* Overlap collisions */
-			for(ball_t &target : vec_balls) {
+			for(Ball &target : vec_balls) {
 				/* Ignore checking ball against itself */
 				if(i == j++) continue; 
 
-				rglV2 delta_pos = {
-					.x = ball.pos.x - target.pos.x,
-					.y = ball.pos.y - target.pos.y,
+				rglV2 delta = {
+					.x = ball.position.x - target.position.x,
+					.y = ball.position.y - target.position.y,
 				};
 
-				/* If balls overlap */
-				if(delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y <= (ball.radius + target.radius) * (ball.radius + target.radius)) { 
-					vec_collisions.push_back({ collision_t::COLLISION_W_BALL, &ball, { .b = &target } });
+				f32 radius_sum = ball.radius + target.radius;
 
-					f32 dist = rglV2Length(&delta_pos);
+				/* If balls overlap */
+				if(delta.x*delta.x + delta.y*delta.y <= radius_sum*radius_sum) { 
+					vec_collisions.push_back({ Collision::COLLISION_W_BALL, &ball, { .b = &target } });
+
+					f32 dist = rglV2Length(&delta);
 					f32 overlap = (dist - ball.radius - target.radius) * 0.5f / dist;
 
 					rglV2 overlap_move = {
-						.x = overlap * delta_pos.x,
-						.y = overlap * delta_pos.y,
+						.x = overlap * delta.x,
+						.y = overlap * delta.y,
 					};
 
-					rglV2Sub(&ball.pos, &overlap_move, &ball.pos);
-					rglV2Add(&target.pos, &overlap_move, &target.pos);
+					rglV2Sub(&ball.position, &overlap_move, &ball.position);
+					rglV2Add(&target.position, &overlap_move, &target.position);
 				}
 			}
 
@@ -284,64 +251,64 @@ thr_physics_func(void) {
 		}
 
 		/* Dynamic collisions */
-		for(collision_t &collision : vec_collisions) {
+		for(Collision &collision : vec_collisions) {
 			f32 time = rglGetTime();
-			if(collision.type == collision_t::COLLISION_W_BALL) {
-				ball_t *a = collision.a;
-				ball_t *b = collision.b;
+			if(collision.type == Collision::COLLISION_W_BALL) {
+				Ball *a = collision.a;
+				Ball *b = collision.b;
 
 				rglV2 delta_pos;
-				rglV2Sub(&a->pos, &b->pos, &delta_pos);
+				rglV2Sub(&a->position, &b->position, &delta_pos);
 
 				rglV2 delta_vel;
-				rglV2Sub(&a->vel, &b->vel, &delta_vel);
+				rglV2Sub(&a->velocity, &b->velocity, &delta_vel);
 
 				f32 dist = rglV2Length(&delta_pos);
 
 				rglV2 normal = {
-					.x = (b->pos.x - a->pos.x) / dist,
-					.y = (b->pos.y - a->pos.y) / dist,
+					.x = (b->position.x - a->position.x) / dist,
+					.y = (b->position.y - a->position.y) / dist,
 				};
 
 				f32 force = 2.0f * (normal.x * delta_vel.x + normal.y * delta_vel.y) / (a->radius + b->radius);
 
 				/* Bounce sound */
-				if(time - a->sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS && time - b->sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS) {
-					a->sound_played_time = time;
-					b->sound_played_time = time;
+				if(time - a->last_sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS && time - b->last_sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS) {
+					a->last_sound_played_time = time;
+					b->last_sound_played_time = time;
 
 					f32 gain = force / 100;
 					if(gain > 1.f) gain = 1.f;
 					play_bounce_sound(gain);
 				}
 
-				a->vel.x -= force * b->radius * normal.x;
-				a->vel.y -= force * b->radius * normal.y;
+				a->velocity.x -= force * b->radius * normal.x;
+				a->velocity.y -= force * b->radius * normal.y;
 
-				b->vel.x += force * a->radius * normal.x;
-				b->vel.y += force * a->radius * normal.y;
+				b->velocity.x += force * a->radius * normal.x;
+				b->velocity.y += force * a->radius * normal.y;
 			} else {
-				ball_t *ball = collision.a;
+				Ball *ball = collision.a;
 
 				rglV2 normal = {
-					.x = (collision.pos.x - ball->pos.x) / ball->radius,
-					.y = (collision.pos.y - ball->pos.y) / ball->radius,
+					.x = (collision.position.x - ball->position.x) / ball->radius,
+					.y = (collision.position.y - ball->position.y) / ball->radius,
 				};
 
 				/* Bounce sound */
-				if(time - collision.a->sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS) {
-					f32 speed = rglV2Length(&collision.a->vel);
+				if(time - collision.a->last_sound_played_time >= MIN_TIME_BETWEEN_BOUNCE_SOUNDS) {
+					f32 speed = rglV2Length(&collision.a->velocity);
 
 					if(speed > 15.f) {
-						collision.a->sound_played_time = time;
+						collision.a->last_sound_played_time = time;
 						f32 gain = speed / 5000;
 						if(gain > 1.f) gain = 1.f;
 						play_bounce_sound(gain);
 					}
 				}
 
-				if(fabs(normal.x) > 0.1f) ball->vel.x *= -1;
-				if(fabs(normal.y) > 0.1f) ball->vel.y *= -1;
+				if(fabs(normal.x) > 0.1f) ball->velocity.x *= -1;
+				if(fabs(normal.y) > 0.1f) ball->velocity.y *= -1;
 			}
 		}
 
@@ -351,17 +318,17 @@ thr_physics_func(void) {
 
 void
 draw_balls(void) {
-	for(ball_t &ball : vec_balls) {
-		rglDrawCircle(ball.color, ball.pos, ball.radius);
+	for(Ball &ball : vec_balls) {
+		rglDrawCircle(ball.color, ball.position, ball.radius);
 	}
 
 	if(selected_ball != NULL) {
-		rglDrawCircleOutline(RGL_RED, selected_ball->pos, selected_ball->radius, 3.f);
+		rglDrawCircleOutline(RGL_RED, selected_ball->position, selected_ball->radius, 3.f);
 
 		rglV2 mouse_pos;
 		rglGetCursorPosInWorld(&mouse_pos);
 
-		rglDrawLine(RGL_BLUE, selected_ball->pos, mouse_pos, 5);
+		rglDrawLine(RGL_BLUE, selected_ball->position, mouse_pos, 5);
 	}
 }
 
@@ -379,7 +346,7 @@ init_balls(void) {
 void
 play_click_sound(void) {
 	rglAudioSourceSetGain(&click_audio_source, 1.0f);
-	rglAudioSourceSetPitch(&click_audio_source, RAND_RANGE_F32(0.8f, 1.2f));
+	rglAudioSourceSetPitch(&click_audio_source, RGL_RAND_RANGE_F32(0.8f, 1.2f));
 	rglAudioSourcePlay(&click_audio_source);
 }
 
@@ -401,33 +368,16 @@ play_bounce_sound(f32 gain) {
 	}
 
 	rglAudioSourceSetGain(source, gain);
-	rglAudioSourceSetPitch(source, RAND_RANGE_F32(0.9f, 1.1f));
+	rglAudioSourceSetPitch(source, RGL_RAND_RANGE_F32(0.9f, 1.1f));
 	rglAudioSourcePlay(source);
 }
 
 void
 add_ball(rglV2 pos) {
-	static const f32 HALF_RANDOM_INITIAL_VELOCITY = RANDOM_INITIAL_VELOCITY * 0.5f;
+	static const f32 HALF_RANDOM_INIT_VEL = RANDOM_INIT_VEL * 0.5f;
 
-	ball_t ball = {
-		.color = { .rgb = { (u8)(RAND_RANGE_I32(100, 255)), (u8)(RAND_RANGE_I32(0, 100)), (u8)(RAND_RANGE_I32(100, 255)) } },
-		.radius = (MAX_RADIUS - MIN_RADIUS) * ((f32)rand() / RAND_MAX) + MIN_RADIUS,
-	};
-
-	ball.vel.x = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
-	ball.vel.y = rand() % RANDOM_INITIAL_VELOCITY - HALF_RANDOM_INITIAL_VELOCITY;
-
-	rglV2Copy(&pos, &ball.pos);
+	Ball ball(pos);
+	ball.velocity = { rand() % RANDOM_INIT_VEL - HALF_RANDOM_INIT_VEL, rand() % RANDOM_INIT_VEL - HALF_RANDOM_INIT_VEL };
 
 	vec_balls.push_back(ball);
-}
-
-b8
-is_point_in_ball(ball_t *ball, rglV2 point) {
-	rglV2 delta_pos = {
-		.x = ball->pos.x - point.x,
-		.y = ball->pos.y - point.y,
-	};
-	
-	return delta_pos.x*delta_pos.x + delta_pos.y*delta_pos.y < (ball->radius * ball->radius);
 }

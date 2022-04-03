@@ -65,7 +65,7 @@ rglMat4Translate(rglMat4 mat, rglV2 *vec) {
 
 void
 rglMat4Rotate(rglMat4 mat, f32 degrees) {
-	f32 rad = degrees * (PI_F / 180.f);
+	f32 rad = degrees * (RGL_PI_F / 180.f);
 	f32 radcos = cosf(rad);
 	f32 radsin = sinf(rad);
 

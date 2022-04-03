@@ -53,16 +53,12 @@ app_update(f32 dt) {
 	rglV2Lerp(&_rgl_camera->position, &player.sprite.position, dt * 10, &_rgl_camera->position);
 
 	_rgl_camera->zoom += _rgl_scroll_value * 0.05f;
+	_rgl_camera->zoom = rglMathClamp_f32(_rgl_camera->zoom, .1f, 3.f);
 }
 
 void 
 app_draw() {
-	if(rglIsKeyPressed(RGL_KEY_SPACE)) {
-		rglDrawCircle(RGL_RED, player.sprite.position, PLAYER_COIN_PICKUP_DISTANCE);
-	}
-
 	for(u32 i=0; i<COIN_COUNT; ++i) {
-		rglDrawLine(RGL_GREEN, player.sprite.position, coins[i].pos, 3);
 		coin_draw(&coins[i]);
 	}
 

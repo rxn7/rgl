@@ -9,13 +9,13 @@
 #include <math.h>
 #include <epoxy/gl.h>
 
-#define PI_F 3.1415926f
-#define PI_2F 2.0f*PI_F
+#define RGL_PI_F 3.1415926f
+#define RGL_PI_2F 2.0f*RGL_PI_F
 
-#define RAND_F32 ((f32)rand() / (f32)RAND_MAX)
-#define RAND_U8 (rand() % 256) 
-#define RAND_RANGE_F32(min, max) (RAND_F32 * (max-min) + min)
-#define RAND_RANGE_I32(min, max) (rand() % (max-min) + min)
+#define RGL_RAND_F32 ((f32)rand() / (f32)RAND_MAX)
+#define RGL_RAND_U8 (u8)(rand() % 256) 
+#define RGL_RAND_RANGE_F32(min, max) (RGL_RAND_F32 * (max-min) + min)
+#define RGL_RAND_RANGE_I32(min, max) (rand() % (max-min) + min)
 
 typedef int8_t          i8;
 typedef int16_t         i16;

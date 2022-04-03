@@ -37,12 +37,12 @@ coin_draw(coin_t *coin) {
 
 void
 coin_respawn(coin_t *coin) {
-	coin->pos.x = RAND_RANGE_F32(-1000, 1000);
-	coin->pos.y = RAND_RANGE_F32(-1000, 1000);
+	coin->pos.x = RGL_RAND_RANGE_F32(-1000, 1000);
+	coin->pos.y = RGL_RAND_RANGE_F32(-1000, 1000);
 }
 
 void
 coin_play_pickup_sound() {
-	rglAudioSourceSetPitch(&_pickup_audio_source, RAND_RANGE_F32(0.9f, 1.1f));
+	rglAudioSourceSetPitch(&_pickup_audio_source, RGL_RAND_RANGE_F32(0.9f, 1.1f));
 	rglAudioSourcePlay(&_pickup_audio_source);
 }
