@@ -25,6 +25,7 @@ do
 			fi
 		done < "$f"
 	else
+		echo "==========================="
 		echo "File $f doesn't exist!"
 	fi
 done
