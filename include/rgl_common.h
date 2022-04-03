@@ -44,4 +44,7 @@ typedef void (*rglAppQuitFunc)(void);
 typedef void (*rglAppInitFunc)(void);
 typedef void (*rglAppDrawFunc)(void);
 
+#define rglSwap(a, b) _rglSwap(a, b, sizeof(a))
+void _rglSwap(void *a, void *b, size_t size);
+
 #endif /* __RGL_COMMON_H */

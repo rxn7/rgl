@@ -6,7 +6,7 @@ list_examples() {
 	ls examples
 }
 
-if [ $# -ne 1 ]
+if [ "$#" -ne "1" ]
 then
 	echo "==========================="
 	echo "You need to specify the example to run i.e. ./run_example.sh <example's name>"

@@ -32,7 +32,7 @@ rglStart(rglAppDesc *desc) {
 	if(!desc->draw_f)		desc->draw_f = _rglDefaultDrawFunc;
 
 	/* Calculate the aspect ratio */
-	i32 gcd = rglMathGcd(desc->width, desc->height);
+	i32 gcd = rglMathGcd_i32(desc->width, desc->height);
 	_rgl_aspect_x = desc->width / gcd;
 	_rgl_aspect_y = desc->height / gcd;
 

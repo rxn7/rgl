@@ -4,6 +4,7 @@ CFLAGS = -std=gnu99 -Wall -fPIC -DRGL_BUILD
 LIBS = -lepoxy -lm -lopenal
 
 OBJ = rgl.o \
+      rgl_common.o \
       rgl_texture.o \
       rgl_file.o \
       rgl_input.o \

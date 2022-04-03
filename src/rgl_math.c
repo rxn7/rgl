@@ -1,12 +1,12 @@
 #include "rgl_math.h"
 
 f32
-rglMathLerpf(f32 a, f32 b, f32 v) {
+rglMathLerp_f32(f32 a, f32 b, f32 v) {
 	return (a * (1.0f - v)) + (b * v);
 }
 
 f32
-rglMathClampf(f32 val, f32 min, f32 max) {
+rglMathClamp_f32(f32 val, f32 min, f32 max) {
 	if(val < min) {
 		val = min;
 	} else if(val > max) {
@@ -17,11 +17,9 @@ rglMathClampf(f32 val, f32 min, f32 max) {
 }
 
 i32
-rglMathGcd(i32 a, i32 b) {
+rglMathGcd_i32(i32 a, i32 b) {
 	if(a < b) {
-		u32 _a = a;
-		a = b;
-		b = _a;
+		rglSwap(&a, &b);
 	}
 
 	while(b != 0) {
