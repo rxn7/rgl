@@ -14,9 +14,7 @@
 #include <thread>
 #include <unistd.h>
 
-extern "C" { 
-	#include <rgl/rgl.h>
-}
+#include <rgl/rgl.h>
 
 struct ball_t {
 	rglColor color;

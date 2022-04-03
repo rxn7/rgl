@@ -1,6 +1,10 @@
 #ifndef __RGL_H
 #define __RGL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -50,5 +54,10 @@ void _rglDefaultDrawFunc(void);
 void _rglUpdateProjection(void);
 void _rglInitGlobals(rglAppDesc *desc);
 void _rglDestroyGlobals();
+
+/* extern "C" { */
+#ifdef __cplusplus
+}
+#endif 
 
 #endif /* __RGL_H */
