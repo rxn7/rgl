@@ -2,15 +2,18 @@
 #include "player.h"
 #include "coin.h"
 
-void app_init();
-void app_init();
-void app_quit();
-void app_update(f32 dt);
-void app_draw();
-void player_coin_pickup_check();
+void appInit(void);
+void appQuit(void);
+void appUpdate(f32 dt);
+void appDraw(void);
+void coinPickupCheck(void);
+void playPickupSound(void);
 
-player_t player;
-coin_t coins[COIN_COUNT];
+rglAudioBuffer pickup_audio_buffer;
+rglAudioSource pickup_audio_source;
+
+Player player;
+Coin coins[COIN_COUNT];
 u32 score = 0;
 
 int 
@@ -20,35 +23,38 @@ main(int argc, const char **argv) {
 		.height = 720,
 		.title = "RGL | Coc",
 		.background_color = RGL_WHITE,
-		.update_f = app_update,
-		.draw_f = app_draw,
-		.init_f = app_init,
-		.quit_f = app_quit,
+		.update_f = appUpdate,
+		.draw_f = appDraw,
+		.init_f = appInit,
+		.quit_f = appQuit,
 	};
 
 	rglStart(&desc);
 }
 
 void
-app_init() {
-	player_create(&player, PLAYER_TEXTURE_PATH);
-	coins_initialize();
+appInit(void) {
+	rglAudioBufferLoadFromVorbis(&pickup_audio_buffer, "res/pickup.ogg");
+	rglAudioSourceCreate(&pickup_audio_source, &pickup_audio_buffer);
+
+	playerCreate(&player, PLAYER_TEXTURE_PATH);
+	coinsInit();
 
 	for(u32 i=0; i<COIN_COUNT; ++i) {
-		coin_respawn(&coins[i]);
+		coinRespawn(&coins[i]);
 	}
 }
 
 void
-app_quit() {
-	player_destroy(&player);
+appQuit(void) {
+	playerDestroy(&player);
 }
 
 void
-app_update(f32 dt) {
-	coins_update(dt);
-	player_update(&player, dt);
-	player_coin_pickup_check();
+appUpdate(f32 dt) {
+	coinsUpdate(dt);
+	playerUpdate(&player, dt);
+	coinPickupCheck();
 
 	rglV2Lerp(&_rgl_camera->position, &player.sprite.position, dt * 10, &_rgl_camera->position);
 
@@ -57,16 +63,16 @@ app_update(f32 dt) {
 }
 
 void 
-app_draw() {
+appDraw(void) {
 	for(u32 i=0; i<COIN_COUNT; ++i) {
-		coin_draw(&coins[i]);
+		coinDraw(&coins[i]);
 	}
 
-	player_draw(&player);
+	playerDraw(&player);
 }
 
 void
-player_coin_pickup_check() {
+coinPickupCheck(void) {
 	rglV2 delta_pos;
 
 	for(u32 i=0; i<COIN_COUNT; ++i) {
@@ -74,11 +80,17 @@ player_coin_pickup_check() {
 		f32 dist = rglV2Length(&delta_pos);
 
 		if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
-			coin_respawn(&coins[i]);
-			coin_play_pickup_sound();
+			coinRespawn(&coins[i]);
+			playPickupSound();
 
 			/* TODO: UI Text display */
 			printf("Score: %u\n", ++score);
 		}
 	}
+}
+
+void
+playPickupSound(void) {
+	rglAudioSourceSetPitch(&pickup_audio_source, RGL_RAND_RANGE_F32(0.9f, 1.1f));
+	rglAudioSourcePlay(&pickup_audio_source);
 }

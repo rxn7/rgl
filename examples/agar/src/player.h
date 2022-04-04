@@ -6,14 +6,14 @@
 #define PLAYER_SPAWN_RADIUS 20
 #define PLAYER_MOVE_SPEED 50
 
-typedef struct player_t {
-	rglV2 pos;
+typedef struct Player {
+	rglV2 position;
 	rglColor color;
 	f32 mass;
-} player_t;
+} Player;
 
-void player_spawn(player_t *player);
-void player_update(player_t *player, f32 dt);
-void player_draw(player_t *player);
+void playerSpawn(Player *player);
+void playerUpdate(Player *player, f32 dt);
+void playerDraw(Player *player);
 
 #endif /* __AGAR_PLAYER_H */

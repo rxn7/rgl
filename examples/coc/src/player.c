@@ -1,11 +1,11 @@
 #include "player.h"
 #include "common.h"
 
-static void player_movement(player_t *player, f32 dt);
-static void player_handle_animations(player_t *player);
+static void playerHandleMovement(Player *player, f32 dt);
+static void playerHandleAnimations(Player *player);
 
 void
-player_create(player_t *player, const char *texture_path) {
+playerCreate(Player *player, const char *texture_path) {
 	rglTextureLoadFromFile(&player->texture, texture_path, RGL_TEXTURE_FILTER_NONE);
 	rglSpriteCreate(&player->sprite, &player->texture);
 
@@ -24,11 +24,11 @@ player_create(player_t *player, const char *texture_path) {
 
 	rglSpriteAnimatorCreate(&player->animator, &player->animations[IDLE]);
 
-	player_play_animation(player, IDLE);
+	playerPlayAnimation(player, IDLE);
 }
 
 void
-player_destroy(player_t *player) {
+playerDestroy(Player *player) {
 	free(player->animations);
 
 	rglTextureDestroy(player->sprite.texture);
@@ -36,23 +36,23 @@ player_destroy(player_t *player) {
 }
 
 void
-player_update(player_t *player, f32 dt) {
-	player_movement(player, dt);
+playerUpdate(Player *player, f32 dt) {
+	playerHandleMovement(player, dt);
 	rglSpriteAnimatorUpdate(&player->animator, &player->sprite, dt);
 }
 
 void
-player_draw(player_t *player) {
+playerDraw(Player *player) {
 	rglSpriteRender(&player->sprite);
 }
 
 void 
-player_play_animation(player_t *player, player_animation_t anim) {
+playerPlayAnimation(Player *player, playerAnimation anim) {
 	rglSpriteAnimatorPlayNow(&player->animator, &player->animations[anim], false);
 }
 
 static void
-player_movement(player_t *player, f32 dt) {
+playerHandleMovement(Player *player, f32 dt) {
 	rglV2Zero(&player->move_dir);
 	if(rglIsKeyPressed(RGL_KEY_W)) player->move_dir.y--;
 	if(rglIsKeyPressed(RGL_KEY_S)) player->move_dir.y++;
@@ -60,19 +60,19 @@ player_movement(player_t *player, f32 dt) {
 	if(rglIsKeyPressed(RGL_KEY_D)) player->move_dir.x++;
 
 	if(player->move_dir.x != 0 || player->move_dir.y != 0) {
-		player_handle_animations(player);
+		playerHandleAnimations(player);
 
 		rglV2Normalize(&player->move_dir, &player->move_dir);
 		rglV2Mulf(&player->move_dir, dt * PLAYER_MOVE_MASS, &player->move_dir);
 		rglV2Add(&player->sprite.position, &player->move_dir, &player->sprite.position);
 	} else {
-		player_play_animation(player, IDLE);
+		playerPlayAnimation(player, IDLE);
 	}
 }
 
-static void player_handle_animations(player_t *player) {
-	if(player->move_dir.y > 0.0f) player_play_animation(player, MOVE_DOWN);
-	else if(player->move_dir.y < 0.0f) player_play_animation(player, MOVE_UP);
-	else if(player->move_dir.x > 0.0f) player_play_animation(player, MOVE_RIGHT);
-	else if(player->move_dir.x < 0.0f) player_play_animation(player, MOVE_LEFT);
+static void playerHandleAnimations(Player *player) {
+	if(player->move_dir.y > 0.0f) playerPlayAnimation(player, MOVE_DOWN);
+	else if(player->move_dir.y < 0.0f) playerPlayAnimation(player, MOVE_UP);
+	else if(player->move_dir.x > 0.0f) playerPlayAnimation(player, MOVE_RIGHT);
+	else if(player->move_dir.x < 0.0f) playerPlayAnimation(player, MOVE_LEFT);
 }

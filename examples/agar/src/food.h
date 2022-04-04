@@ -4,16 +4,16 @@
 #include <rgl/rgl.h>
 #include "player.h"
 
-typedef struct food_t {
-	rglV2 pos;
+typedef struct Food {
+	rglV2 position;
 	rglColor color;
 	f32 mass;
-	b8 eaten;
-} food_t;
+	b8 is_eaten;
+} Food;
 
-void food_spawn(food_t *food, player_t *player);
-void food_draw(food_t *food);
-void food_update(food_t *food, player_t *player, f32 dt);
-void food_eat(food_t *food);
+void foodSpawn(Food *food, Player *player);
+void foodDraw(Food *food);
+void foodUpdate(Food *food, Player *player, f32 dt);
+void foodEat(Food *food);
 
 #endif /* __AGAR_FOOD_H */

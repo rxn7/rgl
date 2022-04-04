@@ -1,13 +1,12 @@
 #pragma once
 #include "common.h"
 
-typedef struct coin_t {
+typedef struct Coin {
 	rglV2 pos;
-} coin_t;
+} Coin;
 
-void coins_initialize();
-void coins_update(f32 dt);
-void coin_destroy(coin_t *coin);
-void coin_draw(coin_t *coin);
-void coin_respawn(coin_t *coin);
-void coin_play_pickup_sound();
+void coinsInit(void);
+void coinsUpdate(f32 dt);
+void coinDestroy(Coin *coin);
+void coinDraw(Coin *coin);
+void coinRespawn(Coin *coin);

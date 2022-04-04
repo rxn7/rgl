@@ -4,53 +4,53 @@
 #define FOOD_RADIUS(f) (food->mass * 100.f)
 
 void
-food_spawn(food_t *food, player_t *player) {
-	food->eaten = false;
+foodSpawn(Food *food, Player *player) {
+	food->is_eaten = false;
 
 	/* TODO: Don't allow food spawning inside of player */
 	f32 x = RGL_RAND_RANGE_F32(_rgl_camera->left, _rgl_camera->right);
 	f32 y = RGL_RAND_RANGE_F32(_rgl_camera->bottom, _rgl_camera->top);
 
 	food->mass = RGL_RAND_RANGE_F32(0.01f, 0.02f);
-	food->pos.x = x;
-	food->pos.y = y;
+	food->position.x = x;
+	food->position.y = y;
 
 	food->color = RGL_COLOR_RAND;
 }
 
 void
-food_draw(food_t *food) {
-	rglDrawCircle(food->color, food->pos, FOOD_RADIUS(food));
+foodDraw(Food *food) {
+	rglDrawCircle(food->color, food->position, FOOD_RADIUS(food));
 }
 
 void
-food_update(food_t *food, player_t *player, f32 dt) {
+foodUpdate(Food *food, Player *player, f32 dt) {
 	rglV2 delta_pos;
-	rglV2Sub(&food->pos, &player->pos, &delta_pos);
+	rglV2Sub(&food->position, &player->position, &delta_pos);
 	f32 dist = rglV2Length(&delta_pos);
 
 	if(dist <= player->mass + FOOD_RADIUS(food->mass)) {
-		if(!food->eaten) {
+		if(!food->is_eaten) {
 			player->mass += food->mass;
-			food_eat(food);
+			foodEat(food);
 		}
 	}
 
-	if(food->pos.x + FOOD_RADIUS(food) < _rgl_camera->left || food->pos.x - FOOD_RADIUS(food) > _rgl_camera->right || food->pos.y - FOOD_RADIUS(food) > _rgl_camera->bottom || food->pos.y + FOOD_RADIUS(food) < _rgl_camera->top) {
-		food_spawn(food, player);
+	if(food->position.x + FOOD_RADIUS(food) < _rgl_camera->left || food->position.x - FOOD_RADIUS(food) > _rgl_camera->right || food->position.y - FOOD_RADIUS(food) > _rgl_camera->bottom || food->position.y + FOOD_RADIUS(food) < _rgl_camera->top) {
+		foodSpawn(food, player);
 	}
 
-	if(food->eaten) {
+	if(food->is_eaten) {
 		food->mass -= dt * 0.05f;
-		rglV2Lerp(&food->pos, &player->pos, dt * 1.01f, &food->pos);
+		rglV2Lerp(&food->position, &player->position, dt * 1.01f, &food->position);
 
 		if(food->mass <= 0) {
-			food_spawn(food, player);
+			foodSpawn(food, player);
 		}
 	}
 }
 
 void
-food_eat(food_t *food) {
-	food->eaten = true;
+foodEat(Food *food) {
+	food->is_eaten = true;
 }

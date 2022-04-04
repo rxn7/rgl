@@ -5,21 +5,21 @@
 #include <thread>
 #include <unistd.h>
 
-void app_quit(void);
-void app_update(f32 dt);
-void app_init(void);
-void app_draw(void);
+void appQuit(void);
+void appUpdate(f32 dt);
+void appInit(void);
+void appDraw(void);
 
-void play_click_sound(void);
-void play_bounce_sound(f32 gain);
-void init_balls(void);
-void update_balls(void);
-void draw_balls(void);
-void add_ball(rglV2 pos);
-void thr_physics_func(void);
+void playClickSound(void);
+void playBounceSound(f32 gain);
+void initBalls(void);
+void updateBalls(void);
+void drawBalls(void);
+void addBall(rglV2 pos);
+void physicsThreadFunc(void);
 
-std::vector<Ball> vec_balls;
-std::thread thr_physics;
+std::vector<Ball> balls_vec;
+std::thread physics_thread;
 Ball *selected_ball = NULL;
 
 rglAudioBuffer click_audio_buffer;
@@ -40,17 +40,17 @@ main(int argc, const char **argv) {
 		.height = 720,
 		.width = 1280,
 		.background_color = RGL_WHITE,
-                .init_f = app_init,
-                .update_f = app_update,
-		.draw_f = app_draw,
-                .quit_f = app_quit,
+                .init_f = appInit,
+                .update_f = appUpdate,
+		.draw_f = appDraw,
+                .quit_f = appQuit,
         };
 
         rglStart(&desc);
 }
 
 void
-app_init(void) {
+appInit(void) {
         srand(time(0));
 
 	rglAudioBufferLoadFromVorbis(&click_audio_buffer, CLICK_SOUND_PATH);
@@ -61,12 +61,12 @@ app_init(void) {
 		rglAudioSourceCreate(&bounce_audio_sources[i], &bounce_audio_buffer);
 	}
 
-	init_balls();
-	thr_physics = std::thread(thr_physics_func);
+	initBalls();
+	physics_thread = std::thread(physicsThreadFunc);
 }
 
 void
-app_quit(void) {
+appQuit(void) {
 	running = false;
 
 	rglAudioBufferDestroy(&bounce_audio_buffer);
@@ -77,10 +77,10 @@ app_quit(void) {
 		rglAudioSourceDestroy(&bounce_audio_sources[i]);
 	}
 
-	thr_physics.join();
+	physics_thread.join();
 }
 
-void app_update(f32 dt) {
+void appUpdate(f32 dt) {
 	b8 left_pressed = rglIsButtonPressed(RGL_MOUSE_LEFT);
 	b8 right_pressed = rglIsButtonPressed(RGL_MOUSE_RIGHT);
 
@@ -89,7 +89,7 @@ void app_update(f32 dt) {
 
 	if(left_pressed || right_pressed) {
 		if(selected_ball == NULL) {
-			for(Ball &ball : vec_balls) {
+			for(Ball &ball : balls_vec) {
 				if(ball.isPointInside(mouse_pos)) {
 					selected_ball = &ball;
 					break;
@@ -101,7 +101,7 @@ void app_update(f32 dt) {
 		}
 	} else {
 		if(rglIsButtonJustReleased(RGL_MOUSE_RIGHT) && selected_ball != NULL) {
-			play_click_sound();
+			playClickSound();
 			selected_ball->velocity.x = 5.0f * (selected_ball->position.x - mouse_pos.x);
 			selected_ball->velocity.y = 5.0f * (selected_ball->position.y - mouse_pos.y);
 		}
@@ -112,46 +112,46 @@ void app_update(f32 dt) {
 	if(rglIsKeyJustPressed(RGL_KEY_N)) {
 		rglV2 pos;
 		rglGetCursorPosInWorld(&pos);
-		add_ball(pos);
+		addBall(pos);
 
-		play_click_sound();
+		playClickSound();
 		printf("Adding a new ball at position: [%f, %f]\n", pos.x, pos.y);
 	}
 
 	if(rglIsKeyJustPressed(RGL_KEY_C)) {
-		vec_balls.clear();
-		play_click_sound();
+		balls_vec.clear();
+		playClickSound();
 		printf("Clearing all balls\n");
 	}
 
 	if(rglIsKeyJustPressed(RGL_KEY_G)) {
 		gravity = !gravity;
-		play_click_sound();
+		playClickSound();
 		printf("Gravity: %s\n", gravity ? "ON" : "OFF");
 	}
 
 	if(rglIsKeyJustPressed(RGL_KEY_M)) {
 		muted = !muted;
-		play_click_sound();
+		playClickSound();
 		printf("Mute: %s\n", muted ? "ON" : "OFF");
 	}
 
 	if(rglIsKeyJustPressed(RGL_KEY_P)) {
 		paused = !paused;
-		play_click_sound();
+		playClickSound();
 		printf("Paused: %s\n", paused ? "ON" : "OFF");
 	}
 
 	f32 radius_multiplier = 1.0f;
 	if(rglIsKeyJustPressed(RGL_KEY_I)) {
 		radius_multiplier = 1.1f;
-		play_click_sound();
+		playClickSound();
 	} else if(rglIsKeyJustPressed(RGL_KEY_O)) {
 		radius_multiplier = 0.9f;
-		play_click_sound();
+		playClickSound();
 	}
 
-	for(Ball &ball : vec_balls) {
+	for(Ball &ball : balls_vec) {
 		/* Apply physics only if game's not paused */
 		if(!paused) {
 			/* Apply drag */
@@ -179,12 +179,12 @@ void app_update(f32 dt) {
 	}
 }
 
-void app_draw(void) {
-	draw_balls();
+void appDraw(void) {
+	drawBalls();
 }
 
 void
-thr_physics_func(void) {
+physicsThreadFunc(void) {
 	std::vector<Collision> vec_collisions;
 
 	while(running) {
@@ -194,7 +194,7 @@ thr_physics_func(void) {
 
 		u32 i=0; 
 		/* Static colliisions */
-		for(Ball &ball : vec_balls) {
+		for(Ball &ball : balls_vec) {
 			u32 j=0;
 
 			/* Left wall */
@@ -219,7 +219,7 @@ thr_physics_func(void) {
 			} 
 
 			/* Overlap collisions */
-			for(Ball &target : vec_balls) {
+			for(Ball &target : balls_vec) {
 				/* Ignore checking ball against itself */
 				if(i == j++) continue; 
 
@@ -279,7 +279,7 @@ thr_physics_func(void) {
 
 					f32 gain = force / 100;
 					if(gain > 1.f) gain = 1.f;
-					play_bounce_sound(gain);
+					playBounceSound(gain);
 				}
 
 				a->velocity.x -= force * b->radius * normal.x;
@@ -303,7 +303,7 @@ thr_physics_func(void) {
 						collision.a->last_sound_played_time = time;
 						f32 gain = speed / 5000;
 						if(gain > 1.f) gain = 1.f;
-						play_bounce_sound(gain);
+						playBounceSound(gain);
 					}
 				}
 
@@ -317,8 +317,8 @@ thr_physics_func(void) {
 }
 
 void
-draw_balls(void) {
-	for(Ball &ball : vec_balls) {
+drawBalls(void) {
+	for(Ball &ball : balls_vec) {
 		rglDrawCircle(ball.color, ball.position, ball.radius);
 	}
 
@@ -333,25 +333,25 @@ draw_balls(void) {
 }
 
 void
-init_balls(void) {
+initBalls(void) {
 	rglV2 pos;
 	for(u32 i=0; i<START_BALL_COUNT; ++i) {
 		pos.x = (f32)(rand() % _rgl_width);
 		pos.y = (f32)(rand() % _rgl_height);
 
-		add_ball(pos);
+		addBall(pos);
 	}
 }
 
 void
-play_click_sound(void) {
+playClickSound(void) {
 	rglAudioSourceSetGain(&click_audio_source, 1.0f);
 	rglAudioSourceSetPitch(&click_audio_source, RGL_RAND_RANGE_F32(0.8f, 1.2f));
 	rglAudioSourcePlay(&click_audio_source);
 }
 
 void
-play_bounce_sound(f32 gain) {
+playBounceSound(f32 gain) {
 	if(muted) return;
 
 	rglAudioSource *source = 0;
@@ -373,11 +373,11 @@ play_bounce_sound(f32 gain) {
 }
 
 void
-add_ball(rglV2 pos) {
+addBall(rglV2 pos) {
 	static const f32 HALF_RANDOM_INIT_VEL = RANDOM_INIT_VEL * 0.5f;
 
 	Ball ball(pos);
 	ball.velocity = { rand() % RANDOM_INIT_VEL - HALF_RANDOM_INIT_VEL, rand() % RANDOM_INIT_VEL - HALF_RANDOM_INIT_VEL };
 
-	vec_balls.push_back(ball);
+	balls_vec.push_back(ball);
 }

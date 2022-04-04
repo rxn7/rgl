@@ -2,16 +2,16 @@
 #include "food.h"
 #include "player.h"
 
-void app_init(void);
-void app_update(f32 dt);
-void app_quit(void);
-void app_draw(void);
-void spawn_foods(void);
+void appInit(void);
+void appUpdate(f32 dt);
+void appQuit(void);
+void appDraw(void);
+void spawnFoods(void);
 
 #define FOOD_COUNT 300
 
-food_t foods[FOOD_COUNT];
-player_t player;
+Food foods[FOOD_COUNT];
+Player player;
 
 int
 main(int argc, const char **argv) {
@@ -20,50 +20,50 @@ main(int argc, const char **argv) {
 		.width = 1280,
 		.height = 720,
 		.background_color = RGL_RGB(255,255,255),
-		.init_f = app_init,
-		.update_f = app_update,
-		.draw_f = app_draw,
-		.quit_f = app_quit,
+		.init_f = appInit,
+		.update_f = appUpdate,
+		.draw_f = appDraw,
+		.quit_f = appQuit,
 	};
 
 	rglStart(&desc);
 }
 
 void
-app_init(void) {
-	player_spawn(&player);
-	spawn_foods();
+appInit(void) {
+	playerSpawn(&player);
+	spawnFoods();
 }
 
 void
-app_update(f32 dt) {
+appUpdate(f32 dt) {
 	if(rglIsKeyJustPressed(RGL_KEY_R)) {
-		player_spawn(&player);
-		spawn_foods();
+		playerSpawn(&player);
+		spawnFoods();
 	}
 
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
-		food_update(&foods[i], &player, dt);
+		foodUpdate(&foods[i], &player, dt);
 	}
 
-	player_update(&player, dt);
+	playerUpdate(&player, dt);
 }
 
-void app_draw(void) {
+void appDraw(void) {
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
-		food_draw(&foods[i]);
+		foodDraw(&foods[i]);
 	}
 
-	player_draw(&player);
-}
-
-void
-app_quit(void) {
+	playerDraw(&player);
 }
 
 void
-spawn_foods(void) {
+appQuit(void) {
+}
+
+void
+spawnFoods(void) {
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
-		food_spawn(&foods[i], &player);
+		foodSpawn(&foods[i], &player);
 	}
 }
