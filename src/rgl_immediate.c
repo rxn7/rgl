@@ -5,14 +5,11 @@ static void
 _rglDrawRect(u32 mode, rglColor *col, rglV2 *pos, rglV2 *size) {
 	glColor3ub(col->r, col->g, col->b);
 
-	f32 hsx = size->x * 0.5f;
-	f32 hsy = size->y * 0.5f;
-
 	glBegin(mode);
-	glVertex2f(pos->x - hsx, pos->y - hsy);
-	glVertex2f(pos->x + hsx, pos->y - hsy);
-	glVertex2f(pos->x + hsx, pos->y + hsy);
-	glVertex2f(pos->x - hsx, pos->y + hsy);
+	glVertex2f(pos->x - size->x, pos->y - size->y);
+	glVertex2f(pos->x + size->x, pos->y - size->y);
+	glVertex2f(pos->x + size->x, pos->y + size->y);
+	glVertex2f(pos->x - size->x, pos->y + size->y);
 	glEnd();
 }
 

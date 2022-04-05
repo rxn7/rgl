@@ -49,7 +49,8 @@ appUpdate(f32 dt) {
 	playerUpdate(&player, dt);
 }
 
-void appDraw(void) {
+void
+appDraw(void) {
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
 		foodDraw(&foods[i]);
 	}
