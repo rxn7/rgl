@@ -25,7 +25,7 @@ fi
 ./build_rgl.sh
 if [ $? -ne 0 ]
 then
-	exit -1
+	exit 1
 fi
 
 echo "==========================="

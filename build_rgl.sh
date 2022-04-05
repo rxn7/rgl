@@ -9,5 +9,5 @@ make -f linux.mk install
 if [ $? -ne 0 ]
 then
 	echo "Failed to compile RGL for linux, please submit a bug report to https://github.com/rxtthin/rgl/issues"
-	exit -1
+	exit 1
 fi
