@@ -6,7 +6,5 @@ CYAN=$'\e[1;36m'
 WHITE=$'\e[0m'
 
 echoColor() {
-	echo $1
-	echo $2
-	echo $WHITE
+	echo "$1$2$WHITE"
 }

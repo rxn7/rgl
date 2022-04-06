@@ -8,12 +8,14 @@ void appUpdate(f32 dt);
 void appDraw(void);
 void coinPickupCheck(void);
 void playPickupSound(void);
+void onCoinPickup(Coin *coin);
 
 rglAudioBuffer pickup_audio_buffer;
 rglAudioSource pickup_audio_source;
 
 Player player;
-Coin coins[COIN_COUNT];
+rglLinkedList coins_ll;
+//Coin coins[COIN_COUNT];
 u32 score = 0;
 
 int 
@@ -34,20 +36,26 @@ main(int argc, const char **argv) {
 
 void
 appInit(void) {
+	rglLinkedListCreate(&coins_ll);
+
 	rglAudioBufferLoadFromVorbis(&pickup_audio_buffer, "res/pickup.ogg");
 	rglAudioSourceCreate(&pickup_audio_source, &pickup_audio_buffer);
 
 	playerCreate(&player, PLAYER_TEXTURE_PATH);
+
 	coinsInit();
 
-	for(u32 i=0; i<COIN_COUNT; ++i) {
-		coinRespawn(&coins[i]);
+	for(u32 i=0; i<4; ++i) {
+		Coin *coin = malloc(sizeof(Coin));
+		coinRespawn(coin);
+		rglLinkedListAdd(&coins_ll, coin);
 	}
 }
 
 void
 appQuit(void) {
 	playerDestroy(&player);
+	rglLinkedListClear(&coins_ll, true);
 }
 
 void
@@ -64,8 +72,10 @@ appUpdate(f32 dt) {
 
 void 
 appDraw(void) {
-	for(u32 i=0; i<COIN_COUNT; ++i) {
-		coinDraw(&coins[i]);
+	rglLinkedListNode *coin_node = coins_ll.head;
+	while(coin_node != NULL) {
+		coinDraw((Coin*)coin_node->data);
+		coin_node = coin_node->next;
 	}
 
 	playerDraw(&player);
@@ -75,17 +85,18 @@ void
 coinPickupCheck(void) {
 	rglV2 delta_pos;
 
-	for(u32 i=0; i<COIN_COUNT; ++i) {
-		rglV2Sub(&coins[i].pos, &player.sprite.position, &delta_pos);
+	rglLinkedListNode *coin_node = coins_ll.head;
+	while(coin_node != NULL) {
+		Coin *coin = (Coin*)coin_node->data;
+
+		rglV2Sub(&coin->pos, &player.sprite.position, &delta_pos);
 		f32 dist = rglV2Length(&delta_pos);
 
 		if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
-			coinRespawn(&coins[i]);
-			playPickupSound();
-
-			/* TODO: UI Text display */
-			printf("Score: %u\n", ++score);
+			onCoinPickup(coin);
 		}
+
+		coin_node = coin_node->next;
 	}
 }
 
@@ -93,4 +104,20 @@ void
 playPickupSound(void) {
 	rglAudioSourceSetPitch(&pickup_audio_source, RGL_RAND_RANGE_F32(0.9f, 1.1f));
 	rglAudioSourcePlay(&pickup_audio_source);
+}
+
+void
+onCoinPickup(Coin *coin) {
+	if(++score > 1 && score % 4 == 0) {
+		Coin *new_coin = malloc(sizeof(Coin));
+		coinRespawn(new_coin);
+		rglLinkedListAdd(&coins_ll, new_coin);
+		printf("Your coin count has increased, current coin count: %u\n", coins_ll.length);
+	}
+
+	coinRespawn(coin);
+	playPickupSound();
+
+	/* TODO: UI Text display */
+	printf("Score: %u\n", score);
 }
