@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source ./shell_colors.sh
+
 list_examples() {
 	echo "==========================="
 	echo "List of examples:"
@@ -9,7 +11,7 @@ list_examples() {
 if [ "$#" -ne "1" ]
 then
 	echo "==========================="
-	echo "You need to specify the example to run i.e. ./run_example.sh <example's name>"
+	echoColor $RED "You need to specify the example to run i.e. ./run_example.sh <example's name>"
 	list_examples
 	exit
 fi
@@ -17,7 +19,7 @@ fi
 if [ ! -d "examples/$1" ]
 then
 	echo "==========================="
-	echo "Example '$1' does not exist."
+	echoColor $RED "Example '$1' does not exist."
 	list_examples
 	exit
 fi
@@ -36,11 +38,11 @@ make
 if [ $? -ne 0 ]
 then
 	echo "==========================="
-	echo "Failed to compile example '$1', please submit a bug report to https://github.com/rxtthin/rgl/issues"
+	echoColor $RED "Failed to compile example '$1', please submit a bug report to https://github.com/rxtthin/rgl/issues"
 else
 	echo "==========================="
-	echo "Example $1 compiled successfully..."
-	echo "Running example $1..."
+	echoColor $GREEN "Example $1 compiled successfully..."
+	echoColor $GREEN "Running example $1..."
 	echo "==========================="
 	./$1
 fi

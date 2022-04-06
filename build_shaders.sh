@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./shell_colors.sh
+
 echo "==========================="
 echo "Compiling RGL shaders to shaders_out..."
 
@@ -26,6 +28,6 @@ do
 		done < "$f"
 	else
 		echo "==========================="
-		echo "File $f doesn't exist!"
+		echoColor $RED "File $f doesn't exist!"
 	fi
 done
