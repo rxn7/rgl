@@ -43,6 +43,8 @@ rglStart(rglAppDesc *desc) {
 	_rglUpdateProjection();
 	_rglShaderCreateDefaults();
 
+	_rgl_running = true;
+
 	/* Call user-defined init func */
         if(desc->init_f) {
                 desc->init_f();
@@ -144,7 +146,6 @@ _rglSetupOpenGL(void) {
 
 void
 _rglMainLoop(void) {
-	_rgl_running = true;
 	b8 first_frame = true;
         f32 dt = 0, now = RGL_PLATFORM_FUN(GetTime), last = now;
         while(_rgl_running) {
