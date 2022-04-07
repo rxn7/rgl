@@ -15,8 +15,8 @@ i32 _rgl_width, _rgl_height;
 f32 _rgl_vp_width, _rgl_vp_height;
 f32 _rgl_vp_x, _rgl_vp_y;
 f32 _rgl_scroll_value = 0.0f;
-u16 _rgl_aspect_x = 0.0f;
-u16 _rgl_aspect_y = 0.0f;
+u16 _rgl_aspect_x = 0;
+u16 _rgl_aspect_y = 0;
 
 void
 rglStart(rglAppDesc *desc) {
