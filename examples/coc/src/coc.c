@@ -1,4 +1,5 @@
 #include "common.h"
+#define RGL_NO_LOG
 #include "player.h"
 #include "coin.h"
 
