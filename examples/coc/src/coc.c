@@ -68,7 +68,7 @@ appUpdate(f32 dt) {
 	rglV2Lerp(&_rgl_camera->position, &player.sprite.position, dt * 10, &_rgl_camera->position);
 
 	_rgl_camera->zoom += _rgl_scroll_value * 0.05f;
-	_rgl_camera->zoom = rglMathClamp_f32(_rgl_camera->zoom, .1f, 3.f);
+	rglMathClamp(_rgl_camera->zoom, .1f, 3.f);
 }
 
 void 

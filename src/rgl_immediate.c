@@ -31,8 +31,8 @@ _rglDrawCircle(u32 mode, rglColor *col, rglV2 *pos, f32 radius) {
 		return;
 	}
 
-	u32 segments = 1.5f * sqrtf(radius) * _rgl_camera->zoom;
-	segments = rglMathClamp_u32(segments, CIRCLE_MIN_SEGMENTS, CIRCLE_MAX_SEGMENTS);
+	u32 segments = 1.75f * sqrtf(radius) * sqrtf(_rgl_camera->zoom);
+	rglMathClamp(segments, CIRCLE_MIN_SEGMENTS, CIRCLE_MAX_SEGMENTS);
 
 	f32 theta = RGL_PI_2F / (float)segments;
 	f32 c = cosf(theta);

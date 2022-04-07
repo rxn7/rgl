@@ -1,43 +1,5 @@
 #include "rgl_math.h"
 
-f32
-rglMathLerp_f32(f32 a, f32 b, f32 v) {
-	return (a * (1.0f - v)) + (b * v);
-}
-
-f32
-rglMathClamp_f32(f32 val, f32 min, f32 max) {
-	if(val < min) {
-		val = min;
-	} else if(val > max) {
-		val = max;
-	}
-
-	return val;
-}
-
-u32
-rglMathClamp_u32(u32 val, u32 min, u32 max) {
-	if(val < min) {
-		val = min;
-	} else if(val > max) {
-		val = max;
-	}
-
-	return val;
-}
-
-i32
-rglMathClamp_i32(i32 val, i32 min, i32 max) {
-	if(val < min) {
-		val = min;
-	} else if(val > max) {
-		val = max;
-	}
-
-	return val;
-}
-
 i32
 rglMathGcd_i32(i32 a, i32 b) {
 	if(a < b) {
@@ -45,7 +7,7 @@ rglMathGcd_i32(i32 a, i32 b) {
 	}
 
 	while(b != 0) {
-		u32 mod = a%b;
+		i32 mod = a%b;
 		a = b;
 		b = mod;
 	}

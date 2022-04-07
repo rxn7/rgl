@@ -3,11 +3,11 @@
 
 #include "rgl_common.h"
 
-f32 rglMathLerp_f32(f32 a, f32 b, f32 v);
+#define rglMathLerp(a, b, v) ((a * (1.0f - v)) + (b * v))
 
-f32 rglMathClamp_f32(f32 val, f32 min, f32 max);
-u32 rglMathClamp_u32(u32 val, u32 min, u32 max);
-i32 rglMathClamp_i32(i32 val, i32 min, i32 max);
+#define rglMathClamp(v, min, max) \
+	if(v < min) v = min; \
+	else if(v > max) v = max;
 
 i32 rglMathGcd_i32(i32 a, i32 b); /* Greates common divisor */
 

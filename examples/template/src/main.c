@@ -37,6 +37,9 @@ appUpdate(f32 dt) {
 	if(rglIsKeyJustPressed(RGL_KEY_SPACE)) {
 		randomizeColors();
 	}
+
+	_rgl_camera->zoom += _rgl_scroll_value * 0.05f;
+	rglMathClamp(_rgl_camera->zoom, .1f, 3.f);
 }
 
 void

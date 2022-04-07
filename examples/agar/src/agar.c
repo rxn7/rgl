@@ -63,9 +63,9 @@ appUpdate(f32 dt) {
 	playerUpdate(&player, dt);
 
 	zoom += _rgl_scroll_value * 0.05f;
-	zoom = rglMathClamp_f32(zoom, 0.5f, 1.5f);
+	rglMathClamp(zoom, 0.5f, 1.5f);
 
-	_rgl_camera->zoom = rglMathLerp_f32(_rgl_camera->zoom, 1.f / player.mass * 100 * zoom, dt * 3); 
+	_rgl_camera->zoom = rglMathLerp(_rgl_camera->zoom, 1.f / player.mass * 100 * zoom, dt * 3); 
 }
 
 void
