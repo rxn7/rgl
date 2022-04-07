@@ -1,5 +1,6 @@
 #include "player.h"
 #include "food.h"
+#include "agar.h"
 
 #define FOOD_RADIUS(f) (food->mass * 100.f)
 
@@ -7,9 +8,8 @@ void
 foodSpawn(Food *food, Player *player) {
 	food->is_eaten = false;
 
-	/* TODO: Don't allow food spawning inside of player */
-	f32 x = RGL_RAND_RANGE_F32(_rgl_camera->left, _rgl_camera->right);
-	f32 y = RGL_RAND_RANGE_F32(_rgl_camera->bottom, _rgl_camera->top);
+	f32 x = player->position.x + RGL_RAND_RANGE_F32(100, 1000) * (roundf(RGL_RAND_F32) * 2 - 1);
+	f32 y = player->position.y + RGL_RAND_RANGE_F32(100, 1000) * (roundf(RGL_RAND_F32) * 2 - 1);
 
 	food->mass = RGL_RAND_RANGE_F32(0.01f, 0.02f);
 	food->position.x = x;
@@ -36,7 +36,7 @@ foodUpdate(Food *food, Player *player, f32 dt) {
 		}
 	}
 
-	if(food->position.x + FOOD_RADIUS(food) < _rgl_camera->left || food->position.x - FOOD_RADIUS(food) > _rgl_camera->right || food->position.y - FOOD_RADIUS(food) > _rgl_camera->bottom || food->position.y + FOOD_RADIUS(food) < _rgl_camera->top) {
+	if(dist > 1000) {
 		foodSpawn(food, player);
 	}
 
@@ -53,4 +53,5 @@ foodUpdate(Food *food, Player *player, f32 dt) {
 void
 foodEat(Food *food) {
 	food->is_eaten = true;
+	playPopSound();
 }

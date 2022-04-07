@@ -31,10 +31,10 @@ _rglDrawCircle(u32 mode, rglColor *col, rglV2 *pos, f32 radius) {
 		return;
 	}
 
-	/* TODO: Find optimal segments algorithm */
-	u32 segments = 4.f * sqrtf(radius); //* (_rgl_data->camera->zoom * 0.25f);
-	if(segments < CIRCLE_MIN_SEGMENTS) segments = CIRCLE_MIN_SEGMENTS;
-	else if(segments > CIRCLE_MAX_SEGMENTS) segments = CIRCLE_MAX_SEGMENTS;
+	u32 segments = 1.5f * sqrtf(radius) * _rgl_camera->zoom;
+	segments = rglMathClamp_u32(segments, CIRCLE_MIN_SEGMENTS, CIRCLE_MAX_SEGMENTS);
+
+	printf("%u\n", segments);
 
 	f32 theta = RGL_PI_2F / (float)segments;
 	f32 c = cosf(theta);

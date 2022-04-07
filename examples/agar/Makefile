@@ -8,4 +8,4 @@ compile:
 	gcc -c $(SRC) -I./src $(CFLAGS)
 
 link:
-	gcc $(OBJ) -lrgl -o agar
+	gcc $(OBJ) -lrgl -lm -o agar

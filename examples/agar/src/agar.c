@@ -1,4 +1,4 @@
-#include <rgl/rgl.h>
+#include "agar.h"
 #include "food.h"
 #include "player.h"
 
@@ -8,10 +8,12 @@ void appQuit(void);
 void appDraw(void);
 void spawnFoods(void);
 
-#define FOOD_COUNT 300
-
 Food foods[FOOD_COUNT];
 Player player;
+f32 zoom = 1.0f;
+
+rglAudioBuffer popSoundBuffer;
+rglAudioSource popSoundSources[POP_SOUND_SOURCE_POOL];
 
 int
 main(int argc, const char **argv) {
@@ -31,8 +33,20 @@ main(int argc, const char **argv) {
 
 void
 appInit(void) {
+	rglAudioBufferLoadFromVorbis(&popSoundBuffer, "./res/pop.ogg");
+
+	for(u32 i=0; i<POP_SOUND_SOURCE_POOL; ++i) {
+		rglAudioSourceCreate(&popSoundSources[i], &popSoundBuffer);
+	}
+
 	playerSpawn(&player);
 	spawnFoods();
+}
+
+
+void
+appQuit(void) {
+	rglAudioBufferDestroy(&popSoundBuffer);
 }
 
 void
@@ -47,6 +61,11 @@ appUpdate(f32 dt) {
 	}
 
 	playerUpdate(&player, dt);
+
+	zoom += _rgl_scroll_value * 0.05f;
+	zoom = rglMathClamp_f32(zoom, 0.5f, 1.5f);
+
+	_rgl_camera->zoom = rglMathLerp_f32(_rgl_camera->zoom, 1.f / player.mass * 100 * zoom, dt * 3); 
 }
 
 void
@@ -59,12 +78,22 @@ appDraw(void) {
 }
 
 void
-appQuit(void) {
-}
-
-void
 spawnFoods(void) {
 	for(u32 i=0; i<FOOD_COUNT; ++i) {
 		foodSpawn(&foods[i], &player);
 	}
+}
+
+void
+playPopSound(void) {
+	for(u32 i=0; i<POP_SOUND_SOURCE_POOL; ++i) {
+		if(!rglAudioSourceIsPlaying(&popSoundSources[i])) {
+			rglAudioSourceSetPitch(&popSoundSources[i], RGL_RAND_RANGE_F32(0.9f, 1.1f));
+			rglAudioSourcePlay(&popSoundSources[i]);
+			return;
+		}
+	}
+
+	printf("There aren't any ready sound sources!\n");
+	rglAudioSourcePlay(&popSoundSources[0]);
 }

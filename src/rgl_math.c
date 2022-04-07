@@ -16,6 +16,28 @@ rglMathClamp_f32(f32 val, f32 min, f32 max) {
 	return val;
 }
 
+u32
+rglMathClamp_u32(u32 val, u32 min, u32 max) {
+	if(val < min) {
+		val = min;
+	} else if(val > max) {
+		val = max;
+	}
+
+	return val;
+}
+
+i32
+rglMathClamp_i32(i32 val, i32 min, i32 max) {
+	if(val < min) {
+		val = min;
+	} else if(val > max) {
+		val = max;
+	}
+
+	return val;
+}
+
 i32
 rglMathGcd_i32(i32 a, i32 b) {
 	if(a < b) {
