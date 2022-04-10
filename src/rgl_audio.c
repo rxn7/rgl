@@ -3,6 +3,13 @@
 #include "stb/stb_vorbis.c"
 #include <unistd.h>
 
+static void _rglInitAudio() {
+	if(_rgl_audio_ctx) return;
+
+	_rgl_audio_ctx = malloc(sizeof(rglAudioContext));
+	rglAudioContextCreate(_rgl_audio_ctx);
+}
+
 void
 rglAudioContextCreate(rglAudioContext *cxt) {
 	RGL_ASSERT_VALID_PTR(cxt);
@@ -34,6 +41,7 @@ rglAudioContextDestroy(rglAudioContext *cxt) {
 void
 rglAudioBufferLoadFromVorbis(rglAudioBuffer *audio_buffer, const char *path) {
 	RGL_ASSERT_VALID_PTR(audio_buffer);
+	_rglInitAudio();
 
 	i16 *buffer;
 	i32 channels, sample_rate;
@@ -65,6 +73,7 @@ void
 rglAudioSourceCreate(rglAudioSource *source, rglAudioBuffer *buffer) {
 	RGL_ASSERT_VALID_PTR(buffer);
 	RGL_ASSERT_VALID_PTR(source);
+	_rglInitAudio();
 
 	source->buffer = buffer;
 

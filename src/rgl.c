@@ -118,9 +118,6 @@ _rglInitGlobals(rglAppDesc *desc) {
 	_rgl_plat_ctx = malloc(sizeof(RGL_PLATFORM_CONTEXT_T));
 	RGL_ASSERT(RGL_PLATFORM_FUN(ContextCreate, _rgl_plat_ctx, desc->title, desc->width, desc->height), "failed to initialize platform context");
 
-	_rgl_audio_ctx = malloc(sizeof(rglAudioContext));
-	rglAudioContextCreate(_rgl_audio_ctx);
-
 	_rgl_camera = malloc(sizeof(rglCamera));
 	rglCameraCreate(_rgl_camera, (rglV2){0,0}, 1);
 	rglCameraUpdate(_rgl_camera);
@@ -131,8 +128,10 @@ _rglDestroyGlobals() {
 	RGL_PLATFORM_FUN(ContextDestroy, _rgl_plat_ctx);
 	free(_rgl_plat_ctx);
 
-	rglAudioContextDestroy(_rgl_audio_ctx);
-	free(_rgl_audio_ctx);
+	if(_rgl_audio_ctx) {
+		rglAudioContextDestroy(_rgl_audio_ctx);
+		free(_rgl_audio_ctx);
+	}
 
 	rglCameraDestroy(_rgl_camera);
 	free(_rgl_camera);
