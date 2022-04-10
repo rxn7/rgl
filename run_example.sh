@@ -36,7 +36,7 @@ fi
 echo "==========================="
 echo "Comiling example $1..."
 
-cd examples/$1
+pushd examples/$1
 make
 if [ $? -ne 0 ]
 then
@@ -50,4 +50,4 @@ else
 	./$1
 fi
 
-cd ../..
+popd
