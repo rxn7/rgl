@@ -9,13 +9,13 @@ compile:
 	gcc $(SRC) $(INCS) $(CFLAGS)
 
 link:
+	mkdir -p out
 	gcc -shared $(OBJ) $(LIBS) -o $(OUT)
 
 clean:
 	rm -rf *.o
 
 install:
-	mkdir -p out
 	make -f linux.mk
 	sudo mkdir -p /usr/include/rgl
 	sudo cp -r include/* /usr/include/rgl/
