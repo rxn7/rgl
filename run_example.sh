@@ -24,10 +24,13 @@ then
 	exit
 fi
 
-./build_rgl.sh
-if [ $? -ne 0 ]
+if [ ! -f /usr/lib/librgl.so ] 
 then
-	exit 1
+	./build_rgl.sh
+	if [ $? -ne 0 ]
+	then
+		exit 1
+	fi
 fi
 
 echo "==========================="
