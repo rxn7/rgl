@@ -3,37 +3,33 @@
 #include "stb/stb_vorbis.c"
 #include <unistd.h>
 
-static void _rglInitAudio() {
-	if(_rgl_audio_ctx) return;
-
-	_rgl_audio_ctx = malloc(sizeof(rglAudioContext));
-	rglAudioContextCreate(_rgl_audio_ctx);
-}
+static ALCdevice *_dev = NULL;
+static ALCcontext *_ctx = NULL;
 
 void
-rglAudioContextCreate(rglAudioContext *cxt) {
-	RGL_ASSERT_VALID_PTR(cxt);
+rglAudioInit() {
+	if(_ctx) return;
 
 	const char *dev_name = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
 	RGL_LOG("Audio Device: %s", dev_name);
 
-	cxt->dev = alcOpenDevice(dev_name);
-	RGL_ASSERT_VALID_PTR(cxt->dev);
+	_dev = alcOpenDevice(dev_name);
+	RGL_ASSERT_VALID_PTR(_dev);
 
-	cxt->cxt = alcCreateContext(cxt->dev, 0);
-	RGL_ASSERT_VALID_PTR(cxt->cxt);
+	_ctx = alcCreateContext(_dev, 0);
+	RGL_ASSERT_VALID_PTR(_ctx);
 
-	RGL_ASSERT(alcMakeContextCurrent(cxt->cxt), "failed to make OpenAL context current");
+	RGL_ASSERT(alcMakeContextCurrent(_ctx), "failed to make OpenAL context current");
 }
 
 void
-rglAudioContextDestroy(rglAudioContext *cxt) {
-	RGL_ASSERT_VALID_PTR(cxt);
+rglAudioCleanup() {
+	if(!_ctx) return;
 
 	alcMakeContextCurrent(0);
-	alcDestroyContext(cxt->cxt);
+	alcDestroyContext(_ctx);
 
-	if(!alcCloseDevice(cxt->dev)) {
+	if(!alcCloseDevice(_dev)) {
 		RGL_LOG_ERROR("Failed to close OpenAL device");
 	}
 }
@@ -41,7 +37,7 @@ rglAudioContextDestroy(rglAudioContext *cxt) {
 void
 rglAudioBufferLoadFromVorbis(rglAudioBuffer *audio_buffer, const char *path) {
 	RGL_ASSERT_VALID_PTR(audio_buffer);
-	_rglInitAudio();
+	rglAudioInit();
 
 	i16 *buffer;
 	i32 channels, sample_rate;
@@ -73,7 +69,7 @@ void
 rglAudioSourceCreate(rglAudioSource *source, rglAudioBuffer *buffer) {
 	RGL_ASSERT_VALID_PTR(buffer);
 	RGL_ASSERT_VALID_PTR(source);
-	_rglInitAudio();
+	rglAudioInit();
 
 	source->buffer = buffer;
 

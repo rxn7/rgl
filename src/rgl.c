@@ -7,14 +7,12 @@
 
 RGL_PLATFORM_CONTEXT_T *_rgl_plat_ctx = NULL;
 rglAppDesc *_rgl_app_desc = NULL;
-rglAudioContext *_rgl_audio_ctx = NULL;
 rglCamera *_rgl_camera = NULL;
 
 b8 _rgl_running = false;
 i32 _rgl_width, _rgl_height;
 f32 _rgl_vp_width, _rgl_vp_height;
 f32 _rgl_vp_x, _rgl_vp_y;
-f32 _rgl_scroll_value = 0.0f;
 u16 _rgl_aspect_x = 0;
 u16 _rgl_aspect_y = 0;
 
@@ -86,10 +84,10 @@ _rglUpdateProjection(void) {
 	_rgl_vp_height = _rgl_height;
 
 	if(_rgl_width * _rgl_aspect_y > _rgl_height * _rgl_aspect_x) {
-		_rgl_vp_width = _rgl_height * _rgl_aspect_x / _rgl_aspect_y ;
+		_rgl_vp_width = (f32)_rgl_height * _rgl_aspect_x / _rgl_aspect_y ;
 		_rgl_vp_x = (_rgl_width - _rgl_vp_width) / 2;
 	} else if(_rgl_width * _rgl_aspect_y < _rgl_height * _rgl_aspect_x) {
-		_rgl_vp_height = _rgl_width * _rgl_aspect_y / _rgl_aspect_x;
+		_rgl_vp_height = (f32)_rgl_width * _rgl_aspect_y / _rgl_aspect_x;
 		_rgl_vp_y = (_rgl_height - _rgl_vp_height) / 2;
 	}
 
@@ -127,11 +125,6 @@ void
 _rglDestroyGlobals() {
 	RGL_PLATFORM_FUN(ContextDestroy, _rgl_plat_ctx);
 	free(_rgl_plat_ctx);
-
-	if(_rgl_audio_ctx) {
-		rglAudioContextDestroy(_rgl_audio_ctx);
-		free(_rgl_audio_ctx);
-	}
 
 	rglCameraDestroy(_rgl_camera);
 	free(_rgl_camera);

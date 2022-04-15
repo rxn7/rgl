@@ -32,8 +32,6 @@ appInit(void) {
 
 void
 appUpdate(f32 dt) {
-	printf("FPS: %f\n", 1.f / dt);
-
 	if(rglIsKeyJustPressed(RGL_KEY_SPACE)) {
 		randomizeColors();
 	}
