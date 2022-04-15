@@ -62,6 +62,8 @@ rglQuit(void) {
                 _rgl_app_desc->quit_f();
         }
 
+	rglAudioCleanup();
+
 	_rglShaderDestroyDefaults();
 	_rglDestroyGlobals();
 
