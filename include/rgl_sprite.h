@@ -3,12 +3,16 @@
 
 #include "rgl_vao.h"
 #include "rgl_texture.h"
+#include "rgl_transform.h"
 
 typedef struct rglSprite {
+	/*
 	rglV2 position;
 	rglV2 size;
-	rglV2 uvs[4];
 	f32 rotation;	
+	*/
+	rglTransform transform;
+	rglV2 uvs[4];
 	rglVao vao;
 	rglTexture *texture;
 } rglSprite;

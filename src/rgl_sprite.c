@@ -1,6 +1,7 @@
 #include "rgl.h"
 #include "rgl_shader.h"
 #include "rgl.h"
+#include "rgl_transform.h"
 
 static rglShader *_shader = 0;
 
@@ -16,10 +17,10 @@ rglSpriteCreate(rglSprite *sprite, rglTexture *texture) {
 	RGL_ASSERT_VALID_PTR(sprite);
 	RGL_ASSERT_VALID_PTR(texture);
 
-	sprite->rotation = 0;
+	sprite->transform.rotation = 0;
 	sprite->texture = texture;
-	sprite->size = (rglV2){texture->width, texture->height};
-	sprite->position = (rglV2){0,0};
+	sprite->transform.scale = (rglV2){texture->width, texture->height};
+	sprite->transform.position = (rglV2){0,0};
 
 	if(!rglVaoCreate(&sprite->vao, _vertices, sizeof(_vertices) / sizeof(_vertices[0]))) {
 		RGL_LOG_ERROR("Failed to create VAO for a sprite");
@@ -44,23 +45,8 @@ rglSpriteRender(rglSprite *sprite) {
 	glBindTexture(GL_TEXTURE_2D, sprite->texture->id);
 	glUseProgram(_shader->id);
 
-	rglMat4 translation_matrix;
-	rglMat4Identity(translation_matrix);
-	rglMat4Translate(translation_matrix, &sprite->position);
-
-	rglMat4 rotation_matrix;
-	rglMat4Identity(rotation_matrix);
-	rglMat4Rotate(rotation_matrix, sprite->rotation);
-
-	rglMat4 scale_matrix;
-	rglMat4Identity(scale_matrix);
-	rglMat4Scale(scale_matrix, &sprite->size);
-
 	rglMat4 model_matrix;
-	rglMat4Identity(model_matrix);
-	rglMat4Mul(model_matrix, translation_matrix);
-	rglMat4Mul(model_matrix, rotation_matrix);
-	rglMat4Mul(model_matrix, scale_matrix);
+	rglTransformCalculateModelMatrix(model_matrix, &sprite->transform);
 
 	glUniformMatrix4fv(_shader->uniform_locations[0], 1, false, (float *)_rgl_camera->projection);
 	glUniformMatrix4fv(_shader->uniform_locations[1], 1, false, (float *)model_matrix);

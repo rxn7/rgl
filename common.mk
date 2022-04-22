@@ -21,6 +21,7 @@ OBJ = rgl.o \
       rgl_animation_texture.o \
       rgl_camera.o \
       rgl_math.o \
-      rgl_list.o
+      rgl_list.o \
+      rgl_transform.o
 
 all: compile link clean

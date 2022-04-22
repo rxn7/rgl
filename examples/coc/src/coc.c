@@ -63,7 +63,7 @@ appUpdate(f32 dt) {
 	playerUpdate(&player, dt);
 	coinPickupCheck();
 
-	rglV2Lerp(&_rgl_camera->position, &player.sprite.position, dt * 10, &_rgl_camera->position);
+	rglV2Lerp(&_rgl_camera->position, &player.sprite.transform.position, dt * 10, &_rgl_camera->position);
 
 	_rgl_camera->zoom += _rgl_scroll_value * 0.05f;
 	rglMathClamp(_rgl_camera->zoom, .1f, 3.f);
@@ -88,7 +88,7 @@ coinPickupCheck(void) {
 	while(coin_node != NULL) {
 		Coin *coin = (Coin*)coin_node->data;
 
-		rglV2Sub(&coin->pos, &player.sprite.position, &delta_pos);
+		rglV2Sub(&coin->pos, &player.sprite.transform.position, &delta_pos);
 		f32 dist = rglV2Length(&delta_pos);
 
 		if(dist <= PLAYER_COIN_PICKUP_DISTANCE) {
