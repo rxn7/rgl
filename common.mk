@@ -5,9 +5,9 @@ LIBS += -lepoxy -lm -lopenal
 SRC += $(wildcard $(addsuffix /*.c, $(DIR_SRC)))
 OBJ += $(patsubst %.c, %.o, $(SRC))
 
-.PHONY:all
+.PHONY: all
 
-all:$(OBJ) $(OUT)
+all: $(OBJ) $(OUT)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
