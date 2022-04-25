@@ -1,19 +1,9 @@
+OUT := out/librgl.so
+LIBS := $(shell pkg-config --static --libs x11) $(shell pkg-config --static --libs glx)
+DIR_SRC := src/x11
+CC := gcc
+
 include common.mk
-OUT = out/librgl.so
-LIBS := $(LIBS) $(shell pkg-config --static --libs x11) $(shell pkg-config --static --libs glx)
-
-SRC := $(SRC) -c src/x11/*.c
-OBJ := $(OBJ) rgl_x11_context.o rgl_x11_input.o
-	
-compile:
-	gcc $(SRC) $(INCS) $(CFLAGS)
-
-link:
-	mkdir -p out
-	gcc -shared $(OBJ) $(LIBS) -o $(OUT)
-
-clean:
-	rm -rf *.o
 
 install:
 	make -f linux.mk

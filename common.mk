@@ -1,26 +1,19 @@
-SRC = -c src/*.c
-INCS = -Iinclude -Isrc -Ishaders
-CFLAGS = -std=gnu99 -Wall -fPIC -DRGL_BUILD
-LIBS = -lepoxy -lm -lopenal
+DIR_SRC += src
+INC += -Iinclude -Isrc
+CFLAGS += -std=gnu99 -Wall -fPIC -DRGL_BUILD
+LIBS += -lepoxy -lm -lopenal
+SRC += $(wildcard $(addsuffix /*.c, $(DIR_SRC)))
+OBJ += $(patsubst %.c, %.o, $(SRC))
 
-OBJ = rgl.o \
-      rgl_common.o \
-      rgl_texture.o \
-      rgl_file.o \
-      rgl_input.o \
-      rgl_vao.o \
-      rgl_audio.o \
-      rgl_sprite.o \
-      rgl_shader.o \
-      rgl_immediate.o \
-      rgl_v2.o \
-      rgl_mat4.o \
-      rgl_assert.o \
-      rgl_sprite_animation.o \
-      rgl_sprite_animator.o \
-      rgl_animation_texture.o \
-      rgl_camera.o \
-      rgl_math.o \
-      rgl_list.o
+.PHONY:all
 
-all: compile link clean
+all:$(OBJ) $(OUT)
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+
+$(OUT): $(OBJ)
+	$(CC) -shared $(CFLAGS) $(LIBS) $(OBJ) -o $@
+
+clean:
+	rm -r $(OBJ) $(OUT) 

@@ -16,7 +16,6 @@ rglAudioSource pickup_audio_source;
 
 Player player;
 rglLinkedList coins_ll;
-//Coin coins[COIN_COUNT];
 u32 score = 0;
 
 int 
