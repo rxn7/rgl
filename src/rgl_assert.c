@@ -5,15 +5,15 @@
 void
 _rglAssert(const char *file, i32 line, b8 expr, const char *expr_str, const char *fmsg, ...) {
 	if(!expr) {
-		fprintf(stderr, "[RGL ASSERT FAILED] Expr: %s  |  Msg: ", expr_str);
+		printf(ANSII_BOLD_RED "[RGL ASSERT FAILED] Expr: %s  |  Msg: ", expr_str);
 
 		/* Print the formatted msg */
 		va_list vargs;
 		va_start(vargs, fmsg);
-		vfprintf(stderr, fmsg, vargs);
+		vprintf(fmsg, vargs);
 		va_end(vargs);
 
-		fprintf(stderr, "  |  File: %s  |  Line: %i\n", file, line);
+		printf("  |  File: %s  |  Line: %i" ANSII_WHITE "\n", file, line);
 
 		rglQuit();
 	}

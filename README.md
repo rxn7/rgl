@@ -1,7 +1,5 @@
 # RGL
-Game Framework written in c99.
-  
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/rxtthin/rgl?style=plastic)  
+RGL is a medium-level Game Framework written in C99.
 
 # Todo
 You can check out the [Trello board](https://trello.com/b/35zRL8wO/rgl)
@@ -24,9 +22,12 @@ You can check out the [Trello board](https://trello.com/b/35zRL8wO/rgl)
 * OpenAL
 * x11
 
+# Lua bindings
+@blackshibe develops lua bindings for RGL: https://github.com/blackshibe/luargl 
+
 # Examples
+### Template - Simple project template
 ### Coc - Collector of coins  
-### Balls - Balls simulation  
 ### Agar - agar.io kind of game  
 Run ```./run_example.sh [example name]``` to run an example  
 

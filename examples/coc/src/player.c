@@ -9,8 +9,8 @@ playerCreate(Player *player, const char *texture_path) {
 	rglTextureLoadFromFile(&player->texture, texture_path, RGL_TEXTURE_FILTER_NONE);
 	rglSpriteCreate(&player->sprite, &player->texture);
 
-	player->sprite.size.x *= 0.3f;
-	player->sprite.size.y *= 0.3f;
+	player->sprite.transform.scale.x *= 0.3f;
+	player->sprite.transform.scale.y *= 0.3f;
 
 	f32 seconds_per_frame = 0.15f;
 	rglAnimationTextureCreate(&player->anim_texture, &player->texture, (rglV2){22,44});
@@ -64,13 +64,14 @@ playerHandleMovement(Player *player, f32 dt) {
 
 		rglV2Normalize(&player->move_dir, &player->move_dir);
 		rglV2Mulf(&player->move_dir, dt * PLAYER_MOVE_MASS, &player->move_dir);
-		rglV2Add(&player->sprite.position, &player->move_dir, &player->sprite.position);
+		rglV2Add(&player->sprite.transform.position, &player->move_dir, &player->sprite.transform.position);
 	} else {
 		playerPlayAnimation(player, IDLE);
 	}
 }
 
-static void playerHandleAnimations(Player *player) {
+static void 
+playerHandleAnimations(Player *player) {
 	if(player->move_dir.y > 0.0f) playerPlayAnimation(player, MOVE_DOWN);
 	else if(player->move_dir.y < 0.0f) playerPlayAnimation(player, MOVE_UP);
 	else if(player->move_dir.x > 0.0f) playerPlayAnimation(player, MOVE_RIGHT);

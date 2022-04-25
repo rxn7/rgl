@@ -12,8 +12,8 @@ extern "C" {
 #include "rgl_texture.h"
 #include "rgl_sprite.h"
 #include "rgl_input.h"
-#include "rgl_immediate.h"
 #include "rgl_audio.h"
+#include "rgl_immediate.h"
 #include "rgl_camera.h"
 #include "rgl_assert.h"
 #include "rgl_sprite_animator.h"
@@ -38,13 +38,11 @@ f32 rglGetTime(void);
 
 extern RGL_PLATFORM_CONTEXT_T *_rgl_plat_ctx;
 extern rglAppDesc *_rgl_app_desc;
-extern rglAudioContext *_rgl_audio_ctx;
 extern rglCamera *_rgl_camera;
 extern b8 _rgl_running;
 extern i32 _rgl_width, _rgl_height;
 extern f32 _rgl_vp_width, _rgl_vp_height;
 extern f32 _rgl_vp_x, _rgl_vp_y;
-extern f32 _rgl_scroll_value;
 extern u16 _rgl_aspect_x;
 extern u16 _rgl_aspect_y;
 

@@ -8,5 +8,4 @@
 #define COIN_TEXTURE_PATH "res/coin.png"
 #define PLAYER_TEXTURE_PATH "res/player.png"
 
-#define RGL_NO_LOG
 #include <rgl/rgl.h>

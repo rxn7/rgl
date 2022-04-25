@@ -16,7 +16,7 @@ coinsInit(void) {
 	rglSpriteAnimatorCreate(&_animator, &_animation);
 
 	rglSpriteCreate(&_sprite, &_texture);
-	rglV2Setf(&_sprite.size, COIN_SPRITE_SIZE);
+	rglV2Setf(&_sprite.transform.scale, COIN_SPRITE_SIZE);
 }
 
 void
@@ -26,7 +26,7 @@ coinsUpdate(f32 dt) {
 
 void
 coinDraw(Coin *coin) {
-	rglV2Copy(&coin->pos, &_sprite.position);
+	rglV2Copy(&coin->pos, &_sprite.transform.position);
 	rglSpriteRender(&_sprite);
 }
 

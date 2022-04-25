@@ -5,12 +5,6 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
-typedef struct rglAudioContext {
-	ALCdevice *dev;
-	ALCcontext *cxt;
-	u32 *audio_effects;
-} rglAudioContext;
-
 typedef struct rglAudioBuffer {
 	u32 id;
 } rglAudioBuffer;
@@ -22,8 +16,9 @@ typedef struct rglAudioSource {
 	rglAudioBuffer *buffer;
 } rglAudioSource;
 
-void rglAudioContextCreate(rglAudioContext *cxt);
-void rglAudioContextDestroy(rglAudioContext *cxt);
+
+void rglAudioInit();
+void rglAudioCleanup();
 
 void rglAudioBufferLoadFromVorbis(rglAudioBuffer *buffer, const char *path);
 void rglAudioBufferDestroy(rglAudioBuffer *buffer);

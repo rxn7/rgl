@@ -76,8 +76,6 @@ rglMat4Rotate(rglMat4 mat, f32 degrees) {
 
 	mat[4] = -radsin;
 	mat[5] = radcos;
-	mat[5] = radcos;
-	mat[6] = 0.0f;
 
 	mat[8] = 0.0f;
 	mat[9] = 0.0f;

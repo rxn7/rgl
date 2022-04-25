@@ -3,6 +3,8 @@
 #include "rgl_input.h"
 #include "rgl.h"
 
+f32 _rgl_scroll_value = 0.0f;
+
 void
 rglGetCursorPos(rglV2 *vec) {
 	RGL_PLATFORM_FUN(GetCursorPos, vec);
