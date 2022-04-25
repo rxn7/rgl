@@ -4,6 +4,8 @@ source ./shell_colors.sh
 
 ./build_shaders.sh
 
+mkdir -p out
+
 echo "==========================="
 echo "Compiling RGL for linux..."
 make -f linux.mk install

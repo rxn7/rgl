@@ -26,6 +26,7 @@ fi
 
 if [ ! -f /usr/lib/librgl.so ] 
 then
+	echoColor $YELLOW "Your machine doesn't have RGL installed, going to build it now."
 	./build_rgl.sh
 	if [ $? -ne 0 ]
 	then
