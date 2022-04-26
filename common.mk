@@ -5,7 +5,7 @@ LIBS += -lepoxy -lm -lopenal
 SRC += $(wildcard $(addsuffix /*.c, $(DIR_SRC)))
 OBJ += $(patsubst %.c, %.o, $(SRC))
 
-.PHONY: all
+.PHONY: all clean install
 
 all: $(OBJ) $(OUT)
 
