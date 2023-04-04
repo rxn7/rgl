@@ -29,6 +29,7 @@ You can check out the [Trello board](https://trello.com/b/35zRL8wO/rgl)
 ### Template - Simple project template
 ### Coc - Collector of coins  
 ### Agar - agar.io kind of game  
+### Balls - fun balls simulation
 Run ```./run_example.sh [example name]``` to run an example  
 
 # Install
