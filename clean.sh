@@ -1,3 +1,3 @@
 #!/bin/sh
 
-make -f linux.mk clean
+make -f make/linux.mk clean

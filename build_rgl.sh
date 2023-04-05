@@ -8,7 +8,11 @@ mkdir -p out
 
 echo "==========================="
 echo "Compiling RGL for linux..."
-make -f linux.mk install
+make -f make/linux.mk
+
+echo "==========================="
+echo "Installing RGL"
+make -f make/linux.mk install
 
 if [ $? -ne 0 ]
 then

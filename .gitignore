@@ -1,4 +1,4 @@
 shaders_out
 out
+obj
 *.o
-**/.o
