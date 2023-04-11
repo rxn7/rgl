@@ -1,9 +1,6 @@
 # RGL
 RGL is a medium-level Game Framework written in C99.
 
-# Todo
-You can check out the [Trello board](https://trello.com/b/35zRL8wO/rgl)
-
 # Features
 * Input system
 * Sprite rendering
