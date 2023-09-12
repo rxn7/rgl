@@ -10,7 +10,6 @@
 
 static bool cells[CELL_COUNT];
 static bool cells_temp[CELL_COUNT];
-static rglVao cells_vao;
 static float update_timer = 0.0f;
 
 void appInit(void);
@@ -37,7 +36,6 @@ main(int argc, const char **argv) {
 
 void
 appInit(void) {
-	rglVaoCreate(&cells_vao, nullptr, 0);
 	randomizeCells();
 }
 

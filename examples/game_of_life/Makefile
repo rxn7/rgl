@@ -8,4 +8,4 @@ compile:
 	gcc -c $(SRC) -I./src $(CFLAGS)
 
 link:
-	gcc $(OBJ) -lrgl -o gof
+	gcc $(OBJ) -lrgl -o game_of_life
