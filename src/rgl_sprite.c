@@ -11,6 +11,10 @@ const rglVertex _vertices[] = {
 	{ { 1,  1},	{1,1} },
 	{ {-1,  1},	{0,1} },
 };
+const u16 _vertices_size = sizeof(_vertices) / sizeof(_vertices[0]);
+
+const element_t _elements[] = { 0, 1, 2, 2, 3, 0 };
+const u16 _elements_size = sizeof(_elements) / sizeof(_elements[0]);
 
 b8
 rglSpriteCreate(rglSprite *sprite, rglTexture *texture) {
@@ -22,7 +26,7 @@ rglSpriteCreate(rglSprite *sprite, rglTexture *texture) {
 	sprite->transform.scale = (rglV2){texture->width, texture->height};
 	sprite->transform.position = (rglV2){0,0};
 
-	if(!rglVaoCreate(&sprite->vao, _vertices, sizeof(_vertices) / sizeof(_vertices[0]))) {
+	if(!rglVaoCreate(&sprite->vao, _vertices, _vertices_size, _elements, _elements_size)) {
 		RGL_LOG_ERROR("Failed to create VAO for a sprite");
 		return false;
 	}
@@ -51,7 +55,7 @@ rglSpriteRender(rglSprite *sprite) {
 	glUniformMatrix4fv(_shader->uniform_locations[0], 1, false, (float *)_rgl_camera->projection);
 	glUniformMatrix4fv(_shader->uniform_locations[1], 1, false, (float *)model_matrix);
 
-	rglVaoRender(&sprite->vao, GL_QUADS);
+	rglVaoRender(&sprite->vao, GL_TRIANGLES);
 
 	glUseProgram(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
