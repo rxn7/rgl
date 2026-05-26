@@ -1,3 +1,6 @@
+# ⚠️ REPOSITORY MOVED ⚠️
+### this repository is now hosted at [https://codeberg/rxn/vox](https://codeberg/rxn/vox)</b>
+
 # RGL
 RGL is a medium-level Game Framework written in C99.
 
